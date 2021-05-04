@@ -5,6 +5,10 @@ function! s:listPlugins()
 	Plug 'kabouzeid/nvim-lspinstall'
 	Plug 'hrsh7th/nvim-compe'
 	Plug 'norcalli/snippets.nvim'
+	Plug 'nvim-lua/popup.nvim'
+	Plug 'nvim-lua/plenary.nvim'
+	Plug 'nvim-telescope/telescope.nvim'
+	Plug 'nvim-telescope/telescope-fzy-native.nvim', { 'do': 'make -C deps/fzy-lua-native' }
 	call plug#end()
 endfunction
 
@@ -30,12 +34,9 @@ set updatetime=200
 set completeopt=menuone,noselect
 
 lua << EOF
-require('plugins_conf/lspclient')
+require('plugins_conf/conf_lspclient')
+--vim.lsp.set_log_level("debug")
 EOF
-
-"lua << EOF
-"vim.lsp.set_log_level("debug")
-"EOF
 
 inoremap <silent><expr> <C-Space> compe#complete()
 inoremap <silent><expr> <CR>      compe#confirm('<CR>')
@@ -76,6 +77,7 @@ vnoremap <leader>y "+y
 nnoremap <leader>Y gg"+yG
 nnoremap <leader>d "_d
 vnoremap <leader>d "_d
+nnoremap <leader>p "+p
 vnoremap <leader>p "_dP
 nnoremap <leader>= :vertical resize +20<CR>
 nnoremap <leader>- :vertical resize -20<CR>
@@ -87,3 +89,17 @@ vnoremap <leader>r "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 " }}} Mappings "
+
+" Finder {{{ "
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+nnoremap <leader>fm <cmd>Telescope man_pages<cr>
+nnoremap <leader>fk <cmd>Telescope keymaps<cr>
+nnoremap <leader>fs <cmd>Telescope lsp_workspace_symbols query= <cr>
+nnoremap <leader>fd <cmd>lua require('plugins_conf/conf_telescope').search_dotfiles()<cr>
+lua << EOF
+require('plugins_conf/conf_telescope')
+EOF
+" }}} Finder "
