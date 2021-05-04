@@ -39,7 +39,6 @@ EOF
 
 inoremap <silent><expr> <C-Space> compe#complete()
 inoremap <silent><expr> <CR>      compe#confirm('<CR>')
-inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 inoremap <c-e> <cmd>lua return require'snippets'.expand_or_advance(1)<CR>
 inoremap <c-q> <cmd>lua return require'snippets'.advance_snippet(-1)<CR>
 " }}} LSP client setup "
