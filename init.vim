@@ -82,4 +82,6 @@ nnoremap <leader>/ :noh<CR>
 nnoremap <leader>s :w<CR>
 nnoremap <leader>q :qa<CR>
 vnoremap <leader>r "hy:%s/<c-r>h//gc<left><left><left>
+nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
+nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 " }}} Mappings "
