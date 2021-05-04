@@ -22,7 +22,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call s:listPlugins()
-" }}} Plugin initialization "
+" }}} Plugin & LSP servers initialization "
 
 " LSP client setup {{{ "
 set updatetime=200
@@ -32,8 +32,6 @@ lua << EOF
 require('plugins_conf/lspclient')
 EOF
 
-let mapleader ="\<Space>"
-
 "lua << EOF
 "vim.lsp.set_log_level("debug")
 "EOF
@@ -41,4 +39,47 @@ let mapleader ="\<Space>"
 inoremap <silent><expr> <C-Space> compe#complete()
 inoremap <silent><expr> <CR>      compe#confirm('<CR>')
 inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+" }}} LSP client setup "
+
+" Options {{{ "
+set nofixeol
+set hidden
+set tabstop=4
+set number
+set hlsearch
+set termguicolors
+set signcolumn=number
+set scroll=10
 " }}} Options "
+
+" Mappings {{{ "
+nnoremap H 0
+vnoremap H 0
+nnoremap L $
+vnoremap L $
+inoremap kj <esc>
+nnoremap 0 <nop>
+vnoremap 0 <nop>
+nnoremap $ <nop>
+vnoremap $ <nop>
+inoremap <esc> <nop>
+vnoremap <esc> <nop>
+nnoremap <c-e> 3<c-e>
+nnoremap <c-y> 3<c-y>
+let mapleader ="\<Space>"
+nnoremap <leader>bs /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
+vnoremap <leader>bs "hy/<c-r>h<CR>
+nnoremap <leader>y "+y
+vnoremap <leader>y "+y
+nnoremap <leader>Y gg"+yG
+nnoremap <leader>d "_d
+vnoremap <leader>d "_d
+vnoremap <leader>p "_dP
+nnoremap <leader>= :vertical resize +20<CR>
+nnoremap <leader>- :vertical resize -20<CR>
+nnoremap <leader>w :set wrap!<CR>
+nnoremap <leader>/ :noh<CR>
+nnoremap <leader>s :w<CR>
+nnoremap <leader>q :qa<CR>
+vnoremap <leader>r "hy:%s/<c-r>h//gc<left><left><left>
+" }}} Mappings "
