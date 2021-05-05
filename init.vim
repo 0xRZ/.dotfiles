@@ -10,9 +10,10 @@ function! s:listPlugins()
 	Plug 'nvim-telescope/telescope.nvim'
 	Plug 'nvim-telescope/telescope-fzy-native.nvim', { 'do': 'make -C deps/fzy-lua-native' }
 	Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-	Plug 'kyazdani42/nvim-web-devicons', {'do': 'curl --create-dirs -fLo ~/.local/share/fonts/Fira_Code_Light_Nerd_Font_Complete_Mono.ttf https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FiraCode/Medium/complete/Fira%20Code%20Medium%20Nerd%20Font%20Complete%20Mono.ttf'}
+	Plug 'kyazdani42/nvim-web-devicons', {'do': 'Firas=(\"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Bold/complete/Fira%20Code%20Bold%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Light/complete/Fira%20Code%20Light%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/SemiBold/complete/Fira%20Code%20SemiBold%20Nerd%20Font%20Complete.ttf\") && mkdir -p ~/.local/share/fonts && for i in ${Firas[@]}; do echo wget -O ~/.local/share/fonts/$(basename $i \| tr -s %20 -) $i; done'}
     Plug 'kyazdani42/nvim-tree.lua'
 	Plug 'norcalli/nvim-colorizer.lua'
+	Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 	call plug#end()
 endfunction
 
@@ -79,6 +80,8 @@ inoremap <esc> <nop>
 vnoremap <esc> <nop>
 nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
+nnoremap <c-d> <c-d>zz
+nnoremap <c-u> <c-u>zz
 vnoremap <c-d> <c-d>zz
 vnoremap <c-u> <c-u>zz
 let mapleader ="\<Space>"
@@ -95,7 +98,7 @@ nnoremap <leader>= :vertical resize +20<CR>
 nnoremap <leader>- :vertical resize -20<CR>
 nnoremap <leader>w :set wrap!<CR>
 nnoremap <leader>/ :noh<CR>
-nnoremap <leader>s :w<CR>
+nnoremap <leader>sf :w<CR>
 nnoremap <leader>q :qa<CR>
 vnoremap <leader>r "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
@@ -174,3 +177,42 @@ require 'colorizer'.setup {
 }
 EOF
 " }}} Colorizer "
+
+" Indentation display {{{ "
+let g:indent_blankline_use_treesitter = v:true
+let g:indent_blankline_show_current_context = v:true
+highlight IndentBlanklineContextChar ctermfg=160 guifg=#d70000
+let g:indent_blankline_context_patterns = ['class', 'function', 'method', '^if', '^do', '^while', '^for', '^struct']
+hi IndentBlanklineCharHighlightListFirstLevel ctermfg=34 guifg=#00af00
+hi IndentBlanklineCharHighlightListSecondLevel ctermfg=35 guifg=#00af5f
+hi IndentBlanklineCharHighlightListThirdLevel ctermfg=36 guifg=#00af87
+hi IndentBlanklineCharHighlightListFourthLevel ctermfg=37 guifg=#00afaf
+hi IndentBlanklineCharHighlightListFifthLevel ctermfg=38 guifg=#00afd7
+hi IndentBlanklineCharHighlightListSixtLevel ctermfg=39 guifg=#00afff
+hi IndentBlanklineCharHighlightListSeventLevel ctermfg=111 guifg=#87afff
+hi IndentBlanklineCharHighlightListEigthLevel ctermfg=110 guifg=#87afd7
+let g:indent_blankline_char = '▏'
+let g:indent_blankline_char_highlight_list = [
+			\'IndentBlanklineCharHighlightListFirstLevel',
+			\'IndentBlanklineCharHighlightListSecondLevel',
+			\'IndentBlanklineCharHighlightListThirdLevel',
+			\'IndentBlanklineCharHighlightListFourthLevel',
+			\'IndentBlanklineCharHighlightListFifthLevel',
+			\'IndentBlanklineCharHighlightListSixtLevel',
+			\'IndentBlanklineCharHighlightListSeventLevel',
+			\'IndentBlanklineCharHighlightListEigthLevel',
+			\]
+set lcs+=eol:↴
+hi NonText ctermfg=9
+let g:indent_blankline_show_end_of_line = v:true
+"might get slow
+let g:indent_blankline_viewport_buffer = 70
+function! s:CheckWhitespaces()
+    if !(&lcs =~ "space")
+        set lcs+=space:·
+    endif
+    IndentBlanklineToggle
+    set list!
+endfunction
+nnoremap <leader>sw :call <SID>CheckWhitespaces()<CR>
+" }}} Indentation  display "
