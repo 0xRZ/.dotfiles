@@ -203,7 +203,6 @@ let g:indent_blankline_char_highlight_list = [
 			\'IndentBlanklineCharHighlightListEigthLevel',
 			\]
 set lcs+=eol:↴
-hi NonText ctermfg=9
 let g:indent_blankline_show_end_of_line = v:true
 "might get slow
 let g:indent_blankline_viewport_buffer = 70
