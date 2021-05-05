@@ -9,6 +9,7 @@ function! s:listPlugins()
 	Plug 'nvim-lua/plenary.nvim'
 	Plug 'nvim-telescope/telescope.nvim'
 	Plug 'nvim-telescope/telescope-fzy-native.nvim', { 'do': 'make -C deps/fzy-lua-native' }
+	Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 	call plug#end()
 endfunction
 
@@ -19,6 +20,9 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 		LspInstall lua
 		LspInstall bash
 		LspInstall vim
+		TSInstall c
+		TSInstall lua
+		TSInstall bash
 		source $MYVIMRC
 	endfunction
 	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -105,3 +109,9 @@ lua << EOF
 require('plugins_conf/conf_telescope')
 EOF
 " }}} Finder "
+
+" nvim-treesitter {{{ "
+lua << EOF
+require('plugins_conf/conf_treesitter')
+EOF
+" }}} nvim-treesitter "
