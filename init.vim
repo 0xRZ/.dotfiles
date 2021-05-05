@@ -10,6 +10,8 @@ function! s:listPlugins()
 	Plug 'nvim-telescope/telescope.nvim'
 	Plug 'nvim-telescope/telescope-fzy-native.nvim', { 'do': 'make -C deps/fzy-lua-native' }
 	Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+	Plug 'kyazdani42/nvim-web-devicons', {'do': 'curl --create-dirs -fLo ~/.local/share/fonts/Fira_Code_Light_Nerd_Font_Complete_Mono.ttf https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FiraCode/Medium/complete/Fira%20Code%20Medium%20Nerd%20Font%20Complete%20Mono.ttf'}
+    Plug 'kyazdani42/nvim-tree.lua'
 	call plug#end()
 endfunction
 
@@ -59,6 +61,7 @@ set hlsearch
 set termguicolors
 set signcolumn=number
 set scroll=10
+set encoding=UTF-8
 " }}} Options "
 
 " Mappings {{{ "
@@ -75,6 +78,8 @@ inoremap <esc> <nop>
 vnoremap <esc> <nop>
 nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
+vnoremap <c-d> <c-d>zz
+vnoremap <c-u> <c-u>zz
 let mapleader ="\<Space>"
 nnoremap <leader>bs /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
 vnoremap <leader>bs "hy/<c-r>h<CR>
@@ -115,3 +120,43 @@ lua << EOF
 require('plugins_conf/conf_treesitter')
 EOF
 " }}} nvim-treesitter "
+
+" File explorer {{{ "
+let g:nvim_tree_width = 40
+let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache', '*.o' ]
+let g:nvim_tree_quit_on_open = 1
+let g:nvim_tree_special_files = [ 'README.md', 'Makefile', 'MAKEFILE' ]
+let g:nvim_tree_icons = {
+    \ 'default': '',
+    \ 'symlink': '',
+    \ 'git': {
+    \   'unstaged': "✗",
+    \   'staged': "✓",
+    \   'unmerged': "",
+    \   'renamed': "➜",
+    \   'untracked': "★",
+    \   'deleted': "",
+    \   'ignored': "◌"
+    \   },
+    \ 'folder': {
+    \   'default': "",
+    \   'open': "",
+    \   'empty': "",
+    \   'empty_open': "",
+    \   'symlink': "",
+    \   'symlink_open': "",
+    \   },
+    \   'lsp': {
+    \     'hint': "",
+    \     'info': "",
+    \     'warning': "",
+    \     'error': "",
+    \   }
+    \ }
+lua << EOF
+require('plugins_conf/conf_nvim-tree')
+EOF
+nnoremap <C-n> :NvimTreeToggle<CR>
+nnoremap <leader>nr :NvimTreeRefresh<CR>
+nnoremap <leader>nn :NvimTreeFindFile<CR>
+" }}} File explorer "
