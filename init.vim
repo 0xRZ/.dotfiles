@@ -18,6 +18,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 		PlugInstall --sync
 		LspInstall lua
 		LspInstall bash
+		LspInstall vim
 		source $MYVIMRC
 	endfunction
 	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -34,8 +35,9 @@ set updatetime=200
 set completeopt=menuone,noselect
 
 lua << EOF
-require('plugins_conf/conf_lspclient')
+--Neovim logs at: ~/.cache/nvim/lsp.log
 --vim.lsp.set_log_level("debug")
+require('plugins_conf/conf_lspclient')
 EOF
 
 inoremap <silent><expr> <C-Space> compe#complete()

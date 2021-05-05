@@ -65,9 +65,9 @@ local function setup_servers()
     table.insert(in_servers, "cpp")
   end
 
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
   if contains(in_servers, "cpp") then
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities.textDocument.completion.completionItem.snippetSupport = true
     nvim_lsp["clangd"].setup {
       on_attach = on_attach,
       capabilities = capabilities
@@ -111,7 +111,20 @@ local function setup_servers()
   end
 
   if contains(in_servers, "bash") then
-    nvim_lsp["bash"].setup { on_attach = on_attach }
+    nvim_lsp["bash"].setup {
+      on_attach = on_attach,
+      capabilities = capabilities
+    }
+  end
+
+  if contains(in_servers, "vim") then
+    nvim_lsp["vim"].setup {
+      on_attach = on_attach,
+      init_options = {
+        isNeovim = true
+	  },
+      capabilities = capabilities
+    }
   end
 end
 
