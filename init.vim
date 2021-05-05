@@ -12,6 +12,7 @@ function! s:listPlugins()
 	Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 	Plug 'kyazdani42/nvim-web-devicons', {'do': 'curl --create-dirs -fLo ~/.local/share/fonts/Fira_Code_Light_Nerd_Font_Complete_Mono.ttf https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FiraCode/Medium/complete/Fira%20Code%20Medium%20Nerd%20Font%20Complete%20Mono.ttf'}
     Plug 'kyazdani42/nvim-tree.lua'
+	Plug 'norcalli/nvim-colorizer.lua'
 	call plug#end()
 endfunction
 
@@ -160,3 +161,16 @@ nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>nr :NvimTreeRefresh<CR>
 nnoremap <leader>nn :NvimTreeFindFile<CR>
 " }}} File explorer "
+
+" Colorizer {{{ "
+lua << EOF
+require 'colorizer'.setup {
+  'css';
+  'javascript';
+  'vim';
+  html = {
+    mode = 'foreground';
+  }
+}
+EOF
+" }}} Colorizer "
