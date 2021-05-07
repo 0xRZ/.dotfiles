@@ -16,6 +16,8 @@ function! s:listPlugins()
 	Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
     Plug 'Xuyuanp/scrollbar.nvim'
     Plug 'kevinhwang91/nvim-hlslens'
+    Plug 'mihaifm/bufstop'
+    Plug 'moll/vim-bbye'
 	call plug#end()
 endfunction
 
@@ -93,8 +95,8 @@ nnoremap <c-u> <c-u>zz
 vnoremap <c-d> <c-d>zz
 vnoremap <c-u> <c-u>zz
 let mapleader ="\<Space>"
-nnoremap <leader>bs /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
-vnoremap <leader>bs "hy/<c-r>h<CR>
+nnoremap <leader>sn /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
+vnoremap <leader>sn "hy/<c-r>h<CR>
 nnoremap <leader>y "+y
 vnoremap <leader>y "+y
 nnoremap <leader>Y gg"+yG
@@ -243,3 +245,32 @@ noremap # #<Cmd>lua require('hlslens').start()<CR>
 noremap g* g*<Cmd>lua require('hlslens').start()<CR>
 noremap g# g#<Cmd>lua require('hlslens').start()<CR>
 " }}} Search "
+
+" Tabs & Windows & Buffers {{{ "
+let g:BufstopDismissKey = "q"
+let g:BufstopKeys = "1234asfcvzx5wertyuiopbnm67890ABCEFGHIJKLMNOPRSTUVZ"
+nnoremap <leader>l :BufstopForward<CR>
+" Move to the previous buffer
+nnoremap <leader>h :BufstopBack<CR>
+" Switch a buffer
+nnoremap <leader>b :BufstopPreview<CR>
+" Switch buffer fast
+nnoremap <leader>a :BufstopModeFast<CR>
+" Close the current buffer and move to the previous one
+nnoremap <leader>d :Bwipeout<CR>
+
+noremap <leader>1 1gt
+noremap <leader>2 2gt
+noremap <leader>3 3gt
+noremap <leader>4 4gt
+noremap <leader>5 5gt
+noremap <leader>6 6gt
+noremap <leader>7 7gt
+noremap <leader>8 8gt
+noremap <leader>9 9gt
+" Go to last active tab
+au TabLeave * let g:lasttab = tabpagenr()
+nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
+" Put window to new tab
+noremap <c-t> :tab sp<cr>
+" }}} Tabs & Windows & Buffers "
