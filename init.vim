@@ -24,9 +24,11 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 		LspInstall lua
 		LspInstall bash
 		LspInstall vim
+		LspInstall yaml
 		TSInstall c
 		TSInstall lua
 		TSInstall bash
+		TSInstall yaml
 		source $MYVIMRC
 	endfunction
 	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -63,7 +65,11 @@ set hlsearch
 set termguicolors
 set signcolumn=number
 set scroll=10
+set startofline
 set encoding=UTF-8
+set lcs+=trail:⬤
+set lcs+=eol:↴
+hi NonText guifg=#fd0000
 " }}} Options "
 
 " Mappings {{{ "
@@ -173,7 +179,8 @@ require 'colorizer'.setup {
   'vim';
   html = {
     mode = 'foreground';
-  }
+  };
+  'conf'
 }
 EOF
 " }}} Colorizer "
@@ -202,7 +209,6 @@ let g:indent_blankline_char_highlight_list = [
 			\'IndentBlanklineCharHighlightListSeventLevel',
 			\'IndentBlanklineCharHighlightListEigthLevel',
 			\]
-set lcs+=eol:↴
 let g:indent_blankline_show_end_of_line = v:true
 "might get slow
 let g:indent_blankline_viewport_buffer = 70

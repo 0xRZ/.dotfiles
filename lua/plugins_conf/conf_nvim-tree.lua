@@ -3,8 +3,6 @@ vim.g.nvim_tree_bindings = {
   -- default mappings
   ["<CR>"]           = tree_cb("edit"),
   ["o"]              = tree_cb("edit"),
-  ["<2-LeftMouse>"]  = tree_cb("edit"),
-  ["<2-RightMouse>"] = tree_cb("cd"),
   ["<C-]>"]          = tree_cb("cd"),
   ["<C-v>"]          = tree_cb("vsplit"),
   ["<C-x>"]          = tree_cb("split"),
@@ -23,6 +21,6 @@ vim.g.nvim_tree_bindings = {
   ["p"]              = tree_cb("paste"),
   ["[c"]             = tree_cb("prev_git_item"),
   ["]c"]             = tree_cb("next_git_item"),
-  ["-"]              = tree_cb("dir_up"),
+  ["C-["]              = tree_cb("dir_up"),
   ["q"]              = tree_cb("close"),
 }

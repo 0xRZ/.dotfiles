@@ -126,6 +126,13 @@ local function setup_servers()
       capabilities = capabilities
     }
   end
+
+  if contains(in_servers, "yaml") then
+    nvim_lsp["yaml"].setup {
+      on_attach = on_attach,
+      capabilities = capabilities
+    }
+  end
 end
 
 setup_servers()

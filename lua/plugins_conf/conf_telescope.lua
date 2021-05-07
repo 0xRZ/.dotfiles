@@ -13,6 +13,8 @@ require('telescope').setup{
       },
       n = {
         ["<esc>"] = false,
+        ["<c-j>"] = actions.move_selection_next,
+        ["<c-k>"] = actions.move_selection_previous,
         ["<c-c>"] = actions.close,
       },
     },
