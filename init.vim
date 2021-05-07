@@ -14,7 +14,6 @@ function! s:listPlugins()
     Plug 'kyazdani42/nvim-tree.lua'
 	Plug 'norcalli/nvim-colorizer.lua'
 	Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
-    Plug 'Xuyuanp/scrollbar.nvim'
     Plug 'kevinhwang91/nvim-hlslens'
     Plug 'mihaifm/bufstop'
     Plug 'moll/vim-bbye'
@@ -71,9 +70,6 @@ set signcolumn=number
 set scroll=10
 set startofline
 set encoding=UTF-8
-set lcs+=trail:⬤
-set lcs+=eol:↴
-hi NonText guifg=#fd0000
 " }}} Options "
 
 " Mappings {{{ "
@@ -90,11 +86,11 @@ inoremap <esc> <nop>
 vnoremap <esc> <nop>
 nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
-nnoremap <c-d> <c-d>zz
-nnoremap <c-u> <c-u>zz
 vnoremap <c-d> <c-d>zz
 vnoremap <c-u> <c-u>zz
 let mapleader ="\<Space>"
+nnoremap <leader>; }
+nnoremap <leader>g {
 nnoremap <leader>sn /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
 vnoremap <leader>sn "hy/<c-r>h<CR>
 nnoremap <leader>y "+y
@@ -190,6 +186,9 @@ EOF
 " }}} Colorizer "
 
 " Indentation display {{{ "
+set lcs+=trail:⬤
+set lcs+=eol:↴
+hi NonText guifg=#fd0000
 let g:indent_blankline_use_treesitter = v:true
 let g:indent_blankline_show_current_context = v:true
 highlight IndentBlanklineContextChar ctermfg=160 guifg=#d70000
@@ -225,15 +224,6 @@ function! s:CheckWhitespaces()
 endfunction
 nnoremap <leader>sw :call <SID>CheckWhitespaces()<CR>
 " }}} Indentation  display "
-
-" Scrollbar {{{ "
-augroup ScrollbarInit
-  autocmd!
-  autocmd CursorMoved,VimResized,QuitPre * silent! lua require('scrollbar').show()
-  autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
-  autocmd WinLeave,FocusLost             * silent! lua require('scrollbar').clear()
-augroup end
-" }}} Scrollbar "
 
 " Search {{{ "
 noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
