@@ -15,6 +15,7 @@ function! s:listPlugins()
 	Plug 'norcalli/nvim-colorizer.lua'
 	Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
     Plug 'Xuyuanp/scrollbar.nvim'
+    Plug 'kevinhwang91/nvim-hlslens'
 	call plug#end()
 endfunction
 
@@ -231,3 +232,14 @@ augroup ScrollbarInit
   autocmd WinLeave,FocusLost             * silent! lua require('scrollbar').clear()
 augroup end
 " }}} Scrollbar "
+
+" Search {{{ "
+noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
+            \<Cmd>lua require('hlslens').start()<CR>
+noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
+            \<Cmd>lua require('hlslens').start()<CR>
+noremap * *<Cmd>lua require('hlslens').start()<CR>
+noremap # #<Cmd>lua require('hlslens').start()<CR>
+noremap g* g*<Cmd>lua require('hlslens').start()<CR>
+noremap g# g#<Cmd>lua require('hlslens').start()<CR>
+" }}} Search "
