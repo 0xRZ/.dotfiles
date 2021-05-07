@@ -14,6 +14,7 @@ function! s:listPlugins()
     Plug 'kyazdani42/nvim-tree.lua'
 	Plug 'norcalli/nvim-colorizer.lua'
 	Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
+    Plug 'Xuyuanp/scrollbar.nvim'
 	call plug#end()
 endfunction
 
@@ -221,3 +222,12 @@ function! s:CheckWhitespaces()
 endfunction
 nnoremap <leader>sw :call <SID>CheckWhitespaces()<CR>
 " }}} Indentation  display "
+
+" Scrollbar {{{ "
+augroup ScrollbarInit
+  autocmd!
+  autocmd CursorMoved,VimResized,QuitPre * silent! lua require('scrollbar').show()
+  autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
+  autocmd WinLeave,FocusLost             * silent! lua require('scrollbar').clear()
+augroup end
+" }}} Scrollbar "
