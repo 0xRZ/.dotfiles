@@ -294,5 +294,29 @@ hi! link HopNextKey2 HopNextKey1
 " }}} Hop "
 
 " Smooth scroll {{{ "
-lua require('neoscroll').setup()
+lua << EOF
+require('neoscroll').setup({
+    -- All these keys will be mapped. Pass an empty table ({}) for no mappings
+    mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>',
+                '<C-y>', '<C-e>', 'zt', 'zz', 'zb'},
+    hide_cursor = true,          -- Hide cursor while scrolling
+    stop_eof = true,             -- Stop at <EOF> when scrolling downwards
+    respect_scrolloff = false,   -- Stop scrolling when the cursor reaches the scrolloff margin of the file
+    cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
+    easing = false,              -- easing_function will be used in all scrolling animations with some defaults
+    easing_function = function(x) return math.pow(x, 2) end -- default easing function
+})
+local t = {}
+-- Syntax: t[keys] = {function, {function arguments}}
+t['<C-u>'] = {'scroll', {'-10', 'true', '8'}}
+t['<C-d>'] = {'scroll', { '10', 'true', '8'}}
+t['<C-b>'] = {'scroll', {'-vim.api.nvim_win_get_height(0)', 'true', '7'}}
+t['<C-f>'] = {'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '7'}}
+t['<C-y>'] = {'scroll', {'-0.10', 'false', '20'}}
+t['<C-e>'] = {'scroll', { '0.10', 'false', '20'}}
+t['zt']    = {'zt', {'7'}}
+t['zz']    = {'zz', {'7'}}
+t['zb']    = {'zb', {'7'}}
+require('neoscroll.config').set_mappings(t)
+EOF
 " }}} Smooth scroll "
