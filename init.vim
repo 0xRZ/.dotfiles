@@ -17,6 +17,7 @@ function! s:listPlugins()
     Plug 'kevinhwang91/nvim-hlslens'
     Plug 'mihaifm/bufstop'
     Plug 'moll/vim-bbye'
+	Plug 'folke/which-key.nvim'
 	call plug#end()
 endfunction
 
@@ -70,6 +71,7 @@ set signcolumn=number
 set scroll=10
 set startofline
 set encoding=UTF-8
+set timeoutlen=300
 " }}} Options "
 
 " Mappings {{{ "
@@ -264,3 +266,13 @@ nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
 " Put window to new tab
 noremap <c-t> :tab sp<cr>
 " }}} Tabs & Windows & Buffers "
+
+" Which key {{{ "
+lua << EOF
+  require("which-key").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+EOF
+" }}} Which key "
