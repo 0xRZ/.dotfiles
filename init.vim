@@ -21,6 +21,7 @@ function! s:listPlugins()
 	Plug 'kdav5758/TrueZen.nvim'
 	Plug 'edluffy/specs.nvim'
 	Plug 'phaazon/hop.nvim'
+    Plug 'karb94/neoscroll.nvim'
 	call plug#end()
 endfunction
 
@@ -291,3 +292,7 @@ nnoremap <c-s> :HopLine<CR>
 hi HopNextKey1 gui=bold,underline guifg=#ff007c
 hi! link HopNextKey2 HopNextKey1
 " }}} Hop "
+
+" Smooth scroll {{{ "
+lua require('neoscroll').setup()
+" }}} Smooth scroll "
