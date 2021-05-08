@@ -14,7 +14,7 @@ function! s:listPlugins()
     Plug 'kyazdani42/nvim-tree.lua'
 	Plug 'norcalli/nvim-colorizer.lua'
 	Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
-    Plug 'kevinhwang91/nvim-hlslens'
+"    Plug 'kevinhwang91/nvim-hlslens'
     Plug 'mihaifm/bufstop'
     Plug 'moll/vim-bbye'
 	Plug 'folke/which-key.nvim'
@@ -22,6 +22,13 @@ function! s:listPlugins()
 	Plug 'edluffy/specs.nvim'
 	Plug 'phaazon/hop.nvim'
     Plug 'karb94/neoscroll.nvim'
+    Plug 'nvim-lua/lsp-status.nvim'
+	Plug 'glepnir/galaxyline.nvim'
+	Plug 'kevinhwang91/nvim-bqf'
+
+	Plug 'tjdevries/colorbuddy.vim'
+	Plug 'Th3Whit3Wolf/onebuddy'
+    Plug 'tjdevries/gruvbuddy.nvim'
 	call plug#end()
 endfunction
 
@@ -48,15 +55,44 @@ endif
 call s:listPlugins()
 " }}} Plugin & LSP servers initialization "
 
+" Colorschemes {{{ "
+"colorscheme OceanicNextLight
+
+"lua require('colorbuddy').colorscheme('colorschemes/simple_light', true)
+lua require('colorbuddy').colorscheme('onebuddy', true)
+lua require('colorbuddy').colorscheme('colorschemes.colorsch_enhancement_light', true)
+" }}} Colorschemes "
+
 " LSP client setup {{{ "
 set updatetime=200
 set completeopt=menuone,noselect
 
 lua << EOF
 --Neovim logs at: ~/.cache/nvim/lsp.log
---vim.lsp.set_log_level("debug")
+vim.lsp.set_log_level("debug")
 require('plugins_conf/conf_lspclient')
 EOF
+
+function s:jumpToNextRef()
+    cclose
+	let v:errmsg = ""
+	cnext
+	if v:errmsg != ""
+        cfirst
+    endif
+endfunction
+
+function s:jumpToPrevRef()
+    cclose
+	let v:errmsg = ""
+	cprev
+	if v:errmsg != ""
+        clast
+    endif
+endfunction
+
+nnoremap <silent> <c-j> <cmd>silent! call <SID>jumpToNextRef()<CR>
+nnoremap <silent> <c-k> <cmd>silent! call <SID>jumpToPrevRef()<CR>
 
 inoremap <silent><expr> <C-Space> compe#complete()
 inoremap <silent><expr> <CR>      compe#confirm('<CR>')
@@ -112,7 +148,7 @@ nnoremap <leader>w :set wrap!<CR>
 nnoremap <leader>/ :noh<CR>
 nnoremap <leader>sf :w<CR>
 nnoremap <leader>q :qa<CR>
-vnoremap <leader>r "hy:%s/<c-r>h//gc<left><left><left>
+vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 " }}} Mappings "
@@ -126,6 +162,7 @@ nnoremap <leader>fm <cmd>Telescope man_pages<cr>
 nnoremap <leader>fk <cmd>Telescope keymaps<cr>
 nnoremap <leader>fs <cmd>Telescope lsp_workspace_symbols query= <cr>
 nnoremap <leader>fd <cmd>lua require('plugins_conf/conf_telescope').search_dotfiles()<cr>
+nnoremap <leader>ft <cmd>Telescope colorscheme<cr>
 lua << EOF
 require('plugins_conf/conf_telescope')
 EOF
@@ -180,13 +217,10 @@ nnoremap <leader>nn :NvimTreeFindFile<CR>
 " Colorizer {{{ "
 lua << EOF
 require 'colorizer'.setup {
-  'css';
-  'javascript';
-  'vim';
-  html = {
-    mode = 'foreground';
-  };
-  'conf'
+  '*';
+  '!c';
+  '!cpp';
+  '!sh';
 }
 EOF
 " }}} Colorizer "
@@ -197,16 +231,7 @@ set lcs+=eol:↴
 hi NonText guifg=#fd0000
 let g:indent_blankline_use_treesitter = v:true
 let g:indent_blankline_show_current_context = v:true
-highlight IndentBlanklineContextChar ctermfg=160 guifg=#d70000
 let g:indent_blankline_context_patterns = ['class', 'function', 'method', '^if', '^do', '^while', '^for', '^struct']
-hi IndentBlanklineCharHighlightListFirstLevel ctermfg=34 guifg=#00af00
-hi IndentBlanklineCharHighlightListSecondLevel ctermfg=35 guifg=#00af5f
-hi IndentBlanklineCharHighlightListThirdLevel ctermfg=36 guifg=#00af87
-hi IndentBlanklineCharHighlightListFourthLevel ctermfg=37 guifg=#00afaf
-hi IndentBlanklineCharHighlightListFifthLevel ctermfg=38 guifg=#00afd7
-hi IndentBlanklineCharHighlightListSixtLevel ctermfg=39 guifg=#00afff
-hi IndentBlanklineCharHighlightListSeventLevel ctermfg=111 guifg=#87afff
-hi IndentBlanklineCharHighlightListEigthLevel ctermfg=110 guifg=#87afd7
 let g:indent_blankline_char = '▏'
 let g:indent_blankline_char_highlight_list = [
 			\'IndentBlanklineCharHighlightListFirstLevel',
@@ -232,14 +257,14 @@ nnoremap <leader>sw :call <SID>CheckWhitespaces()<CR>
 " }}} Indentation  display "
 
 " Search {{{ "
-noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
-            \<Cmd>lua require('hlslens').start()<CR>
-noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
-            \<Cmd>lua require('hlslens').start()<CR>
-noremap * *<Cmd>lua require('hlslens').start()<CR>
-noremap # #<Cmd>lua require('hlslens').start()<CR>
-noremap g* g*<Cmd>lua require('hlslens').start()<CR>
-noremap g# g#<Cmd>lua require('hlslens').start()<CR>
+"noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
+"            \<Cmd>lua require('hlslens').start()<CR>
+"noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
+"            \<Cmd>lua require('hlslens').start()<CR>
+"noremap * *<Cmd>lua require('hlslens').start()<CR>
+"noremap # #<Cmd>lua require('hlslens').start()<CR>
+"noremap g* g*<Cmd>lua require('hlslens').start()<CR>
+"noremap g# g#<Cmd>lua require('hlslens').start()<CR>
 " }}} Search "
 
 " Tabs & Windows & Buffers {{{ "
@@ -282,7 +307,14 @@ EOF
 " }}} Which key "
 
 " Focus mode {{{ "
-lua require("true-zen").setup({ataraxis = { force_when_plus_one_window = true }})
+lua << EOF
+require("true-zen").setup({
+		ataraxis = { force_when_plus_one_window = true },
+		integrations = {
+		   integration_galaxyline = true,
+		}
+		})
+EOF
 map <F12> :TZAtaraxis<CR>
 " }}} Focus mode "
 
@@ -320,3 +352,7 @@ t['zb']    = {'zb', {'7'}}
 require('neoscroll.config').set_mappings(t)
 EOF
 " }}} Smooth scroll "
+
+" Statusline {{{ "
+lua require('plugins_conf/conf_statusline')
+" }}} Statusline "

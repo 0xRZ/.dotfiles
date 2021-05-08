@@ -12,9 +12,16 @@ local function contains(servers, server)
   return false
 end
 
+local lsp_status = require('lsp-status')
+lsp_status.register_progress()
+require'lspinstall'.setup() -- important. to make configs of installed servers available for require'lspconfig'.<server>.setup{}
+local in_servers = require'lspinstall'.installed_servers()
+local nvim_lsp = require'lspconfig'
+
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+  lsp_status.on_attach(client)
 
   local opts = { noremap=true, silent=true }
   buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
@@ -28,8 +35,8 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>Telescope lsp_references<CR>', opts)
---  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', 'gR', '<cmd>Telescope lsp_references<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   buf_set_keymap('n', '<space>ds', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
@@ -44,22 +51,20 @@ local on_attach = function(client, bufnr)
 
   if client.resolved_capabilities.document_highlight then
     vim.api.nvim_exec([[
-      hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
-      hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
-      hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
+      hi! link LspReferenceRead MyLspReferenceRead
+      hi! link LspReferenceText MyLspReferenceText
+      hi! link LspReferenceWrite MyLspReferenceWrite
       augroup lsp_document_highlight
         autocmd! * <buffer>
         autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
         autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
       augroup END
     ]], false)
+
   end
 end
 
 local function setup_servers()
-  require'lspinstall'.setup() -- important. to make configs of installed servers available for require'lspconfig'.<server>.setup{}
-  local in_servers = require'lspinstall'.installed_servers()
-  local nvim_lsp = require'lspconfig'
 
   if in_servers.clangd == nil and vim.fn.executable("clangd") then
     table.insert(in_servers, "cpp")
@@ -67,8 +72,13 @@ local function setup_servers()
 
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities.textDocument.completion.completionItem.snippetSupport = true
+  capabilities = vim.tbl_extend('keep', capabilities or {}, lsp_status.capabilities)
   if contains(in_servers, "cpp") then
     nvim_lsp["clangd"].setup {
+      handlers = lsp_status.extensions.clangd.setup(),
+      init_options = {
+        clangdFileStatus = true
+      },
       on_attach = on_attach,
       capabilities = capabilities
     }
@@ -76,19 +86,15 @@ local function setup_servers()
 
   if contains(in_servers, "lua") then
     local sumneko_binary = vim.fn.stdpath('data')..'/lspinstall/lua/sumneko-lua-language-server'
-    nvim_lsp["lua"].setup {
+    local config = {
       cmd = { sumneko_binary },
       on_attach = on_attach,
+      capabilities = capabilities,
       settings = {
         Lua = {
           runtime = {
             -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
             version = 'LuaJIT',
-            path = {
-              '?.lua',
-              '?/init.lua',
-               vim.split(package.path, ';'),
-            },
           },
           diagnostics = {
             -- Get the language server to recognize the `vim` global
@@ -108,6 +114,12 @@ local function setup_servers()
         },
       },
     }
+	local rtpdirs = vim.api.nvim_get_runtime_file("lua/", true)
+    for _, path in pairs(rtpdirs) do
+        config.settings.Lua.workspace.library[path] = true
+    end
+    require'lspconfig'.lua.setup(config)
+
   end
 
   if contains(in_servers, "bash") then
