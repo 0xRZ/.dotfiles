@@ -18,6 +18,9 @@ function! s:listPlugins()
     Plug 'mihaifm/bufstop'
     Plug 'moll/vim-bbye'
 	Plug 'folke/which-key.nvim'
+	Plug 'kdav5758/TrueZen.nvim'
+	Plug 'edluffy/specs.nvim'
+	Plug 'phaazon/hop.nvim'
 	call plug#end()
 endfunction
 
@@ -90,6 +93,8 @@ nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
 vnoremap <c-d> <c-d>zz
 vnoremap <c-u> <c-u>zz
+nnoremap <c-a> :HopWord<CR>
+nnoremap <c-s> :HopLine<CR>
 let mapleader ="\<Space>"
 nnoremap <leader>; }
 nnoremap <leader>g {
@@ -276,3 +281,8 @@ lua << EOF
   }
 EOF
 " }}} Which key "
+
+" Focus mode {{{ "
+lua require("true-zen").setup({ataraxis = { force_when_plus_one_window = true }})
+map <F12> :TZAtaraxis<CR>
+" }}} Focus mode "
