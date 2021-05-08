@@ -93,8 +93,6 @@ nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
 vnoremap <c-d> <c-d>zz
 vnoremap <c-u> <c-u>zz
-nnoremap <c-a> :HopWord<CR>
-nnoremap <c-s> :HopLine<CR>
 let mapleader ="\<Space>"
 nnoremap <leader>; }
 nnoremap <leader>g {
@@ -286,3 +284,10 @@ EOF
 lua require("true-zen").setup({ataraxis = { force_when_plus_one_window = true }})
 map <F12> :TZAtaraxis<CR>
 " }}} Focus mode "
+
+" Hop {{{ "
+nnoremap <c-a> :HopWord<CR>
+nnoremap <c-s> :HopLine<CR>
+hi HopNextKey1 gui=bold,underline guifg=#ff007c
+hi! link HopNextKey2 HopNextKey1
+" }}} Hop "
