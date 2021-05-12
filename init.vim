@@ -3,8 +3,12 @@ function! s:listPlugins()
 	call plug#begin()
 	Plug 'neovim/nvim-lspconfig'
 	Plug 'kabouzeid/nvim-lspinstall'
-	Plug 'hrsh7th/nvim-compe'
-	Plug 'norcalli/snippets.nvim'
+"	Plug 'hrsh7th/nvim-compe'
+"	Plug 'norcalli/snippets.nvim'
+    Plug 'nvim-lua/completion-nvim'
+	Plug 'SirVer/ultisnips'
+	Plug 'honza/vim-snippets'
+"	Plug 'ray-x/lsp_signature.nvim'
 	Plug 'nvim-lua/popup.nvim'
 	Plug 'nvim-lua/plenary.nvim'
 	Plug 'nvim-telescope/telescope.nvim'
@@ -25,6 +29,12 @@ function! s:listPlugins()
     Plug 'nvim-lua/lsp-status.nvim'
 	Plug 'glepnir/galaxyline.nvim'
 	Plug 'kevinhwang91/nvim-bqf'
+	Plug 'nvim-treesitter/playground'
+	Plug 'npxbr/glow.nvim', {'do': 'git clone https://github.com/charmbracelet/glow.git && cd glow && go build && mv glow $HOME/go/bin','branch':'main'}
+	Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+	if (system("uname -m") == "x86_64\n")
+	Plug 'oberblastmeister/neuron.nvim'
+	endif
 
 	Plug 'tjdevries/colorbuddy.vim'
 	Plug 'Th3Whit3Wolf/onebuddy'
@@ -44,6 +54,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 		TSInstall lua
 		TSInstall bash
 		TSInstall yaml
+		TSInstall query
 		source $MYVIMRC
 	endfunction
 	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -64,8 +75,9 @@ lua require('colorbuddy').colorscheme('colorschemes.colorsch_enhancement_light',
 " }}} Colorschemes "
 
 " LSP client setup {{{ "
-set updatetime=200
-set completeopt=menuone,noselect
+set updatetime=100
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
 
 lua << EOF
 --Neovim logs at: ~/.cache/nvim/lsp.log
@@ -94,10 +106,24 @@ endfunction
 nnoremap <silent> <c-j> <cmd>silent! call <SID>jumpToNextRef()<CR>
 nnoremap <silent> <c-k> <cmd>silent! call <SID>jumpToPrevRef()<CR>
 
-inoremap <silent><expr> <C-Space> compe#complete()
-inoremap <silent><expr> <CR>      compe#confirm('<CR>')
-inoremap <c-e> <cmd>lua return require'snippets'.expand_or_advance(1)<CR>
-inoremap <c-q> <cmd>lua return require'snippets'.advance_snippet(-1)<CR>
+autocmd BufEnter * lua require'completion'.on_attach()
+imap <silent> <c-space> <Plug>(completion_trigger)
+imap <tab> <Plug>(completion_smart_tab)
+imap <s-tab> <Plug>(completion_smart_s_tab)
+let g:completion_chain_complete_list = [
+    \{'complete_items': ['lsp', 'snippet', 'path']},
+    \{'mode': '<c-p>'},
+    \{'mode': '<c-n>'}
+\]
+let g:completion_enable_snippet = 'UltiSnips'
+let g:completion_confirm_key = "\<C-j>"
+let g:UltiSnipsExpandTrigger="<c-j>"
+"let g:UltiSnipsJumpForwardTrigger="<c-j>"
+"let g:UltiSnipsJumpBackwardTrigger="<c-x>"
+"inoremap <silent><expr> <C-Space> compe#complete()
+"inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+"inoremap <c-e> <cmd>lua return require'snippets'.expand_or_advance(1)<CR>
+"inoremap <c-q> <cmd>lua return require'snippets'.advance_snippet(-1)<CR>
 " }}} LSP client setup "
 
 " Options {{{ "
@@ -131,6 +157,7 @@ nnoremap <c-y> 3<c-y>
 vnoremap <c-d> <c-d>zz
 vnoremap <c-u> <c-u>zz
 let mapleader ="\<Space>"
+nnoremap <leader>sv	:source $MYVIMRC<cr>
 nnoremap <leader>; }
 nnoremap <leader>g {
 nnoremap <leader>sn /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
@@ -149,6 +176,7 @@ nnoremap <leader>/ :noh<CR>
 nnoremap <leader>sf :w<CR>
 nnoremap <leader>q :qa<CR>
 vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
+nnoremap <leader>sm :MarkdownPreviewToggle<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 " }}} Mappings "
@@ -163,6 +191,9 @@ nnoremap <leader>fk <cmd>Telescope keymaps<cr>
 nnoremap <leader>fs <cmd>Telescope lsp_workspace_symbols query= <cr>
 nnoremap <leader>fd <cmd>lua require('plugins_conf/conf_telescope').search_dotfiles()<cr>
 nnoremap <leader>ft <cmd>Telescope colorscheme<cr>
+if (system("uname -m") == "x86_64\n")
+nnoremap <leader>fz <cmd>lua require'neuron/telescope'.find_zettels()<CR>
+endif
 lua << EOF
 require('plugins_conf/conf_telescope')
 EOF
@@ -280,20 +311,20 @@ nnoremap <leader>a :BufstopModeFast<CR>
 " Close the current buffer and move to the previous one
 nnoremap <leader>d :Bwipeout<CR>
 
-noremap <leader>1 1gt
-noremap <leader>2 2gt
-noremap <leader>3 3gt
-noremap <leader>4 4gt
-noremap <leader>5 5gt
-noremap <leader>6 6gt
-noremap <leader>7 7gt
-noremap <leader>8 8gt
-noremap <leader>9 9gt
+nnoremap <leader>1 1gt
+nnoremap <leader>2 2gt
+nnoremap <leader>3 3gt
+nnoremap <leader>4 4gt
+nnoremap <leader>5 5gt
+nnoremap <leader>6 6gt
+nnoremap <leader>7 7gt
+nnoremap <leader>8 8gt
+nnoremap <leader>9 9gt
 " Go to last active tab
 au TabLeave * let g:lasttab = tabpagenr()
 nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
 " Put window to new tab
-noremap <c-t> :tab sp<cr>
+nnoremap <c-t> :tab sp<cr>
 " }}} Tabs & Windows & Buffers "
 
 " Which key {{{ "
@@ -356,3 +387,11 @@ EOF
 " Statusline {{{ "
 lua require('plugins_conf/conf_statusline')
 " }}} Statusline "
+
+" Notes {{{ "
+if (system("uname -m") == "x86_64\n")
+lua << EOF
+require'neuron'.setup {}
+EOF
+endif
+" }}} Notes "

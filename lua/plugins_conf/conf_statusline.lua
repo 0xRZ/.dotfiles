@@ -168,7 +168,7 @@ gls.mid[1] = {
 
 gls.right[2] = {
   TimeDate = {
-    provider = function() return vim.fn.strftime("%d/%m/%y %H:%M:%S") end,
+    provider = function() return vim.fn.strftime("%d/%m/%y %H:%M") end,
     highlight = {colors.orange,colors.bg}
   }
 }
