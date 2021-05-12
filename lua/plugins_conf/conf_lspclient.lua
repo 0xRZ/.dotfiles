@@ -13,6 +13,7 @@ local function contains(servers, server)
 end
 
 local lsp_status = require('lsp-status')
+lsp_status.config({diagnostics = false})
 lsp_status.register_progress()
 require'lspinstall'.setup() -- important. to make configs of installed servers available for require'lspconfig'.<server>.setup{}
 local in_servers = require'lspinstall'.installed_servers()
@@ -37,10 +38,10 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gR', '<cmd>Telescope lsp_references<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>ds', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '<space>sd', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>dl', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<space>ld', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
   if client.resolved_capabilities.document_formatting then
     buf_set_keymap("n", "<space>rm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
@@ -80,12 +81,13 @@ local function setup_servers()
     }
   }
   capabilities = vim.tbl_extend('keep', capabilities or {}, lsp_status.capabilities)
+
   if contains(in_servers, "cpp") then
     nvim_lsp["clangd"].setup {
       handlers = lsp_status.extensions.clangd.setup(),
-      init_options = {
-        clangdFileStatus = true
-      },
+      --init_options = {
+      --  clangdFileStatus = true
+      --},
       on_attach = on_attach,
       capabilities = capabilities
     }

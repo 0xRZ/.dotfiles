@@ -11,7 +11,8 @@ local colors = {
   magenta = '#d16d9e',
   grey = '#c0c0c0',
   blue = '#0087d7',
-  red = '#ec5f67'
+  red = '#ec5f67',
+  white = '#ffffff',
 }
 local condition = require('galaxyline.condition')
 local gls = gl.section
@@ -35,7 +36,11 @@ gls.left[2] = {
                           cv = colors.red,ce=colors.red, r = colors.cyan,
                           rm = colors.cyan, ['r?'] = colors.cyan,
                           ['!']  = colors.red,t = colors.red}
-      vim.api.nvim_command('hi GalaxyViMode guifg='..mode_color[vim.fn.mode()])
+      if vim.api.nvim_get_option('mod') == 1 then
+        vim.api.nvim_command('hi GalaxyViMode guifg='..colors.white)
+      else
+        vim.api.nvim_command('hi GalaxyViMode guifg='..mode_color[vim.fn.mode()])
+      end
       return '綠  '
     end,
     highlight = {colors.red,colors.bg,'bold'},
@@ -248,3 +253,4 @@ gls.short_line_right[1] = {
     highlight = {colors.fg,colors.bg}
   }
 }
+

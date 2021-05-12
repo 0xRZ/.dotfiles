@@ -9,6 +9,7 @@ function! s:listPlugins()
 	Plug 'SirVer/ultisnips'
 	Plug 'honza/vim-snippets'
 "	Plug 'ray-x/lsp_signature.nvim'
+	Plug 'liuchengxu/vista.vim'
 	Plug 'nvim-lua/popup.nvim'
 	Plug 'nvim-lua/plenary.nvim'
 	Plug 'nvim-telescope/telescope.nvim'
@@ -395,3 +396,10 @@ require'neuron'.setup {}
 EOF
 endif
 " }}} Notes "
+
+" Class viewer {{{ "
+nnoremap <c-p> :Vista!!<CR>
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+let g:vista_default_executive = 'nvim_lsp'
+let g:vista#renderer#enable_icon = 1
+" }}} Class viewer "
