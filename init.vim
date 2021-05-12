@@ -36,6 +36,10 @@ function! s:listPlugins()
 	if (system("uname -m") == "x86_64\n")
 	Plug 'oberblastmeister/neuron.nvim'
 	endif
+"	Plug 'Shougo/echodoc.vim'
+	Plug 'Raimondi/delimitMate'
+	Plug 'yamatsum/nvim-cursorline'
+	Plug 'b3nj5m1n/kommentary'
 
 	Plug 'tjdevries/colorbuddy.vim'
 	Plug 'Th3Whit3Wolf/onebuddy'
@@ -353,6 +357,8 @@ map <F12> :TZAtaraxis<CR>
 " Hop {{{ "
 nnoremap <c-a> :HopWord<CR>
 nnoremap <c-s> :HopLine<CR>
+nnoremap <c-g> <cmd>HopChar1<CR>
+vnoremap <c-g> <cmd>HopChar1<CR>
 hi HopNextKey1 gui=bold,underline guifg=#ff007c
 hi! link HopNextKey2 HopNextKey1
 " }}} Hop "
@@ -403,3 +409,7 @@ let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 let g:vista_default_executive = 'nvim_lsp'
 let g:vista#renderer#enable_icon = 1
 " }}} Class viewer "
+
+" Autoinsert delimiters {{{ "
+let delimitMate_excluded_ft = "markdown"
+" }}} Autoinsert delimiters "
