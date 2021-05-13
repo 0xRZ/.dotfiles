@@ -9,6 +9,7 @@ function! s:listPlugins()
 	Plug 'SirVer/ultisnips'
 	Plug 'honza/vim-snippets'
 "	Plug 'ray-x/lsp_signature.nvim'
+"	Plug 'Shougo/echodoc.vim'
 	Plug 'liuchengxu/vista.vim'
 	Plug 'nvim-lua/popup.nvim'
 	Plug 'nvim-lua/plenary.nvim'
@@ -36,11 +37,12 @@ function! s:listPlugins()
 	if (system("uname -m") == "x86_64\n")
 	Plug 'oberblastmeister/neuron.nvim'
 	endif
-"	Plug 'Shougo/echodoc.vim'
 	Plug 'Raimondi/delimitMate'
 	Plug 'yamatsum/nvim-cursorline'
 	Plug 'b3nj5m1n/kommentary'
 	Plug 'akinsho/nvim-toggleterm.lua'
+	Plug 'godlygeek/tabular'
+    Plug 'plasticboy/vim-markdown'
 
 	Plug 'tjdevries/colorbuddy.vim'
 	Plug 'Th3Whit3Wolf/onebuddy'
@@ -162,6 +164,7 @@ vnoremap <c-d> <c-d>zz
 vnoremap <c-u> <c-u>zz
 let mapleader ="\<Space>"
 nnoremap <leader>sv	:source $MYVIMRC<cr>
+nnoremap <leader>ev :vsplit $MYVIMRC<CR>
 nnoremap <leader>; }
 nnoremap <leader>g {
 nnoremap <leader>sn /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
