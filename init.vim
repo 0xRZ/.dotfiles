@@ -40,6 +40,7 @@ function! s:listPlugins()
 	Plug 'Raimondi/delimitMate'
 	Plug 'yamatsum/nvim-cursorline'
 	Plug 'b3nj5m1n/kommentary'
+	Plug 'akinsho/nvim-toggleterm.lua'
 
 	Plug 'tjdevries/colorbuddy.vim'
 	Plug 'Th3Whit3Wolf/onebuddy'
@@ -72,8 +73,6 @@ call s:listPlugins()
 " }}} Plugin & LSP servers initialization "
 
 " Colorschemes {{{ "
-"colorscheme OceanicNextLight
-
 "lua require('colorbuddy').colorscheme('colorschemes/simple_light', true)
 lua require('colorbuddy').colorscheme('onebuddy', true)
 lua require('colorbuddy').colorscheme('colorschemes.colorsch_enhancement_light', true)
@@ -176,7 +175,7 @@ nnoremap <leader>p "+p
 vnoremap <leader>p "_dP
 nnoremap <leader>= :vertical resize +20<CR>
 nnoremap <leader>- :vertical resize -20<CR>
-nnoremap <leader>w :set wrap!<CR>
+nnoremap <leader>ww :set wrap!<CR>
 nnoremap <leader>/ :noh<CR>
 nnoremap <leader>sf :w<CR>
 nnoremap <leader>q :qa<CR>
@@ -329,7 +328,7 @@ nnoremap <leader>9 9gt
 au TabLeave * let g:lasttab = tabpagenr()
 nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
 " Put window to new tab
-nnoremap <c-t> :tab sp<cr>
+nnoremap <leader>t :tab sp<cr>
 " }}} Tabs & Windows & Buffers "
 
 " Which key {{{ "
@@ -413,3 +412,40 @@ let g:vista#renderer#enable_icon = 1
 " Autoinsert delimiters {{{ "
 let delimitMate_excluded_ft = "markdown"
 " }}} Autoinsert delimiters "
+
+" Terminal {{{ "
+lua << EOF
+require("toggleterm").setup{
+  size = 40,
+  open_mapping = [[<c-t>]],
+  hide_numbers = true, -- hide the number column in toggleterm buffers
+  shade_filetypes = {},
+  shade_terminals = true,
+  shading_factor = '3', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+  start_in_insert = true,
+  persist_size = true,
+--  direction = 'vertical' | 'horizontal' | 'window' | 'float',
+  direction = 'float',
+  close_on_exit = true, -- close the terminal window when the process exits
+  shell = vim.o.shell, -- change the default shell
+  -- This field is only relevant if direction is set to 'float'
+  float_opts = {
+    -- The border key is *almost* the same as 'nvim_win_open'
+    -- see :h nvim_win_open for details on borders however
+    -- the 'curved' border is a custom border type
+    -- not natively supported but implemented in this plugin.
+    -- border = 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
+    border = 'shadow',
+	--row = 3,
+	--col = 8,
+	width = 150,
+    height = 20,
+    winblend = 10,
+    highlights = {
+      border = "TerminalBorders",
+      background = "TerminalWindow",
+    }
+  }
+}
+EOF
+" }}} Terminal "

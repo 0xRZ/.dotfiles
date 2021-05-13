@@ -192,6 +192,8 @@ gls.right[4] = {
   GitBranch = {
     provider = 'GitBranch',
     condition = condition.check_git_workspace,
+    separator = ' ',
+    separator_highlight = {'NONE',colors.bg},
     highlight = {colors.yellow,colors.bg,'bold'},
   }
 }
@@ -201,6 +203,8 @@ gls.right[5] = {
     provider = 'DiffAdd',
     condition = condition.hide_in_width,
     icon = '  ',
+    separator = ' ',
+    separator_highlight = {'NONE',colors.bg},
     highlight = {colors.green,colors.bg},
   }
 }
@@ -209,6 +213,8 @@ gls.right[6] = {
     provider = 'DiffModified',
     condition = condition.hide_in_width,
     icon = ' 柳',
+    separator = ' ',
+    separator_highlight = {'NONE',colors.bg},
     highlight = {colors.orange,colors.bg},
   }
 }
@@ -217,18 +223,20 @@ gls.right[7] = {
     provider = 'DiffRemove',
     condition = condition.hide_in_width,
     icon = '  ',
+    separator = ' ',
+    separator_highlight = {'NONE',colors.bg},
     highlight = {colors.red,colors.bg},
   }
 }
 
-gls.right[8] = {
+--[[ gls.right[8] = {
    ScrollBar = {
     provider = 'ScrollBar',
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
     highlight = {colors.blue,colors.bg}
   },
-}
+} ]]
 
 gls.short_line_left[1] = {
   BufferType = {
