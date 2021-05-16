@@ -8,6 +8,7 @@ function! s:listPlugins()
     Plug 'nvim-lua/completion-nvim'
 	Plug 'SirVer/ultisnips'
 	Plug 'honza/vim-snippets'
+	Plug 'michaelb/sniprun', {'do': 'bash install.sh'}
 "	Plug 'ray-x/lsp_signature.nvim'
 "	Plug 'Shougo/echodoc.vim'
 	Plug 'liuchengxu/vista.vim'
@@ -160,8 +161,6 @@ inoremap <esc> <nop>
 vnoremap <esc> <nop>
 nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
-vnoremap <c-d> <c-d>zz
-vnoremap <c-u> <c-u>zz
 let mapleader ="\<Space>"
 nnoremap <leader>sv	:source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>
@@ -174,8 +173,8 @@ vnoremap <leader>y "+y
 nnoremap <leader>Y gg"+yG
 nnoremap <leader>d "_d
 vnoremap <leader>d "_d
-nnoremap <leader>p "+p
-vnoremap <leader>p "_dP
+nnoremap <leader>p "+P
+vnoremap <leader>p "_dp
 nnoremap <leader>= :vertical resize +20<CR>
 nnoremap <leader>- :vertical resize -20<CR>
 nnoremap <leader>ww :set wrap!<CR>
@@ -359,8 +358,8 @@ map <F12> :TZAtaraxis<CR>
 " Hop {{{ "
 nnoremap <c-a> :HopWord<CR>
 nnoremap <c-s> :HopLine<CR>
-nnoremap <c-g> <cmd>HopChar1<CR>
-vnoremap <c-g> <cmd>HopChar1<CR>
+nnoremap <c-v> <cmd>HopChar1<CR>
+vnoremap <c-v> <cmd>HopChar1<CR>
 hi HopNextKey1 gui=bold,underline guifg=#ff007c
 hi! link HopNextKey2 HopNextKey1
 " }}} Hop "
@@ -452,3 +451,30 @@ require("toggleterm").setup{
 }
 EOF
 " }}} Terminal "
+
+" Run snippets {{{ "
+nmap <leader>sr <Plug>SnipRun
+vmap <leader>sr <Plug>SnipRun
+nmap <leader>sq <Plug>SnipReset
+nmap <leader>sc <Plug>SnipClose
+lua << EOF
+require'sniprun'.setup({
+--  selected_interpreters = {},     --" use those instead of the default for the current filetype
+--  repl_enable = {},               --" enable REPL-like behavior for the given interpreters
+--  repl_disable = {},              --" disable REPL-like behavior for the given interpreters
+
+  inline_messages = 0,             --" inline_message (0/1) is a one-line way to display messages
+                                  --" to workaround sniprun not being able to display anything
+
+  -- " you can combo different display modes as desired
+  display = {
+    --"Classic",                    -- "display results in the command-line  area
+    "VirtualTextOk",              -- "display ok results as virtual text (multiline is shortened)
+    "VirtualTextErr",          -- "display error results as virtual text
+    -- "TempFloatingWindow",      -- "display results in a floating window
+    --"LongTempFloatingWindow",  -- "same as above, but only long results. To use with VirtualText__
+    "Terminal"                 -- "display results in a vertical split
+  },
+})
+EOF
+" }}} Run snippets "

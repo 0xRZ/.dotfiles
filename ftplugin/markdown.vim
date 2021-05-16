@@ -5,7 +5,7 @@ setlocal conceallevel=2
 
 " Mappings {{{ "
 nmap <buffer> gP <Plug>Markdown_MoveToParentHeader
-nmap <buffer> gc <Plug>Markdown_MoveToCurHeader
+nmap <buffer> gC <Plug>Markdown_MoveToCurHeader
 nmap <buffer> gn <Plug>Markdown_MoveToNextHeader
 nmap <buffer> gp <Plug>Markdown_MoveToPreviousHeader
 nnoremap <buffer> gq :Toch<CR>
