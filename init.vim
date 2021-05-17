@@ -44,6 +44,8 @@ function! s:listPlugins()
 	Plug 'akinsho/nvim-toggleterm.lua'
 	Plug 'godlygeek/tabular'
     Plug 'plasticboy/vim-markdown'
+    Plug 'tpope/vim-fugitive'
+	Plug 'mhinz/vim-signify'
 
 	Plug 'tjdevries/colorbuddy.vim'
 	Plug 'Th3Whit3Wolf/onebuddy'
@@ -164,8 +166,6 @@ nnoremap <c-y> 3<c-y>
 let mapleader ="\<Space>"
 nnoremap <leader>sv	:source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>
-nnoremap <leader>; }
-nnoremap <leader>g {
 nnoremap <leader>sn /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
 vnoremap <leader>sn "hy/<c-r>h<CR>
 nnoremap <leader>y "+y
@@ -174,7 +174,7 @@ nnoremap <leader>Y gg"+yG
 nnoremap <leader>d "_d
 vnoremap <leader>d "_d
 nnoremap <leader>p "+P
-vnoremap <leader>p "_dp
+vnoremap <leader>p "_dP
 nnoremap <leader>= :vertical resize +20<CR>
 nnoremap <leader>- :vertical resize -20<CR>
 nnoremap <leader>ww :set wrap!<CR>
@@ -189,7 +189,7 @@ nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 
 " Finder {{{ "
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fr <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fm <cmd>Telescope man_pages<cr>
@@ -197,6 +197,9 @@ nnoremap <leader>fk <cmd>Telescope keymaps<cr>
 nnoremap <leader>fs <cmd>Telescope lsp_workspace_symbols query= <cr>
 nnoremap <leader>fd <cmd>lua require('plugins_conf/conf_telescope').search_dotfiles()<cr>
 nnoremap <leader>ft <cmd>Telescope colorscheme<cr>
+nnoremap <leader>fgc <cmd>Telescope git_commits<cr>
+nnoremap <leader>fgb <cmd>Telescope git_bcommits<cr>
+nnoremap <leader>fgd <cmd>Telescope git_status<cr>
 if (system("uname -m") == "x86_64\n")
 nnoremap <leader>fz <cmd>lua require'neuron/telescope'.find_zettels()<CR>
 endif
@@ -331,6 +334,8 @@ au TabLeave * let g:lasttab = tabpagenr()
 nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
 " Put window to new tab
 nnoremap <leader>t :tab sp<cr>
+" close
+nnoremap <leader>ct :tabclose<cr>
 " }}} Tabs & Windows & Buffers "
 
 " Which key {{{ "
@@ -478,3 +483,20 @@ require'sniprun'.setup({
 })
 EOF
 " }}} Run snippets "
+
+" Git integration {{{ "
+nnoremap <leader>gs :Git<cr>
+nnoremap <leader>ga :Gwrite<cr>
+nnoremap <leader>gc :Git commit<cr>
+nnoremap <leader>gt :tab Gdiffsplit HEAD<cr>:wincmd j<cr>
+nnoremap <leader>gl :Git difftool -y HEAD~1 HEAD<cr>
+" nnoremap <leader>go :Gtabedit HEAD<cr>
+nnoremap <leader>gd :Git difftool<cr>
+nnoremap <leader>gb :Git blame<cr>
+nnoremap <leader>gf :Git log -S '' -p<left><left><left><left>
+vnoremap <leader>gf "hy:tab Git log -p -S "<c-r>h"<cr>
+"lua << EOF
+"local neogit = require('neogit')
+"neogit.setup {}
+"EOF
+" }}} Git integration "
