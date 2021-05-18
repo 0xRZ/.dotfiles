@@ -28,6 +28,7 @@ function! s:listPlugins()
 	Plug 'kdav5758/TrueZen.nvim'
 	Plug 'edluffy/specs.nvim'
 	Plug 'phaazon/hop.nvim'
+	Plug 'mhinz/vim-grepper'
 	Plug 'tpope/vim-surround'
     Plug 'karb94/neoscroll.nvim'
     Plug 'nvim-lua/lsp-status.nvim'
@@ -140,6 +141,10 @@ inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 " }}} LSP client setup "
 
 " Options {{{ "
+if executable('rg')
+	set grepprg=rg\ --no-ignore\ --smart-case\ --no-heading
+	set grepformat=%f:%l:%c:%m,%f:%l:%m
+endif
 set nofixeol
 set hidden
 set tabstop=4
@@ -184,8 +189,11 @@ nnoremap <leader>- :vertical resize -20<CR>
 nnoremap <leader>ww :set wrap!<CR>
 nnoremap <leader>/ :noh<CR>
 nnoremap <leader>sf :w<CR>
-nnoremap <leader>q :qa<CR>
+nnoremap <leader>qq :qa<CR>
 vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
+nnoremap <leader>re :Grepper<CR>
+nnoremap <leader>qo :copen<CR>
+xmap <leader>re <plug>(GrepperOperator) 
 nnoremap <leader>sm :MarkdownPreviewToggle<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
@@ -301,6 +309,9 @@ nnoremap <leader>sw :call <SID>CheckWhitespaces()<CR>
 " }}} Indentation  display "
 
 " Search {{{ "
+let g:grepper = {}
+let g:grepper.tools =
+  \ ['rg', 'git', 'grep', 'ag']
 "noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
 "            \<Cmd>lua require('hlslens').start()<CR>
 "noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
@@ -340,6 +351,24 @@ nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
 nnoremap <leader>t :tab sp<cr>
 " close
 nnoremap <leader>ct :tabclose<cr>
+
+lua <<EOF
+require('bqf').setup({
+    auto_enable = true,
+    preview = {
+        win_height = 12,
+        win_vheight = 12,
+        delay_syntax = 80,
+        border_chars = {'┃', '┃', '━', '━', '┏', '┓', '┗', '┛', '█'}
+    },
+    func_map = {
+        prevfile = '<c-k>',
+        nextfile = '<c-j>',
+        pscrollorig = '<c-o>',
+        ptogglemode = '<Space>t',
+    },
+})
+EOF
 " }}} Tabs & Windows & Buffers "
 
 " Which key {{{ "
@@ -494,6 +523,7 @@ nnoremap <leader>ga :Gwrite<cr>
 nnoremap <leader>gc :Git commit<cr>
 nnoremap <leader>gt :tab Git diff --staged<cr>
 nnoremap <leader>gl :Git difftool -y HEAD~1 HEAD<cr>
+nnoremap <leader>gr :Git commit -m "rebase this commit" <Bar> Git rebase -i HEAD~2<cr>
 " nnoremap <leader>go :Gtabedit HEAD<cr>
 nnoremap <leader>gd :Git difftool<cr>
 nnoremap <leader>gb :Git blame<cr>
