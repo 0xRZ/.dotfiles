@@ -61,8 +61,9 @@ local on_attach = function(client, bufnr)
         autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
       augroup END
     ]], false)
-
   end
+
+  vim.api.nvim_set_current_dir(client.config.root_dir);
 end
 
 local function setup_servers()
