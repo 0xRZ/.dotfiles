@@ -48,6 +48,7 @@ function! s:listPlugins()
     Plug 'plasticboy/vim-markdown'
     Plug 'tpope/vim-fugitive'
 	Plug 'mhinz/vim-signify'
+	Plug 'skywind3000/asyncrun.vim'
 
 	Plug 'tjdevries/colorbuddy.vim'
 	Plug 'Th3Whit3Wolf/onebuddy'
@@ -365,7 +366,7 @@ require('bqf').setup({
         prevfile = '<c-k>',
         nextfile = '<c-j>',
         pscrollorig = '<c-o>',
-        ptogglemode = '<Space>t',
+        ptogglemode = '<Space>f',
     },
 })
 EOF
@@ -461,7 +462,7 @@ require("toggleterm").setup{
   hide_numbers = true, -- hide the number column in toggleterm buffers
   shade_filetypes = {},
   shade_terminals = true,
-  shading_factor = '3', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+  shading_factor = '1', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
   start_in_insert = true,
   persist_size = true,
 --  direction = 'vertical' | 'horizontal' | 'window' | 'float',
@@ -480,7 +481,7 @@ require("toggleterm").setup{
 	--col = 8,
 	width = 150,
     height = 20,
-    winblend = 10,
+    winblend = 1,
     highlights = {
       border = "TerminalBorders",
       background = "TerminalWindow",
@@ -488,6 +489,12 @@ require("toggleterm").setup{
   }
 }
 EOF
+nnoremap <leader>hu :SignifyHunkUndo<CR>
+nnoremap <leader>hp :SignifyHunkDiff<CR>
+nmap <leader>gk <plug>(signify-prev-hunk)  
+nmap <leader>gx <plug>(signify-next-hunk)  
+nnoremap <silent><c-t> :<c-u>exe v:count1 . "ToggleTerm"<CR>
+inoremap <silent><c-t> <Esc>:<c-u>exe v:count1 . "ToggleTerm"<CR>
 " }}} Terminal "
 
 " Run snippets {{{ "
@@ -527,8 +534,12 @@ nnoremap <leader>gr :Git commit -m "rebase this commit" <Bar> Git rebase -i HEAD
 " nnoremap <leader>go :Gtabedit HEAD<cr>
 nnoremap <leader>gd :Git difftool<cr>
 nnoremap <leader>gb :Git blame<cr>
-nnoremap <leader>gf :Git log -S '' -p<left><left><left><left>
-vnoremap <leader>gf "hy:tab Git log -p -S "<c-r>h"<cr>
+nnoremap <leader>gf :AsyncRun -raw git log -p -S 
+vnoremap <leader>gf "hy:AsyncRun -raw git log -p -S "<c-r>h"<cr>
+nnoremap <leader>hu :SignifyHunkUndo<CR>
+nnoremap <leader>hp :SignifyHunkDiff<CR>
+nmap <leader>gk <plug>(signify-prev-hunk)  
+nmap <leader>gx <plug>(signify-next-hunk)  
 "lua << EOF
 "local neogit = require('neogit')
 "neogit.setup {}
