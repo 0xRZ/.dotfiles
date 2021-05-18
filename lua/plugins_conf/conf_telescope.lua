@@ -14,6 +14,7 @@ require('telescope').setup{
       n = {
         ["<esc>"] = false,
         ["<c-c>"] = actions.close,
+        ["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
       },
     },
     vimgrep_arguments = {

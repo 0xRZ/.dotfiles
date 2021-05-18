@@ -3,9 +3,9 @@ function! s:listPlugins()
 	call plug#begin()
 	Plug 'neovim/nvim-lspconfig'
 	Plug 'kabouzeid/nvim-lspinstall'
-"	Plug 'hrsh7th/nvim-compe'
+    Plug 'hrsh7th/nvim-compe'
 "	Plug 'norcalli/snippets.nvim'
-    Plug 'nvim-lua/completion-nvim'
+    " Plug 'nvim-lua/completion-nvim'
 	Plug 'SirVer/ultisnips'
 	Plug 'honza/vim-snippets'
 	Plug 'michaelb/sniprun', {'do': 'bash install.sh'}
@@ -28,6 +28,7 @@ function! s:listPlugins()
 	Plug 'kdav5758/TrueZen.nvim'
 	Plug 'edluffy/specs.nvim'
 	Plug 'phaazon/hop.nvim'
+	Plug 'tpope/vim-surround'
     Plug 'karb94/neoscroll.nvim'
     Plug 'nvim-lua/lsp-status.nvim'
 	Plug 'glepnir/galaxyline.nvim'
@@ -90,7 +91,7 @@ set shortmess+=c
 
 lua << EOF
 --Neovim logs at: ~/.cache/nvim/lsp.log
-vim.lsp.set_log_level("debug")
+--vim.lsp.set_log_level("debug")
 require('plugins_conf/conf_lspclient')
 EOF
 
@@ -115,22 +116,25 @@ endfunction
 nnoremap <silent> <c-j> <cmd>silent! call <SID>jumpToNextRef()<CR>
 nnoremap <silent> <c-k> <cmd>silent! call <SID>jumpToPrevRef()<CR>
 
-autocmd BufEnter * lua require'completion'.on_attach()
-imap <silent> <c-space> <Plug>(completion_trigger)
-imap <tab> <Plug>(completion_smart_tab)
-imap <s-tab> <Plug>(completion_smart_s_tab)
-let g:completion_chain_complete_list = [
-    \{'complete_items': ['lsp', 'snippet', 'path']},
-    \{'mode': '<c-p>'},
-    \{'mode': '<c-n>'}
-\]
-let g:completion_enable_snippet = 'UltiSnips'
-let g:completion_confirm_key = "\<C-j>"
+" autocmd BufEnter * lua require'completion'.on_attach()
+" imap <silent> <c-space> <Plug>(completion_trigger)
+" imap <tab> <Plug>(completion_smart_tab)
+" imap <s-tab> <Plug>(completion_smart_s_tab)
+" let g:completion_chain_complete_list = [
+"     \{'complete_items': ['lsp', 'snippet', 'path']},
+"     \{'mode': '<c-p>'},
+"     \{'mode': '<c-n>'}
+" \]
+" let g:completion_enable_snippet = 'UltiSnips'
+" let g:completion_confirm_key = "\<C-j>"
+
 let g:UltiSnipsExpandTrigger="<c-j>"
-"let g:UltiSnipsJumpForwardTrigger="<c-j>"
-"let g:UltiSnipsJumpBackwardTrigger="<c-x>"
-"inoremap <silent><expr> <C-Space> compe#complete()
-"inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+inoremap <silent><expr> <C-Space> compe#complete()
+inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 "inoremap <c-e> <cmd>lua return require'snippets'.expand_or_advance(1)<CR>
 "inoremap <c-q> <cmd>lua return require'snippets'.advance_snippet(-1)<CR>
 " }}} LSP client setup "
@@ -488,7 +492,7 @@ EOF
 nnoremap <leader>gs :Git<cr>
 nnoremap <leader>ga :Gwrite<cr>
 nnoremap <leader>gc :Git commit<cr>
-nnoremap <leader>gt :tab Gdiffsplit HEAD<cr>:wincmd j<cr>
+nnoremap <leader>gt :tab Git diff --staged<cr>
 nnoremap <leader>gl :Git difftool -y HEAD~1 HEAD<cr>
 " nnoremap <leader>go :Gtabedit HEAD<cr>
 nnoremap <leader>gd :Git difftool<cr>

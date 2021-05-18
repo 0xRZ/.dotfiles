@@ -1,3 +1,7 @@
+" Misc {{{ "
+let b:surround_98 = "**\r**"
+let b:surround_108 = "[[\r]]"
+" }}} Misc "
 
 " Options {{{ "
 setlocal conceallevel=2
@@ -16,5 +20,7 @@ nnoremap <buffer> ]l :<c-u>put =repeat('* ', v:count1)<cr>A
 nnoremap <buffer> ]d :<c-u>put =repeat('----', v:count1)<cr>A<cr><ESC>
 inoremap <buffer> <CR> <Space><Space><cr>
 nnoremap <buffer> o A<Space><Space><Esc>o
-nnoremap <buffer> O A<Space><Space><Esc>O
-" }}} Mappingss "
+nnoremap <buffer> O O<Space><Space><c-o>0
+vnoremap <buffer> <CR> :s/\n/  \r/<CR>:noh<cr>
+nmap <buffer> <Space>p "+P`[v`]<CR>
+" }}} Mappings "

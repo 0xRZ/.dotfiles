@@ -35,7 +35,7 @@ require'nvim-treesitter.configs'.setup {
       goto_node = '<cr>',
       show_help = '?',
     },
-  }
+  },
 }
 
 vim.api.nvim_win_set_option(0,"foldmethod","expr")
