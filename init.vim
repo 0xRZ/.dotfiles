@@ -1,4 +1,4 @@
-" Plugin & LSP servers initialization {{{ "
+" Plugin initialization {{{ "
 function! s:listPlugins()
 	call plug#begin()
 	Plug 'neovim/nvim-lspconfig'
@@ -78,7 +78,66 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call s:listPlugins()
-" }}} Plugin & LSP servers initialization "
+" }}} Plugin initialization "
+
+" Options {{{ "
+if executable('rg')
+	set grepprg=rg\ --no-ignore\ --smart-case\ --no-heading
+	set grepformat=%f:%l:%c:%m,%f:%l:%m
+endif
+set nofixeol
+set hidden
+set tabstop=4
+set number
+set hlsearch
+set termguicolors
+set signcolumn=number
+set scroll=10
+set startofline
+set encoding=UTF-8
+set timeoutlen=300
+" }}} Options "
+
+" Mappings {{{ "
+nnoremap H 0
+vnoremap H 0
+nnoremap L $
+vnoremap L $
+inoremap kj <esc>
+nnoremap 0 <nop>
+vnoremap 0 <nop>
+nnoremap $ <nop>
+vnoremap $ <nop>
+inoremap <esc> <nop>
+vnoremap <esc> <nop>
+" nnoremap <c-e> 3<c-e>
+" nnoremap <c-y> 3<c-y>
+let mapleader = "\<Space>"
+nnoremap <leader>sv	:source $MYVIMRC<cr>
+nnoremap <leader>ev :vsplit $MYVIMRC<CR>
+nnoremap <leader>sn /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
+vnoremap <leader>sn "hy/<c-r>h<CR>
+nnoremap <leader>y "+y
+vnoremap <leader>y "+y
+nnoremap <leader>Y gg"+yG
+nnoremap <leader>d "_d
+vnoremap <leader>d "_d
+nnoremap <leader>p "+P
+vnoremap <leader>p "_dP
+nnoremap <leader>= :vertical resize +20<CR>
+nnoremap <leader>- :vertical resize -20<CR>
+nnoremap <leader>ww :set wrap!<CR>
+nnoremap <leader>/ :noh<CR>
+nnoremap <leader>sf :w<CR>
+nnoremap <leader>qq :qa<CR>
+vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
+nnoremap <leader>re :Grepper<CR>
+nnoremap <leader>qo :copen<CR>
+xmap <leader>re <plug>(GrepperOperator) 
+nnoremap <leader>sm :MarkdownPreviewToggle<CR>
+nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
+nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
+" }}} Mappings "
 
 " Colorschemes {{{ "
 "lua require('colorbuddy').colorscheme('colorschemes/simple_light', true)
@@ -86,7 +145,7 @@ lua require('colorbuddy').colorscheme('onebuddy', true)
 lua require('colorbuddy').colorscheme('colorschemes.colorsch_enhancement_light', true)
 " }}} Colorschemes "
 
-" LSP client setup {{{ "
+" LSP client setup, completion {{{ "
 set updatetime=100
 set completeopt=menuone,noinsert,noselect
 set shortmess+=c
@@ -141,142 +200,15 @@ inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 "inoremap <c-q> <cmd>lua return require'snippets'.advance_snippet(-1)<CR>
 " }}} LSP client setup "
 
-" Options {{{ "
-if executable('rg')
-	set grepprg=rg\ --no-ignore\ --smart-case\ --no-heading
-	set grepformat=%f:%l:%c:%m,%f:%l:%m
-endif
-set nofixeol
-set hidden
-set tabstop=4
-set number
-set hlsearch
-set termguicolors
-set signcolumn=number
-set scroll=10
-set startofline
-set encoding=UTF-8
-set timeoutlen=300
-" }}} Options "
-
-" Mappings {{{ "
-nnoremap H 0
-vnoremap H 0
-nnoremap L $
-vnoremap L $
-inoremap kj <esc>
-nnoremap 0 <nop>
-vnoremap 0 <nop>
-nnoremap $ <nop>
-vnoremap $ <nop>
-inoremap <esc> <nop>
-vnoremap <esc> <nop>
-nnoremap <c-e> 3<c-e>
-nnoremap <c-y> 3<c-y>
-let mapleader ="\<Space>"
-nnoremap <leader>sv	:source $MYVIMRC<cr>
-nnoremap <leader>ev :vsplit $MYVIMRC<CR>
-nnoremap <leader>sn /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
-vnoremap <leader>sn "hy/<c-r>h<CR>
-nnoremap <leader>y "+y
-vnoremap <leader>y "+y
-nnoremap <leader>Y gg"+yG
-nnoremap <leader>d "_d
-vnoremap <leader>d "_d
-nnoremap <leader>p "+P
-vnoremap <leader>p "_dP
-nnoremap <leader>= :vertical resize +20<CR>
-nnoremap <leader>- :vertical resize -20<CR>
-nnoremap <leader>ww :set wrap!<CR>
-nnoremap <leader>/ :noh<CR>
-nnoremap <leader>sf :w<CR>
-nnoremap <leader>qq :qa<CR>
-vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
-nnoremap <leader>re :Grepper<CR>
-nnoremap <leader>qo :copen<CR>
-xmap <leader>re <plug>(GrepperOperator) 
-nnoremap <leader>sm :MarkdownPreviewToggle<CR>
-nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
-nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
-" }}} Mappings "
-
-" Finder {{{ "
-nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fr <cmd>Telescope live_grep<cr>
-nnoremap <leader>fb <cmd>Telescope buffers<cr>
-nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-nnoremap <leader>fm <cmd>Telescope man_pages<cr>
-nnoremap <leader>fk <cmd>Telescope keymaps<cr>
-nnoremap <leader>fs <cmd>Telescope lsp_workspace_symbols query= <cr>
-nnoremap <leader>fd <cmd>lua require('plugins_conf/conf_telescope').search_dotfiles()<cr>
-nnoremap <leader>ft <cmd>Telescope colorscheme<cr>
-nnoremap <leader>fgc <cmd>Telescope git_commits<cr>
-nnoremap <leader>fgb <cmd>Telescope git_bcommits<cr>
-nnoremap <leader>fgd <cmd>Telescope git_status<cr>
-if (system("uname -m") == "x86_64\n")
-nnoremap <leader>fz <cmd>lua require'neuron/telescope'.find_zettels()<CR>
-endif
-lua << EOF
-require('plugins_conf/conf_telescope')
-EOF
-" }}} Finder "
-
 " nvim-treesitter {{{ "
 lua << EOF
 require('plugins_conf/conf_treesitter')
 EOF
 " }}} nvim-treesitter "
 
-" File explorer {{{ "
-let g:nvim_tree_width = 40
-let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache', '*.o' ]
-let g:nvim_tree_quit_on_open = 1
-let g:nvim_tree_special_files = [ 'README.md', 'Makefile', 'MAKEFILE' ]
-let g:nvim_tree_icons = {
-    \ 'default': '',
-    \ 'symlink': '',
-    \ 'git': {
-    \   'unstaged': "✗",
-    \   'staged': "✓",
-    \   'unmerged': "",
-    \   'renamed': "➜",
-    \   'untracked': "★",
-    \   'deleted': "",
-    \   'ignored': "◌"
-    \   },
-    \ 'folder': {
-    \   'default': "",
-    \   'open': "",
-    \   'empty': "",
-    \   'empty_open': "",
-    \   'symlink': "",
-    \   'symlink_open': "",
-    \   },
-    \   'lsp': {
-    \     'hint': "",
-    \     'info': "",
-    \     'warning': "",
-    \     'error': "",
-    \   }
-    \ }
-lua << EOF
-require('plugins_conf/conf_nvim-tree')
-EOF
-nnoremap <C-n> :NvimTreeToggle<CR>
-nnoremap <leader>nr :NvimTreeRefresh<CR>
-nnoremap <leader>nn :NvimTreeFindFile<CR>
-" }}} File explorer "
-
-" Colorizer {{{ "
-lua << EOF
-require 'colorizer'.setup {
-  '*';
-  '!c';
-  '!cpp';
-  '!sh';
-}
-EOF
-" }}} Colorizer "
+" Autoinsert delimiters {{{ "
+let delimitMate_excluded_ft = "markdown"
+" }}} Autoinsert delimiters "
 
 " Indentation display {{{ "
 set lcs+=trail:⬤
@@ -309,150 +241,12 @@ endfunction
 nnoremap <leader>sw :call <SID>CheckWhitespaces()<CR>
 " }}} Indentation  display "
 
-" Search {{{ "
-let g:grepper = {}
-let g:grepper.tools =
-  \ ['rg', 'git', 'grep', 'ag']
-"noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
-"            \<Cmd>lua require('hlslens').start()<CR>
-"noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
-"            \<Cmd>lua require('hlslens').start()<CR>
-"noremap * *<Cmd>lua require('hlslens').start()<CR>
-"noremap # #<Cmd>lua require('hlslens').start()<CR>
-"noremap g* g*<Cmd>lua require('hlslens').start()<CR>
-"noremap g# g#<Cmd>lua require('hlslens').start()<CR>
-" }}} Search "
-
-" Tabs & Windows & Buffers {{{ "
-let g:BufstopDismissKey = "q"
-let g:BufstopKeys = "1234asfcvzx5wertyuiopbnm67890ABCEFGHIJKLMNOPRSTUVZ"
-nnoremap <leader>l :BufstopForward<CR>
-" Move to the previous buffer
-nnoremap <leader>h :BufstopBack<CR>
-" Switch a buffer
-nnoremap <leader>b :BufstopPreview<CR>
-" Switch buffer fast
-nnoremap <leader>a :BufstopModeFast<CR>
-" Close the current buffer and move to the previous one
-nnoremap <leader>d :Bwipeout<CR>
-
-nnoremap <leader>1 1gt
-nnoremap <leader>2 2gt
-nnoremap <leader>3 3gt
-nnoremap <leader>4 4gt
-nnoremap <leader>5 5gt
-nnoremap <leader>6 6gt
-nnoremap <leader>7 7gt
-nnoremap <leader>8 8gt
-nnoremap <leader>9 9gt
-" Go to last active tab
-au TabLeave * let g:lasttab = tabpagenr()
-nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
-" Put window to new tab
-nnoremap <leader>t :tab sp<cr>
-" close
-nnoremap <leader>ct :tabclose<cr>
-
-lua <<EOF
-require('bqf').setup({
-    auto_enable = true,
-    preview = {
-        win_height = 12,
-        win_vheight = 12,
-        delay_syntax = 80,
-        border_chars = {'┃', '┃', '━', '━', '┏', '┓', '┗', '┛', '█'}
-    },
-    func_map = {
-        prevfile = '<c-k>',
-        nextfile = '<c-j>',
-        pscrollorig = '<c-o>',
-        ptogglemode = '<Space>f',
-    },
-})
-EOF
-" }}} Tabs & Windows & Buffers "
-
-" Which key {{{ "
-lua << EOF
-  require("which-key").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-  }
-EOF
-" }}} Which key "
-
-" Focus mode {{{ "
-lua << EOF
-require("true-zen").setup({
-		ataraxis = { force_when_plus_one_window = true },
-		integrations = {
-		   integration_galaxyline = true,
-		}
-		})
-EOF
-map <F12> :TZAtaraxis<CR>
-" }}} Focus mode "
-
-" Hop {{{ "
-nnoremap <c-a> :HopWord<CR>
-nnoremap <c-s> :HopLine<CR>
-nnoremap <c-v> <cmd>HopChar1<CR>
-vnoremap <c-v> <cmd>HopChar1<CR>
-hi HopNextKey1 gui=bold,underline guifg=#ff007c
-hi! link HopNextKey2 HopNextKey1
-" }}} Hop "
-
-" Smooth scroll {{{ "
-lua << EOF
-require('neoscroll').setup({
-    -- All these keys will be mapped. Pass an empty table ({}) for no mappings
-    mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>',
-                '<C-y>', '<C-e>', 'zt', 'zz', 'zb'},
-    hide_cursor = true,          -- Hide cursor while scrolling
-    stop_eof = true,             -- Stop at <EOF> when scrolling downwards
-    respect_scrolloff = false,   -- Stop scrolling when the cursor reaches the scrolloff margin of the file
-    cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
-    easing = false,              -- easing_function will be used in all scrolling animations with some defaults
-    easing_function = function(x) return math.pow(x, 2) end -- default easing function
-})
-local t = {}
--- Syntax: t[keys] = {function, {function arguments}}
-t['<C-u>'] = {'scroll', {'-10', 'true', '8'}}
-t['<C-d>'] = {'scroll', { '10', 'true', '8'}}
-t['<C-b>'] = {'scroll', {'-vim.api.nvim_win_get_height(0)', 'true', '7'}}
-t['<C-f>'] = {'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '7'}}
-t['<C-y>'] = {'scroll', {'-0.10', 'false', '20'}}
-t['<C-e>'] = {'scroll', { '0.10', 'false', '20'}}
-t['zt']    = {'zt', {'7'}}
-t['zz']    = {'zz', {'7'}}
-t['zb']    = {'zb', {'7'}}
-require('neoscroll.config').set_mappings(t)
-EOF
-" }}} Smooth scroll "
-
-" Statusline {{{ "
-lua require('plugins_conf/conf_statusline')
-" }}} Statusline "
-
-" Notes {{{ "
-if (system("uname -m") == "x86_64\n")
-lua << EOF
-require'neuron'.setup {}
-EOF
-endif
-" }}} Notes "
-
 " Class viewer {{{ "
 nnoremap <c-p> :Vista!!<CR>
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 let g:vista_default_executive = 'nvim_lsp'
 let g:vista#renderer#enable_icon = 1
 " }}} Class viewer "
-
-" Autoinsert delimiters {{{ "
-let delimitMate_excluded_ft = "markdown"
-" }}} Autoinsert delimiters "
 
 " Terminal {{{ "
 lua << EOF
@@ -528,8 +322,9 @@ EOF
 nnoremap <leader>gs :Git<cr>
 nnoremap <leader>ga :Gwrite<cr>
 nnoremap <leader>gc :Git commit<cr>
+nnoremap <leader>gl :Git log<cr>
 nnoremap <leader>gt :tab Git diff --staged<cr>
-nnoremap <leader>gl :Git difftool -y HEAD~1 HEAD<cr>
+nnoremap <leader>gp :Git difftool -y HEAD~1 HEAD<cr>
 nnoremap <leader>gr :Git commit -m "rebase this commit" <Bar> Git rebase -i HEAD~2<cr>
 " nnoremap <leader>go :Gtabedit HEAD<cr>
 nnoremap <leader>gd :Git difftool<cr>
@@ -538,10 +333,211 @@ nnoremap <leader>gf :AsyncRun -raw git log -p -S
 vnoremap <leader>gf "hy:AsyncRun -raw git log -p -S "<c-r>h"<cr>
 nnoremap <leader>hu :SignifyHunkUndo<CR>
 nnoremap <leader>hp :SignifyHunkDiff<CR>
-nmap <leader>gk <plug>(signify-prev-hunk)  
-nmap <leader>gx <plug>(signify-next-hunk)  
-"lua << EOF
-"local neogit = require('neogit')
-"neogit.setup {}
-"EOF
+nmap [h <plug>(signify-prev-hunk)  
+nmap ]h <plug>(signify-next-hunk)  
 " }}} Git integration "
+
+" Tabs & Windows & Buffers {{{ "
+let g:BufstopDismissKey = "q"
+let g:BufstopKeys = "1234asfcvzx5wertyuiopbnm67890ABCEFGHIJKLMNOPRSTUVZ"
+nnoremap <leader>l :BufstopForward<CR>
+" Move to the previous buffer
+nnoremap <leader>h :BufstopBack<CR>
+" Switch a buffer
+nnoremap <leader>b :BufstopPreview<CR>
+" Switch buffer fast
+nnoremap <leader>a :BufstopModeFast<CR>
+" Close the current buffer and move to the previous one
+nnoremap <leader>d :Bwipeout<CR>
+
+nnoremap <leader>1 1gt
+nnoremap <leader>2 2gt
+nnoremap <leader>3 3gt
+nnoremap <leader>4 4gt
+nnoremap <leader>5 5gt
+nnoremap <leader>6 6gt
+nnoremap <leader>7 7gt
+nnoremap <leader>8 8gt
+nnoremap <leader>9 9gt
+" Go to last active tab
+au TabLeave * let g:lasttab = tabpagenr()
+nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
+" Put window to new tab
+nnoremap <leader>t :tab sp<cr>
+" close
+nnoremap <leader>ct :tabclose<cr>
+
+lua <<EOF
+require('bqf').setup({
+    auto_enable = true,
+    preview = {
+        win_height = 12,
+        win_vheight = 12,
+        delay_syntax = 80,
+        border_chars = {'┃', '┃', '━', '━', '┏', '┓', '┗', '┛', '█'}
+    },
+    func_map = {
+        prevfile = '<c-k>',
+        nextfile = '<c-j>',
+        pscrollorig = '<c-o>',
+        ptogglemode = '<Space>f',
+    },
+})
+EOF
+" }}} Tabs & Windows & Buffers "
+
+" Statusline {{{ "
+lua require('plugins_conf/conf_statusline')
+" }}} Statusline "
+
+" Finder {{{ "
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fr <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+nnoremap <leader>fm <cmd>Telescope man_pages<cr>
+nnoremap <leader>fk <cmd>Telescope keymaps<cr>
+nnoremap <leader>fs <cmd>Telescope lsp_workspace_symbols query= <cr>
+nnoremap <leader>fd <cmd>lua require('plugins_conf/conf_telescope').search_dotfiles()<cr>
+nnoremap <leader>ft <cmd>Telescope colorscheme<cr>
+nnoremap <leader>fgc <cmd>Telescope git_commits<cr>
+nnoremap <leader>fgb <cmd>Telescope git_bcommits<cr>
+nnoremap <leader>fgd <cmd>Telescope git_status<cr>
+if (system("uname -m") == "x86_64\n")
+nnoremap <leader>fz <cmd>lua require'neuron/telescope'.find_zettels()<CR>
+endif
+lua << EOF
+require('plugins_conf/conf_telescope')
+EOF
+" }}} Finder "
+
+" File explorer {{{ "
+let g:nvim_tree_width = 40
+let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache', '*.o' ]
+let g:nvim_tree_quit_on_open = 1
+let g:nvim_tree_special_files = [ 'README.md', 'Makefile', 'MAKEFILE' ]
+let g:nvim_tree_icons = {
+    \ 'default': '',
+    \ 'symlink': '',
+    \ 'git': {
+    \   'unstaged': "✗",
+    \   'staged': "✓",
+    \   'unmerged': "",
+    \   'renamed': "➜",
+    \   'untracked': "★",
+    \   'deleted': "",
+    \   'ignored': "◌"
+    \   },
+    \ 'folder': {
+    \   'default': "",
+    \   'open': "",
+    \   'empty': "",
+    \   'empty_open': "",
+    \   'symlink': "",
+    \   'symlink_open': "",
+    \   },
+    \   'lsp': {
+    \     'hint': "",
+    \     'info': "",
+    \     'warning': "",
+    \     'error': "",
+    \   }
+    \ }
+lua << EOF
+require('plugins_conf/conf_nvim-tree')
+EOF
+nnoremap <C-n> :NvimTreeToggle<CR>
+nnoremap <leader>nr :NvimTreeRefresh<CR>
+nnoremap <leader>nn :NvimTreeFindFile<CR>
+" }}} File explorer "
+
+" Search {{{ "
+let g:grepper = {}
+let g:grepper.tools =
+  \ ['rg', 'git', 'grep', 'ag']
+"noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
+"            \<Cmd>lua require('hlslens').start()<CR>
+"noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
+"            \<Cmd>lua require('hlslens').start()<CR>
+"noremap * *<Cmd>lua require('hlslens').start()<CR>
+"noremap # #<Cmd>lua require('hlslens').start()<CR>
+"noremap g* g*<Cmd>lua require('hlslens').start()<CR>
+"noremap g# g#<Cmd>lua require('hlslens').start()<CR>
+" }}} Search "
+
+" Colorizer {{{ "
+lua << EOF
+require 'colorizer'.setup {
+  '*';
+  '!c';
+  '!cpp';
+  '!sh';
+}
+EOF
+" }}} Colorizer "
+
+" Which key {{{ "
+lua << EOF
+  require("which-key").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+EOF
+" }}} Which key "
+
+" Hop {{{ "
+nnoremap <c-a> :HopWord<CR>
+nnoremap <c-s> :HopLine<CR>
+nnoremap <c-v> <cmd>HopChar1<CR>
+vnoremap <c-v> <cmd>HopChar1<CR>
+hi HopNextKey1 gui=bold,underline guifg=#ff007c
+hi! link HopNextKey2 HopNextKey1
+" }}} Hop "
+
+" Focus mode {{{ "
+lua << EOF
+require("true-zen").setup({
+		ataraxis = { force_when_plus_one_window = true },
+		integrations = {
+		   integration_galaxyline = true,
+		}
+		})
+EOF
+map <F12> :TZAtaraxis<CR>
+" }}} Focus mode "
+
+" Smooth scroll {{{ "
+nnoremap <leader>rl :NeoscrollEnablePM<cr>
+lua << EOF
+require('neoscroll').setup({
+    -- All these keys will be mapped. Pass an empty table ({}) for no mappings
+    mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>',
+                '<C-y>', '<C-e>', 'zz',},
+    hide_cursor = true,          -- Hide cursor while scrolling
+    stop_eof = true,             -- Stop at <EOF> when scrolling downwards
+    respect_scrolloff = false,   -- Stop scrolling when the cursor reaches the scrolloff margin of the file
+    cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
+    easing = false,              -- easing_function will be used in all scrolling animations with some defaults
+    easing_function = function(x) return math.pow(x, 2) end -- default easing function
+})
+local t = {}
+-- Syntax: t[keys] = {function, {function arguments}}
+t['<C-u>'] = {'scroll', {'-20', 'true', '8'}}
+t['<C-d>'] = {'scroll', { '20', 'true', '8'}}
+t['<C-b>'] = {'scroll', {'-vim.api.nvim_win_get_height(0)', 'true', '7'}}
+t['<C-f>'] = {'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '7'}}
+t['<C-y>'] = {'scroll', {'-3', 'false', '20'}}
+t['<C-e>'] = {'scroll', { '3', 'false', '20'}}
+t['zz']    = {'zz', {'6, 10'}}
+require('neoscroll.config').set_mappings(t)
+EOF
+" }}} Smooth scroll "
+
+" Notes {{{ "
+if (system("uname -m") == "x86_64\n")
+lua << EOF
+require'neuron'.setup {}
+EOF
+endif
+" }}} Notes "
