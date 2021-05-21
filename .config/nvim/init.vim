@@ -17,7 +17,7 @@ function! s:listPlugins()
 	Plug 'nvim-telescope/telescope.nvim'
 	Plug 'nvim-telescope/telescope-fzy-native.nvim', { 'do': 'make -C deps/fzy-lua-native' }
 	Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-	Plug 'kyazdani42/nvim-web-devicons', {'do': 'Firas=(\"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Bold/complete/Fira%20Code%20Bold%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Light/complete/Fira%20Code%20Light%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/SemiBold/complete/Fira%20Code%20SemiBold%20Nerd%20Font%20Complete.ttf\") && mkdir -p ~/.local/share/fonts && for i in ${Firas[@]}; do echo wget -O ~/.local/share/fonts/$(basename $i \| tr -s %20 -) $i; done'}
+	Plug 'kyazdani42/nvim-web-devicons', {'do': 'Firas=(\"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Bold/complete/Fira%20Code%20Bold%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Light/complete/Fira%20Code%20Light%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/SemiBold/complete/Fira%20Code%20SemiBold%20Nerd%20Font%20Complete.ttf\") && mkdir -p ~/.local/share/fonts && for i in ${Firas[@]}; do wget -O ~/.local/share/fonts/$(basename $i \| tr -s %20 -) $i; done'}
     Plug 'kyazdani42/nvim-tree.lua'
 	Plug 'norcalli/nvim-colorizer.lua'
 	Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
@@ -35,7 +35,7 @@ function! s:listPlugins()
 	Plug 'glepnir/galaxyline.nvim'
 	Plug 'kevinhwang91/nvim-bqf'
 	Plug 'nvim-treesitter/playground'
-	Plug 'npxbr/glow.nvim', {'do': 'git clone https://github.com/charmbracelet/glow.git && cd glow && go build && mv glow $HOME/go/bin','branch':'main'}
+	" Plug 'npxbr/glow.nvim', {'do': 'git clone https://github.com/charmbracelet/glow.git && cd glow && go build && mv glow $HOME/go/bin','branch':'main'}
 	Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 	if (system("uname -m") == "x86_64\n")
 	Plug 'oberblastmeister/neuron.nvim'
@@ -129,7 +129,7 @@ nnoremap <leader>- :vertical resize -20<CR>
 nnoremap <leader>ww :set wrap!<CR>
 nnoremap <leader>/ :noh<CR>
 nnoremap <leader>sf :w<CR>
-nnoremap <leader>qq :qa<CR>
+nnoremap <leader>qf :qa<CR>
 vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap <leader>re :Grepper<CR>
 nnoremap <leader>qo :copen<CR>
@@ -525,10 +525,10 @@ local t = {}
 -- Syntax: t[keys] = {function, {function arguments}}
 t['<C-u>'] = {'scroll', {'-20', 'true', '8'}}
 t['<C-d>'] = {'scroll', { '20', 'true', '8'}}
-t['<C-b>'] = {'scroll', {'-vim.api.nvim_win_get_height(0)', 'true', '7'}}
-t['<C-f>'] = {'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '7'}}
-t['<C-y>'] = {'scroll', {'-3', 'false', '20'}}
-t['<C-e>'] = {'scroll', { '3', 'false', '20'}}
+t['<C-b>'] = {'scroll', {'-vim.api.nvim_win_get_height(0)', 'true', '8'}}
+t['<C-f>'] = {'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '8'}}
+t['<C-y>'] = {'scroll', {'-3', 'false', '8'}}
+t['<C-e>'] = {'scroll', { '3', 'false', '8'}}
 t['zz']    = {'zz', {'6, 10'}}
 require('neoscroll.config').set_mappings(t)
 EOF
