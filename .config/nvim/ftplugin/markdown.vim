@@ -1,6 +1,13 @@
 " Misc {{{ "
+" echo char2nr(" ")
+" bold
 let b:surround_98 = "**\r**"
+" italics
+let b:surround_105 = "*\r*"
+" link
 let b:surround_108 = "[[\r]]"
+" header
+let b:surround_104 = "## \r #"
 " }}} Misc "
 
 " Options {{{ "

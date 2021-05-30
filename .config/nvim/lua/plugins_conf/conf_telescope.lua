@@ -71,7 +71,8 @@ local M = {}
 M.search_dotfiles = function()
   require("telescope.builtin").find_files({
     prompt_title = "<< dotfiles >>",
-	cwd = "~/.config/",
+	cwd = "~/",
+	hidden = true,
   })
 end
 

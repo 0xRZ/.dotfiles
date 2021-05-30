@@ -129,10 +129,10 @@ nnoremap <leader>- :vertical resize -20<CR>
 nnoremap <leader>ww :set wrap!<CR>
 nnoremap <leader>/ :noh<CR>
 nnoremap <leader>sf :w<CR>
-nnoremap <leader>qf :qa<CR>
+nnoremap <leader>q :qa<CR>
 vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap <leader>re :Grepper<CR>
-nnoremap <leader>qo :copen<CR>
+nnoremap <leader>oq :copen<CR>
 xmap <leader>re <plug>(GrepperOperator) 
 nnoremap <leader>sm :MarkdownPreviewToggle<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
@@ -393,7 +393,7 @@ lua require('plugins_conf/conf_statusline')
 " Finder {{{ "
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fr <cmd>Telescope live_grep<cr>
-nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fb <cmd>Telescope current_buffer_fuzzy_find<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fm <cmd>Telescope man_pages<cr>
 nnoremap <leader>fk <cmd>Telescope keymaps<cr>
@@ -518,18 +518,18 @@ require('neoscroll').setup({
     stop_eof = true,             -- Stop at <EOF> when scrolling downwards
     respect_scrolloff = false,   -- Stop scrolling when the cursor reaches the scrolloff margin of the file
     cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
-    easing = false,              -- easing_function will be used in all scrolling animations with some defaults
+    easing = true,              -- easing_function will be used in all scrolling animations with some defaults
     easing_function = function(x) return math.pow(x, 2) end -- default easing function
 })
 local t = {}
 -- Syntax: t[keys] = {function, {function arguments}}
-t['<C-u>'] = {'scroll', {'-20', 'true', '8'}}
-t['<C-d>'] = {'scroll', { '20', 'true', '8'}}
-t['<C-b>'] = {'scroll', {'-vim.api.nvim_win_get_height(0)', 'true', '8'}}
-t['<C-f>'] = {'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '8'}}
-t['<C-y>'] = {'scroll', {'-3', 'false', '8'}}
-t['<C-e>'] = {'scroll', { '3', 'false', '8'}}
-t['zz']    = {'zz', {'6, 10'}}
+t['<C-u>'] = {'scroll', {'-20', 'true', '7, 15'}}
+t['<C-d>'] = {'scroll', { '20', 'true', '7, 15'}}
+t['<C-b>'] = {'scroll', {'-vim.api.nvim_win_get_height(0)', 'true', '7, 15'}}
+t['<C-f>'] = {'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '7, 15'}}
+t['<C-y>'] = {'scroll', {'-3', 'false', '7, 15'}}
+t['<C-e>'] = {'scroll', { '3', 'false', '7, 15'}}
+t['zz']    = {'zz', {'6, 15'}}
 require('neoscroll.config').set_mappings(t)
 EOF
 " }}} Smooth scroll "
