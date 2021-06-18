@@ -4,6 +4,7 @@ function! s:listPlugins()
 	Plug 'neovim/nvim-lspconfig'
 	Plug 'kabouzeid/nvim-lspinstall'
     Plug 'hrsh7th/nvim-compe'
+    " Plug 'simrat39/symbols-outline.nvim'
 "	Plug 'norcalli/snippets.nvim'
     " Plug 'nvim-lua/completion-nvim'
 	Plug 'SirVer/ultisnips'
@@ -16,6 +17,9 @@ function! s:listPlugins()
 	Plug 'nvim-lua/plenary.nvim'
 	Plug 'nvim-telescope/telescope.nvim'
 	Plug 'nvim-telescope/telescope-fzy-native.nvim', { 'do': 'make -C deps/fzy-lua-native' }
+	Plug 'rmagatti/auto-session'
+    Plug 'rmagatti/session-lens'
+	Plug 'folke/todo-comments.nvim'
 	Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 	Plug 'kyazdani42/nvim-web-devicons', {'do': 'Firas=(\"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Bold/complete/Fira%20Code%20Bold%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Light/complete/Fira%20Code%20Light%20Nerd%20Font%20Complete.ttf\" \"https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/SemiBold/complete/Fira%20Code%20SemiBold%20Nerd%20Font%20Complete.ttf\") && mkdir -p ~/.local/share/fonts && for i in ${Firas[@]}; do wget -O ~/.local/share/fonts/$(basename $i \| tr -s %20 -) $i; done'}
     Plug 'kyazdani42/nvim-tree.lua'
@@ -48,11 +52,14 @@ function! s:listPlugins()
     Plug 'plasticboy/vim-markdown'
     Plug 'tpope/vim-fugitive'
 	Plug 'mhinz/vim-signify'
+	Plug 'f-person/git-blame.nvim'
+	Plug 'rhysd/clever-f.vim'
 	Plug 'skywind3000/asyncrun.vim'
 
 	Plug 'tjdevries/colorbuddy.vim'
 	Plug 'Th3Whit3Wolf/onebuddy'
     Plug 'tjdevries/gruvbuddy.nvim'
+	Plug 'marko-cerovac/material.nvim'
 	call plug#end()
 endfunction
 
@@ -113,6 +120,9 @@ vnoremap <esc> <nop>
 " nnoremap <c-e> 3<c-e>
 " nnoremap <c-y> 3<c-y>
 let mapleader = "\<Space>"
+" \ and <Space>. start mappings for a toggle
+map \ <leader>.
+nnoremap <leader>m @q
 nnoremap <leader>sv	:source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>
 nnoremap <leader>sn /<c-r>=escape(expand("<cWORD>"), "/")<CR><CR>
@@ -122,27 +132,35 @@ vnoremap <leader>y "+y
 nnoremap <leader>Y gg"+yG
 nnoremap <leader>d "_d
 vnoremap <leader>d "_d
-nnoremap <leader>p "+P
+nnoremap <leader>p "+p
 vnoremap <leader>p "_dP
 nnoremap <leader>= :vertical resize +20<CR>
 nnoremap <leader>- :vertical resize -20<CR>
-nnoremap <leader>ww :set wrap!<CR>
+nnoremap <leader>.r :set wrap!<CR>
 nnoremap <leader>/ :noh<CR>
 nnoremap <leader>sf :w<CR>
 nnoremap <leader>q :qa<CR>
 vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap <leader>re :Grepper<CR>
 nnoremap <leader>oq :copen<CR>
-xmap <leader>re <plug>(GrepperOperator) 
+xmap <leader>re <plug>(GrepperOperator)
 nnoremap <leader>sm :MarkdownPreviewToggle<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 " }}} Mappings "
 
 " Colorschemes {{{ "
-"lua require('colorbuddy').colorscheme('colorschemes/simple_light', true)
+" lua require('colorbuddy').colorscheme('colorschemes/simple_light', true)
 lua require('colorbuddy').colorscheme('onebuddy', true)
 lua require('colorbuddy').colorscheme('colorschemes.colorsch_enhancement_light', true)
+" let g:material_style = 'palenight'
+" let g:material_italic_comments = 1
+" let g:material_italic_keywords = 1
+" let g:material_italic_functions = 1
+" let g:material_contrast = 1
+
+" " Load the colorsheme
+" colorscheme material
 " }}} Colorschemes "
 
 " LSP client setup, completion {{{ "
@@ -206,10 +224,6 @@ require('plugins_conf/conf_treesitter')
 EOF
 " }}} nvim-treesitter "
 
-" Autoinsert delimiters {{{ "
-let delimitMate_excluded_ft = "markdown"
-" }}} Autoinsert delimiters "
-
 " Indentation display {{{ "
 set lcs+=trail:⬤
 set lcs+=eol:↴
@@ -238,7 +252,7 @@ function! s:CheckWhitespaces()
     IndentBlanklineToggle
     set list!
 endfunction
-nnoremap <leader>sw :call <SID>CheckWhitespaces()<CR>
+nnoremap <leader>.w :call <SID>CheckWhitespaces()<CR>
 " }}} Indentation  display "
 
 " Class viewer {{{ "
@@ -246,6 +260,23 @@ nnoremap <c-p> :Vista!!<CR>
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 let g:vista_default_executive = 'nvim_lsp'
 let g:vista#renderer#enable_icon = 1
+
+" nnoremap <c-p> :SymbolsOutline<CR>
+" let g:symbols_outline = {
+"     \ "highlight_hovered_item": v:true,
+"     \ "show_guides": v:true,
+"     \ "position": 'right',
+"     \ "auto_preview": v:true,
+"     \ "keymaps": {
+"         \ "close": "<Esc>",
+"         \ "goto_location": "<Cr>",
+"         \ "focus_location": "o",
+"         \ "hover_symbol": "<C-space>",
+"         \ "rename_symbol": "r",
+"         \ "code_actions": "a",
+"     \ },
+"     \ "lsp_blacklist": [],
+" \ }
 " }}} Class viewer "
 
 " Terminal {{{ "
@@ -283,10 +314,6 @@ require("toggleterm").setup{
   }
 }
 EOF
-nnoremap <leader>hu :SignifyHunkUndo<CR>
-nnoremap <leader>hp :SignifyHunkDiff<CR>
-nmap <leader>gk <plug>(signify-prev-hunk)  
-nmap <leader>gx <plug>(signify-next-hunk)  
 nnoremap <silent><c-t> :<c-u>exe v:count1 . "ToggleTerm"<CR>
 inoremap <silent><c-t> <Esc>:<c-u>exe v:count1 . "ToggleTerm"<CR>
 " }}} Terminal "
@@ -319,6 +346,11 @@ EOF
 " }}} Run snippets "
 
 " Git integration {{{ "
+function s:lineHistory()
+	let line_nr = input("line number: ")
+	let cmt_sha = input("commit sha to start search with: ", "HEAD")
+	execute "Git blame -L "..line_nr..",+1  --ignore-rev "..cmt_sha
+endfunction
 nnoremap <leader>gs :Git<cr>
 nnoremap <leader>ga :Gwrite<cr>
 nnoremap <leader>gc :Git commit<cr>
@@ -328,13 +360,18 @@ nnoremap <leader>gp :Git difftool -y HEAD~1 HEAD<cr>
 nnoremap <leader>gr :Git commit -m "rebase this commit" <Bar> Git rebase -i HEAD~2<cr>
 " nnoremap <leader>go :Gtabedit HEAD<cr>
 nnoremap <leader>gd :Git difftool<cr>
-nnoremap <leader>gb :Git blame<cr>
-nnoremap <leader>gf :AsyncRun -raw git log -p -S 
-vnoremap <leader>gf "hy:AsyncRun -raw git log -p -S "<c-r>h"<cr>
-nnoremap <leader>hu :SignifyHunkUndo<CR>
-nnoremap <leader>hp :SignifyHunkDiff<CR>
-nmap [h <plug>(signify-prev-hunk)  
-nmap ]h <plug>(signify-next-hunk)  
+let g:gitblame_enabled = 0
+let g:gitblame_message_template = '<sha> • <summary>'
+nnoremap <leader>.g :GitBlameToggle<cr>
+nnoremap <leader>gfh :call <SID>lineHistory()<cr>
+nnoremap <leader>gfc :Git show 
+vnoremap <leader>gfc "hy:Git show <c-r>h<cr>
+nnoremap <leader>gfl :AsyncRun -raw git log -p -S 
+vnoremap <leader>gfl "hy:AsyncRun -raw git log -p -S "<c-r>h"<cr>
+nnoremap <leader>gu :SignifyHunkUndo<CR>
+nnoremap <leader>gh :SignifyHunkDiff<CR>
+nmap [h <plug>(signify-prev-hunk)
+nmap ]h <plug>(signify-next-hunk)
 " }}} Git integration "
 
 " Tabs & Windows & Buffers {{{ "
@@ -380,7 +417,9 @@ require('bqf').setup({
         prevfile = '<c-k>',
         nextfile = '<c-j>',
         pscrollorig = '<c-o>',
-        ptogglemode = '<Space>f',
+        pscrollup = '<c-u>',
+        pscrolldown = '<c-d>',
+        ptogglemode = '<Space>t',
     },
 })
 EOF
@@ -397,18 +436,29 @@ nnoremap <leader>fb <cmd>Telescope current_buffer_fuzzy_find<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fm <cmd>Telescope man_pages<cr>
 nnoremap <leader>fk <cmd>Telescope keymaps<cr>
-nnoremap <leader>fs <cmd>Telescope lsp_workspace_symbols query= <cr>
+nnoremap <leader>fl <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
+nnoremap <leader>fs <cmd>Telescope session-lens search_session<cr>
 nnoremap <leader>fd <cmd>lua require('plugins_conf/conf_telescope').search_dotfiles()<cr>
-nnoremap <leader>ft <cmd>Telescope colorscheme<cr>
 nnoremap <leader>fgc <cmd>Telescope git_commits<cr>
-nnoremap <leader>fgb <cmd>Telescope git_bcommits<cr>
-nnoremap <leader>fgd <cmd>Telescope git_status<cr>
+nnoremap <leader>fgl <cmd>Telescope git_bcommits<cr>
+nnoremap <leader>fgs <cmd>Telescope git_status<cr>
+nnoremap <leader>fgb <cmd>Telescope git_branches<cr>
+nnoremap <leader>fgt <cmd>Telescope git_stash<cr>
 if (system("uname -m") == "x86_64\n")
 nnoremap <leader>fz <cmd>lua require'neuron/telescope'.find_zettels()<CR>
 endif
 lua << EOF
 require('plugins_conf/conf_telescope')
 EOF
+
+" Navigation aid {{{ "
+nnoremap <leader>xt <cmd>TodoQuickFix<cr>
+lua << EOF
+require("todo-comments").setup {
+}
+EOF
+" }}} Navigation aid "
+
 " }}} Finder "
 
 " File explorer {{{ "
@@ -446,7 +496,7 @@ let g:nvim_tree_icons = {
 lua << EOF
 require('plugins_conf/conf_nvim-tree')
 EOF
-nnoremap <C-n> :NvimTreeToggle<CR>
+nnoremap <leader>.f :NvimTreeToggle<CR>
 nnoremap <leader>nr :NvimTreeRefresh<CR>
 nnoremap <leader>nn :NvimTreeFindFile<CR>
 " }}} File explorer "
@@ -486,14 +536,23 @@ lua << EOF
 EOF
 " }}} Which key "
 
-" Hop {{{ "
+" Motion aid {{{ "
 nnoremap <c-a> :HopWord<CR>
 nnoremap <c-s> :HopLine<CR>
 nnoremap <c-v> <cmd>HopChar1<CR>
 vnoremap <c-v> <cmd>HopChar1<CR>
-hi HopNextKey1 gui=bold,underline guifg=#ff007c
-hi! link HopNextKey2 HopNextKey1
-" }}} Hop "
+hi HopNextKey gui=bold,underline guifg=#ff007c
+hi! link HopNextKey1 HopNextKey 
+hi! link HopNextKey2 HopNextKey
+" }}} Motion aid "
+
+" Editing aid {{{ "
+
+" Autoinsert delimiters {{{ "
+let delimitMate_excluded_ft = "markdown"
+" }}} Autoinsert delimiters "
+
+" }}} Editing aid "
 
 " Focus mode {{{ "
 lua << EOF
@@ -504,33 +563,28 @@ require("true-zen").setup({
 		}
 		})
 EOF
-map <F12> :TZAtaraxis<CR>
+map <leader>.e :TZAtaraxis<CR>
 " }}} Focus mode "
 
 " Smooth scroll {{{ "
-nnoremap <leader>rl :NeoscrollEnablePM<cr>
+let g:smooth_scroll_toogle_var = v:true 
+function s:toogle_smthscrll() abort
+		if (g:smooth_scroll_toogle_var)
+				nnoremap <C-u> <C-u>
+				nnoremap <C-d> <C-d>
+				nnoremap <C-b> <C-b>
+				nnoremap <C-f> <C-f>
+				nnoremap zz zz
+		else
+				lua require('neoscroll').setup({ mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>', '<C-y>', '<C-e>', 'zz',},})
+		endif
+		let g:smooth_scroll_toogle_var = !g:smooth_scroll_toogle_var
+endfunction
+nnoremap <leader>.s :call <SID>toogle_smthscrll()<cr>
 lua << EOF
 require('neoscroll').setup({
-    -- All these keys will be mapped. Pass an empty table ({}) for no mappings
-    mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>',
-                '<C-y>', '<C-e>', 'zz',},
-    hide_cursor = true,          -- Hide cursor while scrolling
-    stop_eof = true,             -- Stop at <EOF> when scrolling downwards
-    respect_scrolloff = false,   -- Stop scrolling when the cursor reaches the scrolloff margin of the file
-    cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
-    easing = true,              -- easing_function will be used in all scrolling animations with some defaults
-    easing_function = function(x) return math.pow(x, 2) end -- default easing function
+    mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>', 'zz',},
 })
-local t = {}
--- Syntax: t[keys] = {function, {function arguments}}
-t['<C-u>'] = {'scroll', {'-20', 'true', '7, 15'}}
-t['<C-d>'] = {'scroll', { '20', 'true', '7, 15'}}
-t['<C-b>'] = {'scroll', {'-vim.api.nvim_win_get_height(0)', 'true', '7, 15'}}
-t['<C-f>'] = {'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', '7, 15'}}
-t['<C-y>'] = {'scroll', {'-3', 'false', '7, 15'}}
-t['<C-e>'] = {'scroll', { '3', 'false', '7, 15'}}
-t['zz']    = {'zz', {'6, 15'}}
-require('neoscroll.config').set_mappings(t)
 EOF
 " }}} Smooth scroll "
 
@@ -541,3 +595,15 @@ require'neuron'.setup {}
 EOF
 endif
 " }}} Notes "
+
+" Sessions {{{ "
+function s:saveSession()
+	let sess_name = input("session name: ")
+	let sess_name = stdpath('data').."/sessions/"..sess_name..".vim"
+	execute "mksession! " . sess_name 
+endfunction
+lua << EOF
+require('auto-session').setup()
+EOF
+nnoremap <leader>se :call <SID>saveSession()<CR>
+"	 }}} Sessions "

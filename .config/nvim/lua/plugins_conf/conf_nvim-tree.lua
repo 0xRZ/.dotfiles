@@ -1,7 +1,7 @@
 local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 vim.g.nvim_tree_bindings = {
   -- default mappings
-  ["<CR>"]           = tree_cb("edit"),
+  ["<CR>"]           = tree_cb("preview"),
   ["o"]              = tree_cb("edit"),
   ["<C-]>"]          = tree_cb("cd"),
   ["<C-v>"]          = tree_cb("vsplit"),
@@ -21,6 +21,6 @@ vim.g.nvim_tree_bindings = {
   ["p"]              = tree_cb("paste"),
   ["[c"]             = tree_cb("prev_git_item"),
   ["]c"]             = tree_cb("next_git_item"),
-  ["<C-[>"]            = tree_cb("dir_up"),
+  ["<C-[>"]          = tree_cb("dir_up"),
   ["q"]              = tree_cb("close"),
 }
