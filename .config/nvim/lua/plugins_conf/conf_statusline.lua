@@ -1,7 +1,7 @@
 local gl = require('galaxyline')
 local colors = {
-  bg = '#2f2d44',
-  fg = '#eae8ff',
+  bg = '#bae4ff',
+  fg = '#5d4d7a',
   yellow = '#fabd2f',
   cyan = '#008080',
   darkblue = '#081633',
@@ -21,21 +21,21 @@ gl.short_line_list = {'NvimTree','vista','dbui','packer'}
 gls.left[1] = {
   RainbowRed = {
     provider = function() return '▊ ' end,
-    highlight = {colors.red,colors.bg}
+    highlight = {colors.darkblue,colors.bg}
   },
 }
 gls.left[2] = {
   ViMode = {
     provider = function()
       -- auto change color according the vim mode
-      local mode_color = {n = colors.red, i = colors.green,v=colors.blue,
+      local mode_color = {n = colors.darkblue, i = colors.green,v=colors.blue,
                           [''] = colors.blue,V=colors.blue,
-                          c = colors.magenta,no = colors.red,s = colors.orange,
+                          c = colors.darkblue,no = colors.darkblue,s = colors.orange,
                           S=colors.orange,[''] = colors.orange,
                           ic = colors.yellow,R = colors.violet,Rv = colors.violet,
-                          cv = colors.red,ce=colors.red, r = colors.cyan,
+                          cv = colors.darkblue,ce=colors.darkblue, r = colors.cyan,
                           rm = colors.cyan, ['r?'] = colors.cyan,
-                          ['!']  = colors.red,t = colors.red}
+                          ['!']  = colors.darkblue,t = colors.darkblue}
       if vim.api.nvim_get_option('mod') == 1 then
         vim.api.nvim_command('hi GalaxyViMode guifg='..colors.white)
       else
@@ -43,18 +43,18 @@ gls.left[2] = {
       end
       return '綠  '
     end,
-    highlight = {colors.red,colors.bg,'bold'},
+    highlight = {colors.darkblue,colors.bg,'bold'},
   },
 }
-gls.left[3] = {
+--[[ gls.left[3] = {
   WorkDir = {
     provider = function() return vim.fn.getcwd().."/" end,
     condition = condition.buffer_not_empty,
-    highlight = {colors.magenta, colors.bg},
+    highlight = {colors.darkblue, colors.bg},
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
   }
-}
+} ]]
 gls.left[4] ={
   FileIcon = {
     provider = 'FileIcon',
@@ -67,7 +67,7 @@ gls.left[5] = {
   FileName = {
     provider = 'FileName',
     condition = condition.buffer_not_empty,
-    highlight = {colors.magenta,colors.bg,'bold'}
+    highlight = {colors.darkblue,colors.bg,'bold'}
   }
 }
 
@@ -102,14 +102,14 @@ gls.left[9] = {
   DiagnosticError = {
     provider = 'DiagnosticError',
     icon = '  ',
-    highlight = {colors.red,colors.bg}
+    highlight = {colors.darkblue,colors.bg}
   }
 }
 gls.left[10] = {
   DiagnosticWarn = {
     provider = 'DiagnosticWarn',
     icon = '  ',
-    highlight = {colors.yellow,colors.bg},
+    highlight = {colors.magenta,colors.bg},
   }
 }
 
@@ -117,7 +117,7 @@ gls.left[11] = {
   DiagnosticHint = {
     provider = 'DiagnosticHint',
     icon = '  ',
-    highlight = {colors.cyan,colors.bg},
+    highlight = {colors.purple,colors.bg},
   }
 }
 
@@ -125,7 +125,7 @@ gls.left[12] = {
   DiagnosticInfo = {
     provider = 'DiagnosticInfo',
     icon = '  ',
-    highlight = {colors.blue,colors.bg},
+    highlight = {colors.darkblue,colors.bg},
   }
 }
 
@@ -147,7 +147,7 @@ gls.left[12] = {
 gls.mid[1] = {
    ShowLspInfo = {
     provider = function() return require('lsp-status').status() end,
-    highlight = {colors.blue,colors.bg}
+    highlight = {colors.purple,colors.bg}
   },
 }
 
@@ -171,12 +171,12 @@ gls.mid[1] = {
 --  }
 --}
 
-gls.right[2] = {
+--[[ gls.right[2] = {
   TimeDate = {
     provider = function() return vim.fn.strftime("%d/%m/%y %H:%M") end,
     highlight = {colors.orange,colors.bg}
   }
-}
+} ]]
 
 gls.right[3] = {
   GitIcon = {
@@ -184,7 +184,7 @@ gls.right[3] = {
     condition = condition.check_git_workspace,
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
-    highlight = {colors.yellow,colors.bg,'bold'},
+    highlight = {colors.red,colors.bg,'bold'},
   }
 }
 
@@ -194,7 +194,7 @@ gls.right[4] = {
     condition = condition.check_git_workspace,
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
-    highlight = {colors.yellow,colors.bg,'bold'},
+    highlight = {colors.red,colors.bg,'bold'},
   }
 }
 
@@ -205,7 +205,7 @@ gls.right[5] = {
     icon = '  ',
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
-    highlight = {colors.green,colors.bg},
+    highlight = {colors.red,colors.bg},
   }
 }
 gls.right[6] = {
@@ -215,7 +215,7 @@ gls.right[6] = {
     icon = ' 柳',
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
-    highlight = {colors.orange,colors.bg},
+    highlight = {colors.red,colors.bg},
   }
 }
 gls.right[7] = {
@@ -225,7 +225,7 @@ gls.right[7] = {
     icon = '  ',
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
-    highlight = {colors.red,colors.bg},
+    highlight = {colors.orange,colors.bg},
   }
 }
 
@@ -243,7 +243,7 @@ gls.short_line_left[1] = {
     provider = 'FileTypeName',
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
-    highlight = {colors.blue,colors.bg,'bold'}
+    highlight = {colors.darkblue,colors.bg,'bold'}
   }
 }
 

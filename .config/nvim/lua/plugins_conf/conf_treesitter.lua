@@ -5,6 +5,7 @@ require'nvim-treesitter.configs'.setup {
 --      -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
 --      ["foo.bar"] = "Identifier",
 --    },
+	additional_vim_regex_highlighting = false,
   },
   incremental_selection = {
     enable = true,
@@ -34,6 +35,47 @@ require'nvim-treesitter.configs'.setup {
       update = 'R',
       goto_node = '<cr>',
       show_help = '?',
+    },
+  },
+  textobjects = {
+    select = {
+      enable = true,
+      keymaps = {
+        -- You can use the capture groups defined in textobjects.scm
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
+        ["ak"] = "@comment.outer",
+        ["ii"] = "@conditional.inner",
+        ["ai"] = "@conditional.outer",
+        ["il"] = "@loop.inner",
+        ["al"] = "@loop.outer",
+      },
+    },
+    move = {
+      enable = true,
+      set_jumps = true, -- whether to set jumps in the jumplist
+      goto_next_start = {
+        ["]m"] = "@function.outer",
+        ["]c"] = "@class.outer",
+        ["]i"] = "@conditional.outer",
+      },
+      goto_next_end = {
+        ["]M"] = "@function.outer",
+        ["]C"] = "@class.outer",
+        ["]i"] = "@conditional.outer",
+      },
+      goto_previous_start = {
+        ["[m"] = "@function.outer",
+		["[c"] = "@class.outer",
+        ["[i"] = "@conditional.outer",
+      },
+      goto_previous_end = {
+        ["[M"] = "@function.outer",
+        ["[C"] = "@class.outer",
+        ["[I"] = "@conditional.outer",
+      },
     },
   },
 }

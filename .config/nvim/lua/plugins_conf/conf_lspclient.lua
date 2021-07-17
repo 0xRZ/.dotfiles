@@ -63,7 +63,6 @@ local on_attach = function(client, bufnr)
     ]], false)
   end
 
-  vim.api.nvim_set_current_dir(client.config.root_dir);
 end
 
 local function setup_servers()
