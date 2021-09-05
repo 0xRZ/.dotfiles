@@ -52,12 +52,10 @@ function! s:listPlugins()
 	if (system("uname -m") == "x86_64\n")
 		Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 		Plug 'oberblastmeister/neuron.nvim'
-
-		Plug 'tjdevries/gruvbuddy.nvim'
-		Plug 'tjdevries/colorbuddy.vim'
-		Plug 'Th3Whit3Wolf/onebuddy'
-
 	endif
+	Plug 'tjdevries/gruvbuddy.nvim'
+	Plug 'tjdevries/colorbuddy.vim'
+	Plug 'Th3Whit3Wolf/onebuddy'
 	Plug 'Raimondi/delimitMate'
 	Plug 'b3nj5m1n/kommentary'
 	Plug 'akinsho/nvim-toggleterm.lua'
@@ -131,6 +129,9 @@ vnoremap <esc> <nop>
 " nnoremap <c-e> 3<c-e>
 " nnoremap <c-y> 3<c-y>
 let mapleader = "\<Space>"
+nnoremap . <nop>
+ " filetype specific mapping
+let maplocalleader = "."
 " \ start mappings for a toggle
 nnoremap <leader>m @q
 nnoremap <leader>sv	:source $MYVIMRC<cr>
@@ -147,11 +148,11 @@ vnoremap <leader>p "_dP
 nnoremap <leader>= :vertical resize +20<CR>
 nnoremap <leader>- :vertical resize -20<CR>
 nnoremap \w :set wrap!<CR>
+nnoremap \n :set number!<CR>
 nnoremap <leader>/ :noh<CR>
 " nnoremap <leader>sf :w<CR>
 nnoremap <leader>q :qa<CR>
 vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
-nnoremap <leader>re :Grepper<CR>
 function! s:toggleQuickFix()
     if empty(filter(getwininfo(), 'v:val.quickfix'))
         copen
@@ -161,8 +162,6 @@ function! s:toggleQuickFix()
 endfunction
 nnoremap \x :call <SID>toggleQuickFix()<CR>
 nnoremap <leader>ig :let @l=@%.":".line('.')<CR>:call setreg('+',@l)<CR>:echo @l." copied to clipboard"<CR>
-" nnoremap <leader>ig :"=echom @%.":" . line(".")<CR>
-xmap <leader>re <plug>(GrepperOperator)
 nnoremap <leader>sm :MarkdownPreviewToggle<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
@@ -177,33 +176,8 @@ EOF
 
 " Colorschemes {{{ "
 " lua require('colorbuddy').colorscheme('colorschemes/simple_light', true)
-if (system("uname -m") == "x86_64\n")
 	lua require('colorbuddy').colorscheme('onebuddy', true)
 	lua require('colorbuddy').colorscheme('colorschemes.colorsch_enhancement_onebuddy_light', true)
-else
-	set background=light
-lua << EOF
-	vim.g.material_style = 'lighter'
-	vim.g.material_italic_comments = true
-	vim.g.material_italic_keywords = false
-	vim.g.material_italic_functions = false
-	vim.g.material_italic_variables = false
-	vim.g.material_lighter_contrast = true
-	vim.g.material_contrast = true
-	vim.g.material_borders = true
-	vim.g.material_disable_background = false
-	vim.g.material_custom_colors = {
-		highlight = '#6dbed7',
-		disabled = '#2f2d44',
-}
-	require('material').set()
-EOF
-	hi StatusLine guibg=#bae4ff
-	hi MyLspReferenceRead guifg=#d70000
-	hi MyLspReferenceText guifg=#d70000
-	hi MyLspReferenceWrite guifg=#d70000
-	hi JumpHiglight guifg=#bae4ff guibg=#bae4ff
-endif
 
 " colorscheme onedark
 " let g:vscode_style = "light"
@@ -293,7 +267,6 @@ EOF
 lua << EOF
 require('plugins_conf/conf_treesitter')
 EOF
-
 " }}} nvim-treesitter "
 
 " }}} LSP client setup "
@@ -611,9 +584,14 @@ tnoremap <silent> \r <C-\><C-n>:RnvimrToggle<CR>
 " }}} File explorer "
 
 " Search {{{ "
-let g:grepper = {}
-let g:grepper.tools =
-  \ ['rg', 'git', 'grep', 'ag']
+runtime plugin/grepper.vim
+let g:grepper = {
+    \ 'tools': ['rg', 'rg_hidden', 'git', 'grep', 'ag'],
+    \ 'rg_hidden': {
+    \   'grepprg':    'rg -H --no-heading --vimgrep --hidden',
+    \ }}
+nnoremap <leader>re :Grepper<CR>
+xmap <leader>re <plug>(GrepperOperator)
 
 " noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
 "             \<Cmd>lua require('hlslens').start()<CR>
@@ -793,11 +771,11 @@ function s:toogle_smthscrll() abort
 		let g:smooth_scroll_toogle_var = !g:smooth_scroll_toogle_var
 endfunction
 nnoremap \s :call <SID>toogle_smthscrll()<cr>
-lua << EOF
-require('neoscroll').setup({
-    mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>', 'zz',},
-})
-EOF
+" lua << EOF
+" require('neoscroll').setup({
+"     mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>', 'zz',},
+" })
+" EOF
 " }}} Smooth scroll "
 
 " }}} Beautifiers "

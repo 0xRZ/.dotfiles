@@ -11,11 +11,12 @@ require('telescope').setup{
     	    ["<c-p>"] = false,
     	    ["<c-k>"] = actions.move_selection_previous,
     	    ["<c-b>"] = actions.delete_buffer,
+    	    ["<C-x>"] = actions.send_to_qflist + actions.open_qflist,
     	  },
     	  n = {
     	    ["<esc>"] = false,
     	    ["<c-c>"] = actions.close,
-    	    ["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
+    	    ["<C-x>"] = actions.send_to_qflist + actions.open_qflist,
     	    ["<c-b>"] = actions.delete_buffer,
     	  },
     	},
@@ -26,7 +27,8 @@ require('telescope').setup{
     	  '--with-filename',
     	  '--line-number',
     	  '--column',
-    	  '--smart-case'
+    	  '--smart-case',
+    	  '--hidden'
     	},
     	prompt_prefix = "> ",
     	selection_caret = "> ",
