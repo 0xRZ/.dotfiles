@@ -1,0 +1,59 @@
+env:
+  TERM: alacritty
+  LANG: "en_US.UTF-8"
+  LC_CTYPE: en_US.UTF-8
+
+font:
+  normal:
+    family: "JetBrainsMonoNL Nerd Font"
+    style: "Regular"
+  bold:
+    family: "JetBrainsMonoNL Nerd Font"
+    style: "Bold"
+  italic:
+    family: "JetBrainsMonoNL Nerd Font"
+    style: "Italic"
+  bold_italic:
+    family: "JetBrainsMonoNL Nerd Font"
+    style: "Bold Italic"
+  size: 15.0
+
+colors:
+  name: Google (light)
+  author: Chris Kempson
+  primary:
+    background: "#ffffff"
+    foreground: "#373b41"
+  cursor:
+    text: "#ffffff"
+    cursor: "#373b41"
+  normal:
+    black: "#1d1f21"
+    red: "#cc342b"
+    green: "#198844"
+    yellow: "#fba922"
+    blue: "#3971ed"
+    magenta: "#a36ac7"
+    cyan: "#3971ed"
+    white: "#c5c8c6"
+  bright:
+    black: "#969896"
+    red: "#cc342b"
+    green: "#198844"
+    yellow: "#fba922"
+    blue: "#3971ed"
+    magenta: "#a36ac7"
+    cyan: "#3971ed"
+    white: "#ffffff"
+
+shell:
+  program: /usr/bin/zsh
+
+key_bindings:
+  # already have that one in tmux
+  - { key: Space,     mods: Shift|Control, mode: ~Search, action: None }
+  - { key: V,         mods: Shift|Control, action: None             }
+  - { key: V,         mods: Control,       action: Paste            }
+
+debug:
+  log_level: OFF

@@ -32,9 +32,10 @@ function! s:listPlugins()
     Plug 'kyazdani42/nvim-tree.lua'
 	Plug 'lukas-reineke/indent-blankline.nvim'
 "    Plug 'kevinhwang91/nvim-hlslens'
-	Plug 'romgrk/barbar.nvim'
+	Plug 'akinsho/bufferline.nvim'
+" Do not delete window when wiping out buffer within it
+	Plug 'famiu/bufdelete.nvim'
 	" Plug 't9md/vim-choosewin'
-    Plug 'moll/vim-bbye'
 	Plug 'folke/which-key.nvim'
 	Plug 'folke/zen-mode.nvim'
 	Plug 'folke/twilight.nvim'
@@ -66,6 +67,7 @@ function! s:listPlugins()
 	Plug 'f-person/git-blame.nvim'
 	Plug 'skywind3000/asyncrun.vim'
 	Plug 'kevinhwang91/rnvimr'
+	Plug 'tmux-plugins/vim-tmux'
 
 	Plug 'marko-cerovac/material.nvim'
 	Plug 'Mofiqul/vscode.nvim'
@@ -112,6 +114,7 @@ set startofline
 set encoding=UTF-8
 set timeoutlen=300
 set noequalalways
+set nowrap
 " }}} Options "
 
 " Mappings {{{ "
@@ -145,6 +148,8 @@ nnoremap <leader>d "_d
 vnoremap <leader>d "_d
 nnoremap <leader>p "+p
 vnoremap <leader>p "_dP
+nnoremap <leader>+ :resize +5<CR>
+nnoremap <leader>_ :resize -5<CR>
 nnoremap <leader>= :vertical resize +20<CR>
 nnoremap <leader>- :vertical resize -20<CR>
 nnoremap \w :set wrap!<CR>
@@ -176,8 +181,8 @@ EOF
 
 " Colorschemes {{{ "
 " lua require('colorbuddy').colorscheme('colorschemes/simple_light', true)
-	lua require('colorbuddy').colorscheme('onebuddy', true)
-	lua require('colorbuddy').colorscheme('colorschemes.colorsch_enhancement_onebuddy_light', true)
+lua require('colorbuddy').colorscheme('onebuddy', true)
+lua require('colorbuddy').colorscheme('colorschemes.colorsch_enhancement_onebuddy_light', true)
 
 " colorscheme onedark
 " let g:vscode_style = "light"
@@ -437,33 +442,36 @@ nnoremap <leader>gfl :AsyncRun -raw git log -p -S
 vnoremap <leader>gfl "hy:AsyncRun -raw git log -p -S "<c-r>h"<cr>
 nnoremap <leader>gu :SignifyHunkUndo<CR>
 nnoremap <leader>gh :SignifyHunkDiff<CR>
-nmap [h <plug>(signify-prev-hunk)zt
-nmap ]h <plug>(signify-next-hunk)zt
+nmap [h <plug>(signify-prev-hunk)
+nmap ]h <plug>(signify-next-hunk)
 nnoremap <leader>gb <cmd>Telescope git_branches<cr>
 " }}} Git integration "
 
 " Tabs & Windows & Buffers {{{ "
-nnoremap <silent> <leader>1 :BufferGoto 1<CR>
-nnoremap <silent> <leader>2 :BufferGoto 2<CR>
-nnoremap <silent> <leader>3 :BufferGoto 3<CR>
-nnoremap <silent> <leader>4 :BufferGoto 4<CR>
-nnoremap <silent> <leader>5 :BufferGoto 5<CR>
-nnoremap <silent> <leader>6 :BufferGoto 6<CR>
-nnoremap <silent> <leader>7 :BufferGoto 7<CR>
-nnoremap <silent> <leader>8 :BufferGoto 8<CR>
-nnoremap <silent> <leader>9 :BufferLast<CR>
-nnoremap <silent> <leader>d :BufferWipeout<CR>
-nnoremap <silent> <leader>h :BufferPrevious<CR>
-nnoremap <silent> <leader>l :BufferNext<CR>
-nnoremap <silent> <leader>< :BufferMovePrevious<CR>
-nnoremap <silent> <leader>> :BufferMoveNext<CR>
+lua << EOF
+require("bufferline").setup{}
+EOF
+nnoremap <silent><leader>1 <Cmd>BufferLineGoToBuffer 1<CR>
+nnoremap <silent><leader>2 <Cmd>BufferLineGoToBuffer 2<CR>
+nnoremap <silent><leader>3 <Cmd>BufferLineGoToBuffer 3<CR>
+nnoremap <silent><leader>4 <Cmd>BufferLineGoToBuffer 4<CR>
+nnoremap <silent><leader>5 <Cmd>BufferLineGoToBuffer 5<CR>
+nnoremap <silent><leader>6 <Cmd>BufferLineGoToBuffer 6<CR>
+nnoremap <silent><leader>7 <Cmd>BufferLineGoToBuffer 7<CR>
+nnoremap <silent><leader>8 <Cmd>BufferLineGoToBuffer 8<CR>
+nnoremap <silent><leader>9 <Cmd>BufferLineGoToBuffer 9<CR>
+nnoremap <silent> <leader>h :BufferLineCyclePrev<CR>
+nnoremap <silent> <leader>l :BufferLineCycleNext<CR>
+nnoremap <silent> <leader>< :BufferLineMovePrev<CR>
+nnoremap <silent> <leader>> :BufferLineMoveNext<CR>
 " Close the current buffer and move to the previous one
-nnoremap <leader>d :BufferWipeout<CR>
+nnoremap <leader>d :Bwipeout<CR>
 " Switch a buffer
-nnoremap <leader>b :BufferPick<CR>
+nnoremap gb :BufferLinePick<CR>
+" Delete a buffer
+nnoremap <silent> gB :BufferLinePickClose<CR>
 " Toggle previous buffer switch
 nmap <silent> <c-h> :e #<CR>
-
 " Go to last active tab
 au TabLeave * let g:lasttab = tabpagenr()
 nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
@@ -789,21 +797,21 @@ endif
 " }}} Notes "
 
 " Sessions {{{ "
-function s:saveSession()
-	let sess_name = input("session name: ")
-	let sess_name = stdpath('data').."/sessions/"..sess_name..".vim"
-	execute "mksession! " . sess_name 
-endfunction
+
 lua << EOF
 local opts = {
-  log_level = 'error',
+  log_level = 'info',
   auto_session_enable_last_session = false,
-  auto_session_enabled = false,
-  auto_save_enabled = false,
-  auto_restore_enabled = true,
+  auto_session_enabled = true,
+  auto_save_enabled = nil,
+  auto_restore_enabled = nil,
   auto_session_suppress_dirs = nil
 }
 require('auto-session').setup(opts)
 EOF
-nnoremap <leader>se :call <SID>saveSession()<CR>
+set sessionoptions+=options,resize,winpos,terminal
+" set sessionoptions-=blank
+set sessionoptions-=folds
+nnoremap <leader>ss	:SaveSession<cr>
+
 "	 }}} Sessions "

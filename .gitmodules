@@ -1,0 +1,8 @@
+[submodule "i3/.i3blocks/i3blocks-contrib"]
+	path = i3/.i3blocks/i3blocks-contrib
+	url = https://github.com/vivien/i3blocks-contrib
+	branch = master
+[submodule "tmux/.config/tmux/plugins/tpm"]
+	path = tmux/.config/tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm
+	branch = master
