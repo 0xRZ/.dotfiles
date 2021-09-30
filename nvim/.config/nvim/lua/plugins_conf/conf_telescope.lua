@@ -5,18 +5,17 @@ require('telescope').setup{
 		mappings = {
     	  i = {
     	    -- To disable a keymap, put [map] = false
-    	    ["<c-x>"] = false,
     	    ["<c-n>"] = false,
     	    ["<c-j>"] = actions.move_selection_next,
     	    ["<c-p>"] = false,
     	    ["<c-k>"] = actions.move_selection_previous,
     	    ["<c-b>"] = actions.delete_buffer,
-    	    ["<C-x>"] = actions.send_to_qflist + actions.open_qflist,
+    	    ["<C-x>"] = actions.smart_send_to_qflist + actions.open_qflist,
     	  },
     	  n = {
     	    ["<esc>"] = false,
     	    ["<c-c>"] = actions.close,
-    	    ["<C-x>"] = actions.send_to_qflist + actions.open_qflist,
+    	    ["<C-x>"] = actions.smart_send_to_qflist + actions.open_qflist,
     	    ["<c-b>"] = actions.delete_buffer,
     	  },
     	},

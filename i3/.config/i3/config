@@ -203,7 +203,7 @@ bindsym Mod1+i exec firefox
 bindsym Mod1+x bar mode toggle
 
 # hide dock
-bindsym Mod1+Shift+p exec --no-startup-id "shutdown_menu"
+bindsym Mod1+Shift+p exec --no-startup-id "zsh -c 'source $HOME/.zshrc && shutdown_menu'"
 
 # Screenshots
 bindsym --release Print exec --no-startup-id maim ~/Pictures/fullscreen_$(date "+%F-%T").png

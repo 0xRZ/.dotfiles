@@ -6,3 +6,25 @@
 	path = tmux/.config/tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
 	branch = master
+[submodule "zsh/.oh-my-zsh"]
+	path = zsh/.oh-my-zsh
+	url = https://github.com/ohmyzsh/ohmyzsh.git
+	branch = master
+	ignore = untracked
+[submodule "zsh/.custom_oh-my-zsh/themes/powerlevel10k"]
+	path = zsh/.custom_oh-my-zsh/themes/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
+	branch = master
+	shallow = true
+[submodule "zsh/.custom_oh-my-zsh/plugins/fzf-tab"]
+	path = zsh/.custom_oh-my-zsh/plugins/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab
+	branch = master
+[submodule "zsh/.custom_oh-my-zsh/plugins/zsh-autosuggestions"]
+	path = zsh/.custom_oh-my-zsh/plugins/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+	branch = master
+[submodule "zsh/.custom_oh-my-zsh/plugins/fast-syntax-highlighting"]
+	path = zsh/.custom_oh-my-zsh/plugins/fast-syntax-highlighting
+	url = https://github.com/zdharma/fast-syntax-highlighting.git
+	update = none

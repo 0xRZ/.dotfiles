@@ -1,2 +1,3 @@
 plugged
-.cfg
+*.log
+tmux/.config/tmux/plugins/
