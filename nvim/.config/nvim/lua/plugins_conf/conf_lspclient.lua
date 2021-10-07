@@ -3,223 +3,140 @@ local function dump(...)
     print(unpack(objects))
 end
 
-local function contains(servers, server)
-  for _, value in pairs(servers) do
-    if value == server then
-      return true
-    end
-  end
-  return false
-end
-
-local lsp_status = require('lsp-status')
-lsp_status.config({diagnostics = false})
-lsp_status.register_progress()
-require'lspinstall'.setup() -- important. to make configs of installed servers available for require'lspconfig'.<server>.setup{}
-local in_servers = require'lspinstall'.installed_servers()
-local nvim_lsp = require'lspconfig'
+-- completions
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-  lsp_status.on_attach(client)
-
   local opts = { noremap=true, silent=true }
-  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  -- buf_set_keymap('n', '<space>ss', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', 'gR', '<cmd>Telescope lsp_references<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>sd', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>xd', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
+  if client.resolved_capabilities.declaration then
+    buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  end
+  buf_set_keymap('n', 'gf', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'gF', '<Cmd>vsplit<CR><Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  if client.resolved_capabilities.hover then
+    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  end
+  if client.resolved_capabilities.signature_help then
+    buf_set_keymap('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  end
+  if client.resolved_capabilities.implementation then
+    buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  end
+  buf_set_keymap('n', '<leader>Lwa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<leader>Lwr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<leader>Lwl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  if client.resolved_capabilities.type_definition then
+   buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts) 
+  end
+  buf_set_keymap('n', '<leader>Lr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<leader>La', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>Telescope lsp_references<CR>', opts)
+  buf_set_keymap('n', '<leader>ie', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[e', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']e', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   if client.resolved_capabilities.document_formatting then
-    buf_set_keymap("n", "<space>rm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+    buf_set_keymap("n", "<leader>F", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   end
   if client.resolved_capabilities.document_range_formatting then
-    buf_set_keymap("v", "<space>rm", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+    buf_set_keymap("v", "<leader>F", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
   end
 
-  if client.resolved_capabilities.document_highlight then
-    vim.api.nvim_exec([[
-      hi! link LspReferenceRead MyLspReferenceRead
-      hi! link LspReferenceText MyLspReferenceText
-      hi! link LspReferenceWrite MyLspReferenceWrite
-      augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-    ]], false)
-  end
-
+  -- semantic highlight of a variable under cursor
+  require 'illuminate'.on_attach(client)
 end
 
-local function setup_servers()
+-- configure LSPs
+local lsp_installer = require("nvim-lsp-installer")
 
-  if in_servers.clangd == nil and vim.fn.executable("clangd") then
-    table.insert(in_servers, "cpp")
-  end
+lsp_installer.on_server_ready(function(server)
+    local opts = {}
 
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities.textDocument.completion.completionItem.snippetSupport = true
-  capabilities.textDocument.completion.completionItem.resolveSupport = {
-    properties = {
-      'documentation',
-      'detail',
-      'additionalTextEdits',
-    }
-  }
-  capabilities = vim.tbl_extend('keep', capabilities or {}, lsp_status.capabilities)
-
-  if contains(in_servers, "cpp") then
-    nvim_lsp["clangd"].setup {
-      handlers = lsp_status.extensions.clangd.setup(),
-      --init_options = {
-      --  clangdFileStatus = true
-      --},
-      on_attach = on_attach,
-      capabilities = capabilities
-    }
-  end
-
-  if contains(in_servers, "lua") then
-    local sumneko_binary = vim.fn.stdpath('data')..'/lspinstall/lua/sumneko-lua-language-server'
-    local config = {
-      cmd = { sumneko_binary },
-      on_attach = on_attach,
-      capabilities = capabilities,
-      settings = {
-        Lua = {
-          runtime = {
-            -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-            version = 'LuaJIT',
-          },
-          diagnostics = {
-            -- Get the language server to recognize the `vim` global
-            globals = {'vim'},
-          },
-          workspace = {
-            -- Make the server aware of Neovim runtime files
-            library = {
-                [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-                [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
-            }
-          },
-          -- Do not send telemetry data containing a randomized but unique identifier
-          telemetry = {
-            enable = false,
-          },
-        },
-      },
-    }
-	local rtpdirs = vim.api.nvim_get_runtime_file("lua/", true)
-    for _, path in pairs(rtpdirs) do
-        config.settings.Lua.workspace.library[path] = true
+    if server.name == "sumneko_lua" then
+		opts = require("lua-dev").setup({
+		  library = {
+		  		vimruntime = true,
+		    	types = true,
+		    	plugins = false,
+		  },
+		  lspconfig = {
+		    cmd = {vim.fn.stdpath('data')..'/lsp_servers/sumneko_lua/extension/server/bin/Linux/lua-language-server'},
+			on_attach = on_attach,
+		  	capabilities = capabilities,
+			settings = {
+				Lua = {
+					workspace = {
+						library = vim.api.nvim_get_runtime_file("", true),
+					},
+				},
+			},
+		  },
+		})
     end
-    require'lspconfig'.lua.setup(config)
 
-  end
+    if server.name == "bashls" or server.name == "yaml" then
+		opts = {
+			on_attach = on_attach,
+   			capabilities = capabilities,
+		}
+    end
 
-  if contains(in_servers, "bash") then
-    nvim_lsp["bash"].setup {
+    if server.name == "vimls" then
+		opts = {
+			on_attach = on_attach,
+   			init_options = {
+   			  isNeovim = true
+  			},
+   			capabilities = capabilities,
+		}
+    end
+
+    if server.name == "diagnosticls" then
+		opts = {
+			filetypes = { "sh" },
+			init_options = {
+				linters = {
+					shellcheck = {
+						command = "shellcheck",
+						debounce = 100,
+            			args = { "--format=gcc", "-" },
+            			offsetLine = 0,
+            			offsetColumn = 0,
+            			sourceName = "shellcheck",
+            			formatLines = 1,
+						formatPattern = {
+							"^[^:]+:(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
+							{
+								line = 1,
+								column = 2,
+								message = 4,
+								security = 3
+							}
+						},
+            			securities = {
+            			  error = "error",
+            			  warning = "warning",
+            			  note = "info"
+            			}
+					}
+				},
+				filetypes = {
+					sh = "shellcheck",
+				},
+			},
+		}
+    end
+
+    server:setup(opts)
+end)
+
+local lsp_conf = require'lspconfig'
+
+if vim.fn.executable("clangd") then
+    lsp_conf.clangd.setup {
       on_attach = on_attach,
       capabilities = capabilities
     }
-  end
-
-  if contains(in_servers, "vim") then
-    nvim_lsp["vim"].setup {
-      on_attach = on_attach,
-      init_options = {
-        isNeovim = true
-	  },
-      capabilities = capabilities
-    }
-  end
-
-  if contains(in_servers, "yaml") then
-    nvim_lsp["yaml"].setup {
-      on_attach = on_attach,
-      capabilities = capabilities
-    }
-  end
 end
-
-setup_servers()
-
-
-----------------
--- completion --
-
-require'compe'.setup {
- enabled = true;
- autocomplete = true;
- debug = false;
- min_length = 1;
- preselect = 'enable';
- throttle_time = 80;
- source_timeout = 200;
- incomplete_delay = 400;
- max_abbr_width = 100;
- max_kind_width = 100;
- max_menu_width = 100;
- documentation = true;
-
- source = {
-   path = true;
-   buffer = true;
-   calc = true;
-   nvim_lsp = true;
-   nvim_lua = true;
-   ultisnips = true;
- };
-}
-
-local t = function(str)
- return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
-local check_back_space = function()
-   local col = vim.fn.col('.') - 1
-   if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-       return true
-   else
-       return false
-   end
-end
-
--- Use (s-)tab to:
---- move to prev/next item in completion menuone
---- jump to prev/next snippet's placeholder
-_G.tab_complete = function()
- if vim.fn.pumvisible() == 1 then
-   return t "<C-n>"
- elseif check_back_space() then
-   return t "<Tab>"
- else
-   return vim.fn['compe#complete']()
- end
-end
-_G.s_tab_complete = function()
- if vim.fn.pumvisible() == 1 then
-   return t "<C-p>"
- else
-   return t "<S-Tab>"
- end
-end
-
-vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})

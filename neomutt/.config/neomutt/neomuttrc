@@ -1,0 +1,165 @@
+###################################
+# contrib/vombatidae colorscheme #
+###################################
+color normal            color253        color234 # mod
+# currently selected message
+color indicator         color227        color238
+color status            color202        color16
+color tree              color208        color234
+color signature         color102        color234
+color message           color253        color234
+color attachment        color117        color234
+color error             color30         color234
+color tilde             color130        color235
+color search       color100     default
+color markers      color138     default
+color quoted        color107     color234             # quoted text
+color quoted1       color66      color234
+color quoted2       color32      color234
+color quoted3       color30      color234
+color quoted4       color99      color234
+color quoted5       color36      color234
+color quoted6       color114     color234
+color quoted7       color109     color234
+color quoted8       color41      color234
+color quoted9       color138     color234
+# make index email preview colorfull
+color index_author color83 color234 '.*'
+color index_date color117 color234
+color index_number color226 color234
+color index_flags color201 color234 '.*'
+color body          cyan  default  "((ftp|http|https)://|news:)[^ >)\"\t]+"
+color body          cyan  default  "[-a-z_0-9.+]+@[-a-z_0-9.]+"
+color body          red   default  "(^| )\\*[-a-z0-9*]+\\*[,.?]?[ \n]"
+color body          green default  "(^| )_[-a-z0-9_]+_[,.?]?[\n]"
+color body          red   default  "(^| )\\*[-a-z0-9*]+\\*[,.?]?[ \n]"
+color body          green default  "(^| )_[-a-z0-9_]+_[,.?]?[ \n]"
+color index             color202        color234  "~F"         # Flagged
+color index             color196         color234  "~N"          # New (unread)
+color index             color196         color234  "~O" 			# Old (unread)
+color index             color229        color22  "~T"         # Tagged
+color index             color240        color234  "~D"         # Deleted
+color body green default "\`[^\`]*\`" # Green text between ` and `
+color body brightblue default "^# \.*" # Headings as bold blue
+color body brightcyan default "^## \.*" # Subheadings as bold cyan
+color body brightgreen default "^### \.*" # Subsubheadings as bold green
+# # --- header ---
+color hdrdefault        color46         color233
+color header            color198        color233    '^date:'
+color header            color153        color233    '^(to|cc|bcc):'
+color header            color120        color233    '^from:'
+color header            color178        color233    '^subject:'
+color header            color31         color233    '^user-agent:'
+color header            color48         color233    '^reply-to:'
+###################################
+
+
+
+###########
+# options #
+###########
+set sleep_time = 0		# Pause 0 seconds for informational messages
+set markers = no		# Disables the `+` displayed at line wraps
+set pager_stop = yes		# internal-pager will not move to the next message when you are at the end of a message
+set mark_old = no		# Unread mail stay unread until read
+set mime_forward = yes		# attachments are forwarded with mail
+set fcc_attach			# save attachments with the body
+set forward_format = "Fwd: %s"	# format of subject when forwarding
+set forward_references = yes	# the forwarded message becomes part of the original thread instead of starting a new one
+set forward_quote		# include message in forwards
+set reverse_name		# reply as whomever it was to
+set include			# include message in replies
+set auto_tag = yes  # apply mutt commands by default to all selected (tagged) messages without using tag-prefix
+alternative_order text/plain text/enriched text/html
+set header_cache="~/.neomutt/msghdrcache"
+set mail_check_stats
+set mail_check = 60
+set timeout=15
+set date_format="!%a, %b %d, %Y at %H:%M:%S"
+set index_format="%2C %Z %D %-15.15F %s"
+set sidebar_format="%B%?F? [%F]?%* %?N?%N/?%S"
+set editor = `echo \$EDITOR`
+set edit_headers = yes
+unset use_domain
+set realname = "Dmitry Tikhov"
+set from = "ddtikhov@gmail.com"
+set charset = UTF-8
+set send_charset="us-ascii:utf-8"
+set use_from = yes
+# set use_threads = yes
+set sort=reverse-threads
+set sort_aux=date-received
+###########
+
+
+
+###############
+# keybindings #
+###############
+# Moving around
+bind attach,browser,index       g   noop
+bind attach,browser,index       gg  first-entry
+bind attach,browser,index       G   last-entry
+bind pager                      g  noop
+bind pager                      gg  top
+bind pager                      G   bottom
+bind pager                      k   previous-line
+bind pager                      j   next-line
+# Scrolling
+bind attach,browser,pager,index \CF next-page
+bind attach,browser,pager,index \CB previous-page
+bind attach,browser,pager,index \Cu half-up
+bind attach,browser,pager,index \Cd half-down
+bind browser,pager              \Ce next-line
+bind browser,pager              \Cy previous-line
+bind index                      \Ce next-line
+bind index                      \Cy previous-line
+bind index   	 				\Ck sidebar-prev
+bind index   	 				\Cj sidebar-next
+bind index   	 				\Co sidebar-open
+bind index,pager 			 	D	sidebar-toggle-visible
+bind pager,index                d   noop
+bind pager,index                dd  delete-message
+# Threads
+bind browser,pager,index        N   search-opposite
+bind pager,index                dT  delete-thread
+bind pager,index                dt  delete-subthread
+bind pager,index                gt  next-thread
+bind pager,index                gT  previous-thread
+bind index                      za  collapse-thread
+bind index                      zA  collapse-all # Missing :folddisable/foldenable
+bind index h noop
+bind index l display-message
+bind index F noop
+macro index Fu <limit>~U\n "show unread messages"
+macro index Fa "<limit>all\n" "show all messages (undo limit)"
+macro index Ft "<limit-current-thread>" "show messages from current thread"
+set abort_key = "<Esc>"
+bind pager M noop
+macro index,pager Mt "<save-message>=[Gmail]/Trash<enter>" "move mail to trash"
+bind index <Space> tag-entry
+macro index R '<imap-fetch-mail><enter-command>echo "fetched new emails"<enter>'
+###############
+
+
+
+#########
+# Gmail #
+#########
+# imap
+set imap_user = 'ddtikhov@gmail.com'
+set folder = imaps://imap.gmail.com/
+# this folder opened by default on mutt start
+set spoolfile = "imaps://imap.gmail.com/[Gmail]/All Mail" 
+# gmail sends sent messages to record automatically
+unset record
+set postponed = "imaps://imap.gmail.com/[Gmail]/Drafts"
+set mbox = "imaps://imap.gmail.com/[Gmail]/All Mail"
+# smtp
+set smtp_url = "smtp://ddtikhov@gmail.com@smtp.gmail.com:587/"
+set ssl_force_tls = yes # Require encrypted connection
+set smtp_authenticators = 'gssapi:login'
+# gmail imap mailboxes
+set imap_check_subscribed
+# mailboxes =[Gmail]/All\ Mail =INBOX =[Gmail]/Sent\ Mail =[Gmail]/Drafts =[Gmail]/Spam =[Gmail]/Trash
+#########

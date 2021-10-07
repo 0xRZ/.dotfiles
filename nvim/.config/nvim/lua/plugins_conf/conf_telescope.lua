@@ -1,79 +1,79 @@
 local actions = require('telescope.actions')
+local action_layout = require('telescope.actions.layout')
 
 require('telescope').setup{
     defaults = {
 		mappings = {
     	  i = {
-    	    -- To disable a keymap, put [map] = false
-    	    ["<c-n>"] = false,
-    	    ["<c-j>"] = actions.move_selection_next,
-    	    ["<c-p>"] = false,
-    	    ["<c-k>"] = actions.move_selection_previous,
-    	    ["<c-b>"] = actions.delete_buffer,
-    	    ["<C-x>"] = actions.smart_send_to_qflist + actions.open_qflist,
+			["<C-h>"] = "which_key",
+    	    ["<C-j>"] = actions.move_selection_next,
+    	    ["<C-p>"] = action_layout.toggle_preview,
+    	    ["<C-k>"] = actions.move_selection_previous,
+    	    ["<C-b>"] = actions.delete_buffer,
+    		["<C-x>"] = actions.select_horizontal,
+    		["<C-s>"] = actions.select_vertical,
+			["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
     	  },
     	  n = {
     	    ["<esc>"] = false,
-    	    ["<c-c>"] = actions.close,
-    	    ["<C-x>"] = actions.smart_send_to_qflist + actions.open_qflist,
-    	    ["<c-b>"] = actions.delete_buffer,
+    	    ["<C-p>"] = action_layout.toggle_preview,
+    	    ["<C-b>"] = actions.delete_buffer,
+    		["<C-x>"] = actions.select_horizontal,
+    		["<C-s>"] = actions.select_vertical,
+			["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
+    		["<C-c>"] = actions.close,
     	  },
     	},
     	vimgrep_arguments = {
-    	  'rg',
-    	  '--color=never',
-    	  '--no-heading',
-    	  '--with-filename',
-    	  '--line-number',
-    	  '--column',
-    	  '--smart-case',
-    	  '--hidden'
+    		'rg',
+    		'--color=never',
+    		'--no-heading',
+    		'--with-filename',
+    		'--line-number',
+    		'--column',
+    		'--smart-case',
+    		'--hidden'
     	},
-    	prompt_prefix = "> ",
-    	selection_caret = "> ",
-    	entry_prefix = "  ",
-    	initial_mode = "insert",
-    	selection_strategy = "reset",
-    	sorting_strategy = "descending",
-    	layout_strategy = "horizontal",
+    	border = false,
+    	layout_strategy = "bottom_pane",
     	layout_config = {
-    	  horizontal = {
-    	    mirror = false,
-    	  },
-    	  vertical = {
-    	    mirror = false,
-    	  },
+       		bottom_pane = {
+       		 	height = 30,
+       		 	prompt_position = "top"
+       		},
     	},
-    	file_sorter =  require'telescope.sorters'.get_fuzzy_file,
-    	file_ignore_patterns = {},
-    	generic_sorter =  require'telescope.sorters'.get_generic_fuzzy_sorter,
-    	winblend = 0,
-    	border = {},
-    	borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-    	color_devicons = true,
-    	use_less = true,
-    	path_display = {},
-    	set_env = { ['COLORTERM'] = 'truecolor' }, -- default = nil,
-    	file_previewer = require'telescope.previewers'.vim_buffer_cat.new,
-    	grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep.new,
-    	qflist_previewer = require'telescope.previewers'.vim_buffer_qflist.new,
-
-    	-- Developer configurations: Not meant for general override
-    	buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker,
+    	prompt_prefix = " ",
+    	selection_caret = "",
+    	entry_prefix = "",
 	},
+    pickers = {
+    	find_files = {
+    		hidden = true,
+    		no_ignore = true,
+    	},
+    	help_tags = {
+			mappings = {
+				i = {
+					["<CR>"] = actions.select_vertical,
+				},
+				n = {
+					["<CR>"] = actions.select_vertical,
+				},
+			},
+    	},
+    	man_pages = {
+    		sections = { "ALL" },
+			mappings = {
+				i = {
+					["<CR>"] = actions.select_vertical,
+				},
+				n = {
+					["<CR>"] = actions.select_vertical,
+				},
+			},
+    	},
+    },
 }
 
-if io.popen('uname -m','r'):read('*l') == 'x86_64' then
-	require('telescope').load_extension('fzy_native')
-end
-
-local M = {}
-M.search_dotfiles = function()
-  require("telescope.builtin").find_files({
-    prompt_title = "<< dotfiles >>",
-	cwd = "~/",
-	hidden = true,
-  })
-end
-
-return M;
+require('telescope').load_extension('fzf')
+require('telescope').load_extension('projects')

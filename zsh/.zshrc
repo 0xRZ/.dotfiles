@@ -21,13 +21,14 @@ ENABLE_CORRECTION="true"
 DISABLE_MAGIC_FUNCTIONS="true"
 # COMPLETION_WAITING_DOTS="true"
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
+# auto-update
+zstyle ':omz:update' mode auto
 
 plugins=(
 				copyfile
 				encode64
 				extract
 				genpass
-				zsh_reload
 				autojump
 				docker
 				git
@@ -51,9 +52,6 @@ plugins=(
 				# zsh-syntax-highlighting
 				history-substring-search
 )
-
-# plugins/copydir
-alias cpd='copydir'
 
 # plugins/copyfile
 alias cpf='copyfile'
@@ -112,45 +110,6 @@ setopt globdots
 # treat symbols as part of a word
 WORDCHARS='*?_-.[]~=\/&;!#$%^(){}<>|'
 
-# environment variables
-export PATH=$HOME/bin:$HOME/usr/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH
-export LANG=en_US.UTF-8
-export EDITOR='nvim'
-export TERM=alacritty
-export COLORTERM=truecolor
-
-# nnn file manager
-export NNN_BMS="c:$HOME/.config;h:/home;"
-NNN_PLUG_BUNDLED='m:bulknew;f:fzcd;t:mimelist;p:preview-tui'
-NNN_PLUG_CMDS='e:-!sudo -E nvim $nnn*;l:-!less -iR $nnn*'
-NNN_PLUG_YANK='y:nnn_file_path_yank;Y:nnn_file_name_yank;d:nnn_file_dir_yank'
-export NNN_PLUG="$NNN_PLUG_BUNDLED;$NNN_PLUG_CMDS;$NNN_PLUG_YANK"
-export NNN_TRASH=1
-export NNN_OPENER=nnn_nvim_opener
-n ()
-{
-    # Block nesting of nnn in subshells
-    if [ -n $NNNLVL ] && [ "${NNNLVL:-0}" -ge 1 ]; then
-        echo "nnn is already running"
-        return
-    fi
-
-    # The default behaviour is to cd on quit (nnn checks if NNN_TMPFILE is set)
-    # To cd on quit only on ^G, remove the "export" as in:
-    #     NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
-    export NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
-
-	# multiple NNN_FIFO for previewers
-	# show hidden files by default
-	# CLI only custom opener
-    nnn -a -H -c "$@"
-
-    if [ -f "$NNN_TMPFILE" ]; then
-            . "$NNN_TMPFILE"
-            rm -f "$NNN_TMPFILE" > /dev/null
-    fi
-}
-
 # widgets 
 function expand-alias() {
 	zle _expand_alias
@@ -179,6 +138,8 @@ function fzf_get_alias() {
 # aliases
 alias tssh='TERM=xterm-256color ssh'
 alias a='print -z $(fzf_get_alias)'
+alias v='$EDITOR'
+alias vt='v -c "set buftype=nofile" -'
 alias hl='history | tail'
 alias nf='n -P f'
 alias ts='tmux new-session -s'
@@ -187,8 +148,22 @@ alias tad='tmux attach-session -d -t'
 alias tkss='tmux kill-session -t'
 alias tksv='tmux kill-server'
 alias tl='tmux list-sessions'
-alias gcl='git clone --recurse-submodules --jobs $(nproc)'
+alias gcl='git clone'
+alias gclr='git clone --recurse-submodules --jobs $(nproc)'
 alias gla='git log --graph --decorate --author=""'
+alias ddr='dd if=/dev/urandom bs=4K count=1 | e64 > output.dat'
+alias vdss='rm $HOME/.local/share/nvim/sessions/*.vim'
+alias vlsw='ls $HOME/.local/share/nvim/swap/*.swp'
+alias vdsw='rm -f $HOME/.local/share/nvim/swap/*.swp'
+alias rd='\rm -r -f'
+alias psg='ps -wwo "pid,wchan,cmd" -p $(pgrep nvim)'
+alias k='kill -9 '
+alias tclr='trash-empty'
+
+
+# cat > output.dat << EOF
+# 
+# EOF
 
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.

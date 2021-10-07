@@ -16,6 +16,7 @@ setlocal conceallevel=2
 " }}} Options "
 
 " Mappings {{{ "
+nnoremap <buffer> \p :MarkdownPreviewToggle<CR>
 nmap <buffer> gP <Plug>Markdown_MoveToParentHeader
 nmap <buffer> gC <Plug>Markdown_MoveToCurHeader
 nmap <buffer> gn <Plug>Markdown_MoveToNextHeader

@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+. $(dirname $0)/.nnn-plugin-helper
+CUR_CTX=1
+
+DIR=$(xclip -o -selection clipboard)
+if [ ! ${DIR:0:1} == "/" ] ; then DIR=${PWD}/${DIR}; fi
+
+nnn_cd "${DIR}"

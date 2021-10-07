@@ -183,6 +183,8 @@ bar {
 	tray_padding 0
 }
 
+focus_follows_mouse no
+
 # ------------------------------------------
 # CUSTOM KEYMAPS 
 # ------------------------------------------
@@ -194,7 +196,9 @@ bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ to
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 # calculator
-bindsym Mod1+c exec --no-startup-id "rofi -show calc -modi calc -no-show-match -no-sort -no-persist-history > /dev/null"
+# histor file: $HOME/.local/share/rofi/rofi_calc_history
+bindsym Mod1+c exec --no-startup-id "rofi -show calc -modi calc -no-show-match -no-sort -calc-command 'echo -n '{result}' | xclip -i -selection clipboard'> /dev/null"
+
 
 # browser
 bindsym Mod1+i exec firefox
@@ -202,18 +206,18 @@ bindsym Mod1+i exec firefox
 # hide dock
 bindsym Mod1+x bar mode toggle
 
-# hide dock
+# poweroff menu
 bindsym Mod1+Shift+p exec --no-startup-id "zsh -c 'source $HOME/.zshrc && shutdown_menu'"
 
 # Screenshots
-bindsym --release Print exec --no-startup-id maim ~/Pictures/fullscreen_$(date "+%F-%T").png
-bindsym --release Mod4+Print exec --no-startup-id maim --window $(xdotool getactivewindow) ~/Pictures/active_$(date "+%F-%T").png
-bindsym --release Shift+Print exec --no-startup-id maim --select ~/Pictures/selection_$(date "+%F-%T").png
+bindsym --release Mod4+Print exec --no-startup-id maim ~/Pictures/fullscreen_$(date "+%F-%T").png
+bindsym --release Shift+Print exec --no-startup-id maim --window $(xdotool getactivewindow) ~/Pictures/active_$(date "+%F-%T").png
+bindsym --release Print exec --no-startup-id maim --select ~/Pictures/selection_$(date "+%F-%T").png
 
 ## Clipboard Screenshots
-bindsym --release Ctrl+Print exec --no-startup-id maim | xclip -selection clipboard -t image/png
-bindsym --release Ctrl+Mod4+Print exec --no-startup-id maim --window $(xdotool getactivewindow) | xclip -selection clipboard -t image/png
-bindsym --release Ctrl+Shift+Print exec --no-startup-id maim --select | xclip -selection clipboard -t image/png
+bindsym --release Ctrl+Mod4+Print exec --no-startup-id maim | xclip -selection clipboard -t image/png
+bindsym --release Ctrl+Shift+Print exec --no-startup-id maim --window $(xdotool getactivewindow) | xclip -selection clipboard -t image/png
+bindsym --release Ctrl+Print exec --no-startup-id maim --select | xclip -selection clipboard -t image/png
 
 # ------------------------------------------
 # AUTOSTART

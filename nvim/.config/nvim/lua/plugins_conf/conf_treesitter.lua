@@ -1,42 +1,46 @@
 require'nvim-treesitter.configs'.setup {
+
+  ensure_installed = { "c", "cpp", "lua", "bash", "vim", "yaml", "query" },
+  sync_install = false,
+  -- treesitter modules
   highlight = {
     enable = true,
---    custom_captures = {
---      -- Highlight the @foo.bar capture group with the "Identifier" highlight group.
---      ["foo.bar"] = "Identifier",
---    },
 	additional_vim_regex_highlighting = false,
   },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "gnn",
-      node_incremental = "grn",
-      scope_incremental = "grc",
-      node_decremental = "grm",
-    },
-  },
-  indent = {
+
+  -- JoosepAlviste/nvim-ts-context-commentstring plugin
+  -- semantic nested commenting
+  context_commentstring = {
     enable = true
   },
-  playground = {
+
+  -- andymass/vim-matchup plugin
+  -- better integration for %
+  matchup = {
     enable = true,
-    disable = {},
-    updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
-    persist_queries = false, -- Whether the query persists across vim sessions
-    keybindings = {
-      toggle_query_editor = 'o',
-      toggle_hl_groups = 'i',
-      toggle_injected_languages = 't',
-      toggle_anonymous_nodes = 'a',
-      toggle_language_display = 'I',
-      focus_language = 'f',
-      unfocus_language = 'F',
-      update = 'R',
-      goto_node = '<cr>',
-      show_help = '?',
+  },
+
+  -- p00f/nvim-ts-rainbow plugin
+  -- highlight parentheses
+  rainbow = {
+    enable = true,
+    extended_mode = true,
+    max_file_lines = nil,
+	colors = {
+	  "#000000",
+	  "#003CFF",
+	  "#D27000",
+	  "#00D207",
+	  "#CD007B",
+	  "#9A00FF",
+	  "#00C4DA",
     },
   },
+
+  -- nvim-treesitter/playground plugin
+  playground = {},
+
+  -- nvim-treesitter-textobjects plugin
   textobjects = {
     select = {
       enable = true,
@@ -82,8 +86,5 @@ require'nvim-treesitter.configs'.setup {
       },
     },
   },
-}
 
-vim.api.nvim_win_set_option(0,"foldmethod","expr")
-vim.api.nvim_win_set_option(0,"foldexpr","nvim_treesitter#foldexpr()")
-vim.api.nvim_win_set_option(0,"foldlevel",99)
+}

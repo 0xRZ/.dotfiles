@@ -16,7 +16,9 @@ font:
   bold_italic:
     family: "JetBrainsMonoNL Nerd Font"
     style: "Bold Italic"
-  size: 15.0
+  size: 16.5
+  # also good
+  # size: 15.0
 
 colors:
   name: Google (light)

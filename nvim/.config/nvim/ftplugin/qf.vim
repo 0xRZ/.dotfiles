@@ -1,2 +1,5 @@
-nnoremap <buffer> \b :BqfToggle<CR>
-nnoremap <buffer> <Space>q :cclose<CR>
+nmap <buffer> [f <Plug>(qf_previous_file)
+nmap <buffer> ]f <Plug>(qf_next_file)
+nnoremap <buffer> <silent> <leader>h :colder<cr>
+nnoremap <buffer> <silent> <leader>l :cnewer<cr>
+nnoremap <buffer> <silent> <leader>d :cclose<cr>
