@@ -10,7 +10,10 @@ export SHELL=/bin/zsh
 export ESCDELAY=0
 
 # nnn file manager
-export NNN_BMS="c:$HOME/.config;h:/home;t:$HOME/.local/share/Trash;b:$HOME/build;d:$HOME/.dotfiles"
+export NNN_BMS="\
+c:$HOME/.config;h:/home;t:$HOME/.local/share/Trash;\
+b:$HOME/build;d:$HOME/.dotfiles;p:$HOME/.backup;\
+"
 NNN_PLUG_BUNDLED='m:bulknew;f:fzcd;t:mimelist;p:preview-tui'
 NNN_PLUG_CMDS='e:-!sudo -E nvim $nnn*;l:-!less -iR $nnn*'
 NNN_PLUG_YANK='y:nnn_file_path_yank;Y:nnn_file_name_yank;d:nnn_file_dir_yank'
@@ -34,7 +37,8 @@ n ()
 	# multiple NNN_FIFO for previewers
 	# show hidden files by default
 	# CLI only custom opener
-    nnn -a -H -c "$@"
+	# always use selection
+    nnn -a -H -c -u "$@"
 
     if [ -f "$NNN_TMPFILE" ]; then
             . "$NNN_TMPFILE"

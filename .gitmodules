@@ -26,5 +26,5 @@
 	branch = master
 [submodule "zsh/.custom_oh-my-zsh/plugins/fast-syntax-highlighting"]
 	path = zsh/.custom_oh-my-zsh/plugins/fast-syntax-highlighting
-	url = https://github.com/zdharma/fast-syntax-highlighting.git
+	url = https://github.com/zdharma-continuum/fast-syntax-highlighting
 	update = none

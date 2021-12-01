@@ -1,7 +1,7 @@
 #!/bin/bash
 
-term_configs=(bin gdb nvim tmux zsh nnn)
-desktop_configs=("${term_configs[@]}" usr fonts alacritty i3 picom redshift rofi neomutt)
+term_configs=(bin nvim tmux zsh nnn)
+desktop_configs=("${term_configs[@]}" fonts alacritty i3 picom redshift rofi neomutt)
 
 function check_prog() {
     if ! hash "$1" > /dev/null 2>&1; then
@@ -23,21 +23,17 @@ function install_term() {
 	else
 		echo "nnn plugins already installed"
 	fi
-	set -x
 	for e in "${term_configs[@]}"; do
-		stow --target "$HOME" "$e"
-	set +x
+		stow --verbose=2 --target "$HOME" "$e"
 	done
 	./tmux/.config/tmux/plugins/tpm/bin/install_plugins
 }
 
 function install_desktop() {
-	set -x
 	make -C ./i3/.i3blocks
 	for e in "${desktop_configs[@]}"; do
-		stow --target "$HOME" "$e"
+		stow --verbose=2 --target "$HOME" "$e"
 	done
-	set +x
 }
 
 function check_health() {
@@ -46,11 +42,9 @@ function check_health() {
 }
 
 function clear() {
-	set -x
 	for e in "${desktop_configs[@]}"; do
-		stow -D --target "$HOME" "$e"
+		stow --verbose=2 -D --target "$HOME" "$e"
 	done
-	set +x
 }
 
 function configure() {
@@ -76,10 +70,13 @@ script to install dotfiles
 
 TYPE:
 	--t |-term		
-		only install dotfiles for programs that are available through terminal interface; fetches plugins for an nnn file manager; installs plugins for Tmux's Plugin Manager TPM
+		only install dotfiles for programs that are available through terminal interface;
+			fetches plugins for an nnn file manager;
+			installs plugins for Tmux's Plugin Manager TPM
 
 	--d | -desktop	
-		install dotfiles fully fledged; compiles c programs for an i3blocks status bar
+		install dotfiles fully fledged;
+			compiles c programs for an i3blocks status bar
 
 OPTION:
 	--c | -configure
@@ -100,37 +97,37 @@ DESK=0
 while (( $# )); do
   case "$1" in
     -t|--term)
-      CLI=1
-      shift
-      ;;
+    	CLI=1
+    	shift
+    	;;
     -d|--desktop)
-      DESK=1
-      shift
-      ;;
+    	DESK=1
+    	shift
+    	;;
     -h|--help)
-      echo "$usage"
-      exit
-      ;;
+    	echo "$usage"
+    	exit
+    	;;
     -u|--update)
-      update
-      exit
-      ;;
+    	update
+    	exit
+    	;;
     -c|--configure)
-      configure
-      exit
-      ;;
+    	configure
+    	exit
+    	;;
     --checkhealth)
-      check_health
-      exit
-      ;;
+    	check_health
+    	exit
+    	;;
     -l|--clear)
-      clear
-      exit
-      ;;
+    	clear
+    	exit
+    	;;
     -*)
-      echo "Error: Unsupported flag $1" >&2
-      exit 1
-      ;;
+    	echo "Error: Unsupported flag $1" >&2
+    	exit 1
+    	;;
   esac
 done
 

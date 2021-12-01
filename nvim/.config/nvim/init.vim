@@ -13,6 +13,8 @@ function! s:listPlugins()
     Plug 'rmagatti/goto-preview',
 	Plug 'ray-x/lsp_signature.nvim'
 	Plug 'ldelossa/calltree.nvim'
+	Plug 'kosayoda/nvim-lightbulb'
+	Plug 'weilbith/nvim-code-action-menu'
 	" auto change cwd
 	Plug 'ahmedkhalf/project.nvim'
 
@@ -85,9 +87,10 @@ function! s:listPlugins()
 	Plug 'matze/vim-move'
 	Plug 'godlygeek/tabular'
 	Plug 'jbyuki/venn.nvim'
-	" browse
+	" movement
 	Plug 'phaazon/hop.nvim'
 	Plug 'andymass/vim-matchup'
+	Plug 'unblevable/quick-scope'
 	Plug 'nacro90/numb.nvim'
 	" search
 	Plug 'mhinz/vim-grepper'
@@ -220,6 +223,8 @@ nnoremap <leader>id :echo getcwd()<CR>
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
+inoremap <C-p> <C-r>"y
+onoremap w iw
 
 " }}} Mappings "
 
@@ -326,6 +331,18 @@ lua << EOF
 EOF
 hi TreesitterContext guibg=#ECFFFF gui=bold
 
+" show lightbulb when there is a code action available under cursor
+autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb({
+	\ sign = {
+	\    enabled = false,
+	\ },
+	\ virtual_text = {
+	\   enabled = true,
+	\    text = "💡",
+	\   hl_mode = "replace",
+	\},
+\})
+
 " }}} LSP "
 
 " Class viewer {{{ "
@@ -392,7 +409,17 @@ nnoremap <leader>fgt <cmd>Telescope git_stash<cr>
 nnoremap <leader>gs :Git<cr>
 nnoremap <leader>ga :Gwrite<cr>
 nnoremap <leader>gc :Git commit<cr>
-nnoremap <leader>gr :Git commit -m "this commit will be rebased on its parent" <Bar> Git reset --soft HEAD~1 <Bar> Git commit --amend <cr>
+function s:rebaseStagedChanges()
+	let ans = input("Is everything needed to be rebased on top of previous commit staged? y/n: ")
+	if ans == 'y'
+		echo "\n"
+		execute "Git reset --soft HEAD~1"
+		execute "Git commit --amend"
+    else
+        return
+    endif 
+endfunction
+nnoremap <leader>gr :call <SID>rebaseStagedChanges()<cr>
 function s:showBranchCommitDiffs()
 	let branch_name = input("Base branch for which to show commits difference: ", "master")
 	execute "Git log "..branch_name..".."..FugitiveHead()
@@ -680,6 +707,14 @@ lua	require'hop'.setup()
 
 " }}} Jump to word "
 
+" Highlight unique characters on a line {{{ "
+
+highlight QuickScopePrimary guibg='#FF7C7C' gui=bold,underline 
+highlight QuickScopeSecondary guibg='#FF00FF' gui=bold,underline
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+
+" }}} Highlight unique characters on a line "
+
 " Matching bracket navigation {{{ "
 
 let g:matchup_matchparen_offscreen = {}
@@ -735,7 +770,7 @@ lua require("todo-comments").setup()
 " Highlight word under cursor {{{ "
 
 function s:highlight_matches()
-	hi illuminatedWord gui=underline guibg=#FFC0C2
+	hi illuminatedWord guibg=#FFC0C2
 	hi! link LspReferenceText illuminatedWord
 	hi! link LspReferenceRead illuminatedWord
 	hi! link LspReferenceWrite illuminatedWord
