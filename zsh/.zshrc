@@ -22,7 +22,7 @@ DISABLE_MAGIC_FUNCTIONS="true"
 # COMPLETION_WAITING_DOTS="true"
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 # auto-update
-zstyle ':omz:update' mode auto
+zstyle ':omz:update' mode disabled
 
 plugins=(
 				copyfile
@@ -159,6 +159,7 @@ alias rd='\rm -r -f'
 alias psg='ps -wwo "pid,wchan,cmd" -p $(pgrep nvim)'
 alias k='kill -9 '
 alias tclr='trash-empty'
+alias "src"='omz reload'
 
 
 # cat > output.dat << EOF

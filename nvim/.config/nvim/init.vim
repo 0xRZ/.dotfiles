@@ -1,5 +1,16 @@
 " Plugins initialization {{{ "
 
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+endif
+
+" Run PlugInstall if there are missing plugins
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  \| PlugInstall --sync | source $MYVIMRC
+\| endif
+
 function! s:listPlugins()
 	call plug#begin()
 
@@ -104,6 +115,7 @@ function! s:listPlugins()
 	Plug 'lukas-reineke/indent-blankline.nvim'
 	Plug 'RRethy/vim-illuminate'
 	Plug 'lewis6991/foldsigns.nvim'
+	Plug 'rhysd/vim-grammarous'
 	" filetype specific
 	Plug 'sheerun/vim-polyglot'
 	Plug 'tmux-plugins/vim-tmux'
@@ -125,18 +137,7 @@ function! s:listPlugins()
 	call plug#end()
 endfunction
 
-" delete ~/.local/share/nvim/site/autoload/plug.vim for first_time_start() invoke
-let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
-if empty(glob(data_dir . '/autoload/plug.vim'))
-	function s:first_time_start()
-		LspInstall --sync sumneko_lua bashls vimls yamlls diagnosticls
-		PlugInstall
-	endfunction
-	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-	autocmd VimEnter * call <SID>first_time_start()
-	call s:listPlugins()
-	finish
-endif
+" LspInstall --sync sumneko_lua bashls vimls yamlls diagnosticls
 
 call s:listPlugins()
 
@@ -167,6 +168,11 @@ set timeoutlen=300
 set nowrap
 set pastetoggle=<F3>
 autocmd InsertLeave * set nopaste
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+augroup END
 
 " }}} Options "
 
@@ -187,8 +193,8 @@ inoremap <esc> <nop>
 vnoremap <esc> <nop>
 nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
-nnoremap <c-d> 9j
-nnoremap <c-u> 9k
+nnoremap <c-d> 10j
+nnoremap <c-u> 10k
 let mapleader = "\<Space>"
 nnoremap . <nop>
 " '\' starts mappings for a toggle
@@ -223,8 +229,10 @@ nnoremap <leader>id :echo getcwd()<CR>
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
-inoremap <C-p> <C-r>"y
+inoremap <C-p> <C-r>"
 onoremap w iw
+onoremap q i"
+onoremap Q i'
 
 " }}} Mappings "
 
@@ -457,15 +465,15 @@ require('gitsigns').setup {
     ['n ]h'] = { expr = true, "&diff ? ']c' : '<cmd>lua require\"gitsigns.actions\".next_hunk()<CR>'"},
     ['n [h'] = { expr = true, "&diff ? '[c' : '<cmd>lua require\"gitsigns.actions\".prev_hunk()<CR>'"},
 
-    ['n <leader>ghs'] = '<cmd>lua require"gitsigns".stage_hunk()<CR>',
-    ['v <leader>ghs'] = '<cmd>lua require"gitsigns".stage_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
-    ['n <leader>ghu'] = '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>',
-    ['n <leader>ghr'] = '<cmd>lua require"gitsigns".reset_hunk()<CR>',
-    ['v <leader>ghr'] = '<cmd>lua require"gitsigns".reset_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
-    ['n <leader>ghR'] = '<cmd>lua require"gitsigns".reset_buffer()<CR>',
-    ['n <leader>ghp'] = '<cmd>lua require"gitsigns".preview_hunk()<CR>',
-    ['n <leader>ghb'] = '<cmd>lua require"gitsigns".blame_line(true)<CR>',
-    ['n <leader>ghU'] = '<cmd>lua require"gitsigns".reset_buffer_index()<CR>',
+    ['n <leader>gh'] = '<cmd>lua require"gitsigns".preview_hunk()<CR>',
+    ['n <leader>gHs'] = '<cmd>lua require"gitsigns".stage_hunk()<CR>',
+    ['v <leader>gHs'] = '<cmd>lua require"gitsigns".stage_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
+    ['n <leader>gHu'] = '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>',
+    ['n <leader>gHr'] = '<cmd>lua require"gitsigns".reset_hunk()<CR>',
+    ['v <leader>gHr'] = '<cmd>lua require"gitsigns".reset_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
+    ['n <leader>gHR'] = '<cmd>lua require"gitsigns".reset_buffer()<CR>',
+    ['n <leader>gHb'] = '<cmd>lua require"gitsigns".blame_line(true)<CR>',
+    ['n <leader>gHU'] = '<cmd>lua require"gitsigns".reset_buffer_index()<CR>',
 
     -- Text objects
     ['o ih'] = ':<C-U>lua require"gitsigns.actions".select_hunk()<CR>',

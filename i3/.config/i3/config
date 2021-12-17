@@ -199,7 +199,6 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 # histor file: $HOME/.local/share/rofi/rofi_calc_history
 bindsym Mod1+c exec --no-startup-id "rofi -show calc -modi calc -no-show-match -no-sort -calc-command 'echo -n '{result}' | xclip -i -selection clipboard'> /dev/null"
 
-
 # browser
 bindsym Mod1+i exec firefox
 

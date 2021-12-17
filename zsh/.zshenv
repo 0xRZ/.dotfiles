@@ -15,7 +15,7 @@ c:$HOME/.config;h:/home;t:$HOME/.local/share/Trash;\
 b:$HOME/build;d:$HOME/.dotfiles;p:$HOME/.backup;\
 "
 NNN_PLUG_BUNDLED='m:bulknew;f:fzcd;t:mimelist;p:preview-tui'
-NNN_PLUG_CMDS='e:-!sudo -E nvim $nnn*;l:-!less -iR $nnn*'
+NNN_PLUG_CMDS='s:-!sudoedit $nnn*'
 NNN_PLUG_YANK='y:nnn_file_path_yank;Y:nnn_file_name_yank;d:nnn_file_dir_yank'
 NNN_PLUG_CD='c:nnn_clipboard_file_path_cd'
 export NNN_PLUG="$NNN_PLUG_BUNDLED;$NNN_PLUG_CMDS;$NNN_PLUG_YANK;$NNN_PLUG_CD;"

@@ -49,18 +49,31 @@ function clear() {
 
 function configure() {
 	check_root
-	set -x
 	check_prog update-alternatives chsh
 	chsh -s "$(which zsh)"
 	update-alternatives --install /usr/bin/vim vim /usr/local/bin/nvim 200
-	set +x
 }
 
 function update() {
-	set -x
-	git submodule update --remote --recursive --jobs "$(nproc)"
-	./tmux/.config/tmux/plugins/tpm/bin/update_plugins all
-	set +x
+	local -a submodules_paths
+	local is_init=true
+	cd "$(dirname "$0")" || { echo "cd failure" >&2; exit 1; }
+	IFS=$'\n' read -r -d '' -a submodules_paths < <( git config --file .gitmodules --path --get-regexp 'submodule.*.path$' | cut -d " " -f 2 )
+	for i in "${submodules_paths[@]}"
+	do
+		if ! ls "$i"/.git >/dev/null 2>&1 ; then
+			echo >&2 "$i module not initialized."
+			is_init=false
+		fi
+	done
+	# INFO: --checkout = checks out superproject's submodule commit, --remote checks out latest submodule's branch commit
+	if [ "$is_init" = true ]; then
+		git submodule update --remote --recursive --jobs "$(nproc)" --depth 1
+		./tmux/.config/tmux/plugins/tpm/bin/update_plugins all
+	else
+		echo "Initializing repo submodules..."
+		git submodule update --checkout --init --jobs "$(nproc)" --depth 1
+	fi
 }
 
 usage="
@@ -76,14 +89,15 @@ TYPE:
 
 	--d | -desktop	
 		install dotfiles fully fledged;
-			compiles c programs for an i3blocks status bar
+			compiles c blocklets for an i3blocks status bar
 
 OPTION:
 	--c | -configure
 		configure default programs for persistent sessions
 
 	 -u | --update
-		update tmux plugins, git submodules
+		update tmux plugins, git submodules;
+		or initialize git submodules if its not initialized already
 
 	 -l | --clear
 		clean environment from config files
