@@ -128,10 +128,9 @@ Plug 'Mofiqul/vscode.nvim'
 call plug#end()
 
 if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-	echo "Some modules are missing, run :PlugInstall"
+	echom "Some modules are missing, run :PlugInstall"
 	finish
 endif
-" LspInstall --sync sumneko_lua bashls vimls yamlls diagnosticls
 
 " }}} Plugins initialization "
 

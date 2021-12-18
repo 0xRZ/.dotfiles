@@ -70,7 +70,7 @@ require'lualine'.setup {
     lualine_x = {
 	{
 		'diagnostics',
-		sources = {'nvim_lsp'},
+		sources = {'nvim_diagnostic'},
     	diagnostics_color = {
     		error = { fg = '#FF0000', },
     		warn  = { fg = '#FFEF00', },
