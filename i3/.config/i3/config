@@ -8,7 +8,7 @@ font pango:FontAwesome 14
 # alt
 set $mod Mod1
 # win-key
-# set $sup Mod4
+# set $mod Mod4
 
 # Options
 focus_follows_mouse no
