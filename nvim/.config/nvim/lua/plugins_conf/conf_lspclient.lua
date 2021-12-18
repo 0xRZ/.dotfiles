@@ -28,7 +28,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'glwr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
   buf_set_keymap('n', 'glwl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   if client.resolved_capabilities.type_definition then
-   buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts) 
+   buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   end
   buf_set_keymap('n', 'glr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', 'gla', '<cmd>CodeActionMenu<CR>', opts)
@@ -48,109 +48,106 @@ local on_attach = function(client, bufnr)
   require 'illuminate'.on_attach(client)
 end
 
--- configure LSPs
-local lsp_installer = require("nvim-lsp-installer")
-
-lsp_installer.on_server_ready(function(server)
-    local opts = {}
-
-    if server.name == "sumneko_lua" then
-		opts = require("lua-dev").setup({
-		  library = {
-		  		vimruntime = true,
-		    	types = true,
-		    	plugins = false,
-		  },
-		  lspconfig = {
-		    cmd = {vim.fn.stdpath('data')..'/lsp_servers/sumneko_lua/extension/server/bin/Linux/lua-language-server'},
-			on_attach = on_attach,
-		  	capabilities = capabilities,
-			settings = {
-				Lua = {
-					workspace = {
-						library = vim.api.nvim_get_runtime_file("", true),
+local lsp_servers = {}
+lsp_servers["sumneko_lua"] = function()
+	local opt
+	opt = require("lua-dev").setup({
+	library = {
+		vimruntime = true,
+	  	types = true,
+	  	plugins = false,
+	},
+	lspconfig = {
+		on_attach = on_attach,
+		capabilities = capabilities,
+		settings = {
+	  		Lua = {
+	  			workspace = {
+	  				library = vim.api.nvim_get_runtime_file("", true),
+	  			},
+	  		},
+	  	},
+	},
+	})
+	return opt
+end
+lsp_servers["bashls"] = function()
+	local opt
+	opt = {
+		on_attach = on_attach,
+		capabilities = capabilities,
+	}
+	return opt
+end
+lsp_servers["yaml"] = lsp_servers["bashls"]
+lsp_servers["vimls"] = function()
+	local opt
+	opt = {
+		on_attach = on_attach,
+   		init_options = {
+   		  isNeovim = true
+  		},
+   		capabilities = capabilities,
+	}
+	return opt
+end
+lsp_servers["diagnosticls"] = function()
+	local opt
+	opt = {
+		filetypes = { "sh" },
+		init_options = {
+			linters = {
+				shellcheck = {
+					command = "shellcheck",
+					debounce = 100,
+        			args = { "--format=gcc", "-" },
+        			offsetLine = 0,
+        			offsetColumn = 0,
+        			sourceName = "shellcheck",
+        			formatLines = 1,
+					formatPattern = {
+						"^[^:]+:(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
+						{
+							line = 1,
+							column = 2,
+							message = 4,
+							security = 3
+						}
 					},
-				},
+        			securities = {
+        			  error = "error",
+        			  warning = "warning",
+        			  note = "info"
+        			}
+				}
 			},
-		  },
-		})
-    end
-
-    if server.name == "bashls" or server.name == "yaml" then
-		opts = {
-			on_attach = on_attach,
-   			capabilities = capabilities,
-		}
-    end
-
-    if server.name == "vimls" then
-		opts = {
-			on_attach = on_attach,
-   			init_options = {
-   			  isNeovim = true
-  			},
-   			capabilities = capabilities,
-		}
-    end
-
-    if server.name == "diagnosticls" then
-		opts = {
-			filetypes = { "sh" },
-			init_options = {
-				linters = {
-					shellcheck = {
-						command = "shellcheck",
-						debounce = 100,
-            			args = { "--format=gcc", "-" },
-            			offsetLine = 0,
-            			offsetColumn = 0,
-            			sourceName = "shellcheck",
-            			formatLines = 1,
-						formatPattern = {
-							"^[^:]+:(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
-							{
-								line = 1,
-								column = 2,
-								message = 4,
-								security = 3
-							}
-						},
-            			securities = {
-            			  error = "error",
-            			  warning = "warning",
-            			  note = "info"
-            			}
-					}
-				},
-				filetypes = {
-					sh = "shellcheck",
-				},
+			filetypes = {
+				sh = "shellcheck",
 			},
-		}
-    end
-
-    server:setup(opts)
-end)
-
-local lsp_conf = require'lspconfig'
-
-if vim.fn.executable("clangd") then
-    lsp_conf.clangd.setup {
-      on_attach = on_attach,
-      capabilities = capabilities
-    }
+		},
+	}
+	return opt
 end
 
--- local lsp_installer_servers = require'nvim-lsp-installer.servers'
+local lsp_installer_servers = require'nvim-lsp-installer.servers'
 
--- local server_available, requested_server = lsp_installer_servers.get_server("rust_analyzer")
--- if server_available then
---     requested_server:on_ready(function ()
---         local opts = {}
---         requested_server:setup(opts)
---     end)
---     if not requested_server:is_installed() then
---         -- Queue the server to be installed
---         requested_server:install()
---     end
--- end
+for n, f in pairs(lsp_servers) do
+	local server_available, requested_server = lsp_installer_servers.get_server(n)
+	if server_available then
+		requested_server:on_ready(function ()
+			local opts = f()
+			requested_server:setup(opts)
+		end)
+		if not requested_server:is_installed() then
+			requested_server:install()
+		end
+	end
+end
+
+local lsp_conf = require'lspconfig'
+if vim.fn.executable("clangd") then
+    lsp_conf.clangd.setup {
+    	on_attach = on_attach,
+    	capabilities = capabilities
+    }
+end

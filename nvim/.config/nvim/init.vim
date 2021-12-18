@@ -2,144 +2,136 @@
 
 let data_dir = stdpath('data') . '/site'
 if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 endif
 
-" Run PlugInstall if there are missing plugins
-autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-  \| PlugInstall --sync | source $MYVIMRC
-\| endif
+call plug#begin()
+" LSP
+Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/nvim-lsp-installer'
+" Plug 'glepnir/lspsaga.nvim'
+Plug 'folke/trouble.nvim'
+Plug 'folke/lua-dev.nvim'
+Plug 'simrat39/symbols-outline.nvim'
+Plug 'rmagatti/goto-preview',
+Plug 'ray-x/lsp_signature.nvim'
+Plug 'ldelossa/calltree.nvim'
+Plug 'kosayoda/nvim-lightbulb'
+Plug 'weilbith/nvim-code-action-menu'
+" auto change cwd
+Plug 'ahmedkhalf/project.nvim'
 
-function! s:listPlugins()
-	call plug#begin()
+" Completion
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'rafamadriz/friendly-snippets'
+Plug 'onsails/lspkind-nvim'
 
-	" LSP
-	Plug 'neovim/nvim-lspconfig'
-	Plug 'williamboman/nvim-lsp-installer'
-	" Plug 'glepnir/lspsaga.nvim'
-	Plug 'folke/trouble.nvim'
-	Plug 'folke/lua-dev.nvim'
-    Plug 'simrat39/symbols-outline.nvim'
-    Plug 'rmagatti/goto-preview',
-	Plug 'ray-x/lsp_signature.nvim'
-	Plug 'ldelossa/calltree.nvim'
-	Plug 'kosayoda/nvim-lightbulb'
-	Plug 'weilbith/nvim-code-action-menu'
-	" auto change cwd
-	Plug 'ahmedkhalf/project.nvim'
+" treesitter
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'JoosepAlviste/nvim-ts-context-commentstring'
+Plug 'nvim-treesitter/playground'
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+Plug 'p00f/nvim-ts-rainbow'
+Plug 'romgrk/nvim-treesitter-context'
 
-	" Completion
-	Plug 'hrsh7th/nvim-cmp'
-	Plug 'hrsh7th/cmp-nvim-lsp'
-	Plug 'hrsh7th/cmp-buffer'
-	Plug 'hrsh7th/cmp-path'
-	Plug 'hrsh7th/cmp-cmdline'
-	Plug 'hrsh7th/vim-vsnip'
-	Plug 'rafamadriz/friendly-snippets'
-	Plug 'onsails/lspkind-nvim'
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'rhysd/git-messenger.vim'
+Plug 'f-person/git-blame.nvim'
+Plug 'junegunn/gv.vim'
+Plug 'lewis6991/gitsigns.nvim'
 
-	" treesitter
-	Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-	Plug 'JoosepAlviste/nvim-ts-context-commentstring'
-	Plug 'nvim-treesitter/playground'
-    Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-    Plug 'p00f/nvim-ts-rainbow'
-	Plug 'romgrk/nvim-treesitter-context'
+" Finder/telescope
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'sudormrfbin/cheatsheet.nvim'
 
-	" Git
-    Plug 'tpope/vim-fugitive'
-	Plug 'rhysd/git-messenger.vim'
-	Plug 'f-person/git-blame.nvim'
-	Plug 'junegunn/gv.vim'
-	Plug 'lewis6991/gitsigns.nvim'
+" Status line
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'SmiteshP/nvim-gps'
+Plug 'arkav/lualine-lsp-progress'
 
-	" Finder/telescope
-	Plug 'nvim-lua/popup.nvim'
-	Plug 'nvim-lua/plenary.nvim'
-	Plug 'nvim-telescope/telescope.nvim'
-	Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-	Plug 'sudormrfbin/cheatsheet.nvim'
+" Tabs & Windows & Buffers
+Plug 'akinsho/bufferline.nvim'
+Plug 'famiu/bufdelete.nvim'
+Plug 'romainl/vim-qf'
+Plug 'kevinhwang91/nvim-bqf'
+Plug 'folke/zen-mode.nvim'
+Plug 'folke/twilight.nvim'
 
-	" Status line
-	Plug 'nvim-lualine/lualine.nvim'
-	Plug 'SmiteshP/nvim-gps'
-	Plug 'arkav/lualine-lsp-progress'
+" File explorer
+Plug 'kyazdani42/nvim-tree.lua'
+Plug 'mcchrish/nnn.vim'
+" Terminal
+Plug 'kassio/neoterm'
 
-	" Tabs & Windows & Buffers
-	Plug 'akinsho/bufferline.nvim'
-	Plug 'famiu/bufdelete.nvim'
-	Plug 'romainl/vim-qf'
-	Plug 'kevinhwang91/nvim-bqf'
-	Plug 'folke/zen-mode.nvim'
-	Plug 'folke/twilight.nvim'
+" Debugging
+Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh' }
 
-	" File explorer
-    Plug 'kyazdani42/nvim-tree.lua'
-	Plug 'mcchrish/nnn.vim'
-	" Terminal
-	Plug 'kassio/neoterm'
+" Sessions
+Plug 'rmagatti/session-lens'
+Plug 'rmagatti/auto-session'
+" open file at last editing position
+Plug 'ethanholz/nvim-lastplace'
 
-	" Debugging
-	Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh' }
+" editing
+Plug 'Pocco81/AutoSave.nvim'
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'tpope/vim-surround'
+Plug 'windwp/nvim-autopairs'
+Plug 'tpope/vim-commentary'
+Plug 'matze/vim-move'
+Plug 'godlygeek/tabular'
+Plug 'jbyuki/venn.nvim'
+" movement
+Plug 'phaazon/hop.nvim'
+Plug 'andymass/vim-matchup'
+Plug 'unblevable/quick-scope'
+Plug 'nacro90/numb.nvim'
+" search
+Plug 'mhinz/vim-grepper'
+Plug 'kevinhwang91/nvim-hlslens'
+Plug 'pechorin/any-jump.vim'
+" info
+Plug 'mbbill/undotree'
+Plug 'folke/which-key.nvim'
+Plug 'norcalli/nvim-colorizer.lua'
+Plug 'folke/todo-comments.nvim'
+Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'RRethy/vim-illuminate'
+Plug 'lewis6991/foldsigns.nvim'
+Plug 'rhysd/vim-grammarous'
+" filetype specific
+Plug 'sheerun/vim-polyglot'
+Plug 'tmux-plugins/vim-tmux'
+" markdown
+Plug 'plasticboy/vim-markdown'
+if (system("uname -m") == "x86_64\n")
+	Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+endif
+" misc
+Plug 'kyazdani42/nvim-web-devicons'
 
-	" Sessions
-    Plug 'rmagatti/session-lens'
-	Plug 'rmagatti/auto-session'
-	" open file at last editing position
-	Plug 'ethanholz/nvim-lastplace'
+" Colorschemes
+Plug 'Mofiqul/vscode.nvim'
+" Plug 'tjdevries/gruvbuddy.nvim'
+" Plug 'tjdevries/colorbuddy.vim'
+" Plug 'marko-cerovac/material.nvim'
+" Plug 'ishan9299/nvim-solarized-lua'
+call plug#end()
 
-	" editing
-	Plug 'Pocco81/AutoSave.nvim'
-	Plug 'AndrewRadev/splitjoin.vim'
-	Plug 'tpope/vim-surround'
-	Plug 'windwp/nvim-autopairs'
-	Plug 'tpope/vim-commentary'
-	Plug 'matze/vim-move'
-	Plug 'godlygeek/tabular'
-	Plug 'jbyuki/venn.nvim'
-	" movement
-	Plug 'phaazon/hop.nvim'
-	Plug 'andymass/vim-matchup'
-	Plug 'unblevable/quick-scope'
-	Plug 'nacro90/numb.nvim'
-	" search
-	Plug 'mhinz/vim-grepper'
-	Plug 'kevinhwang91/nvim-hlslens'
-	Plug 'pechorin/any-jump.vim'
-	" info
-	Plug 'mbbill/undotree'
-	Plug 'folke/which-key.nvim'
-	Plug 'norcalli/nvim-colorizer.lua'
-	Plug 'folke/todo-comments.nvim'
-	Plug 'lukas-reineke/indent-blankline.nvim'
-	Plug 'RRethy/vim-illuminate'
-	Plug 'lewis6991/foldsigns.nvim'
-	Plug 'rhysd/vim-grammarous'
-	" filetype specific
-	Plug 'sheerun/vim-polyglot'
-	Plug 'tmux-plugins/vim-tmux'
-	" markdown
-    Plug 'plasticboy/vim-markdown'
-	if (system("uname -m") == "x86_64\n")
-		Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
-	endif
-	" misc
-	Plug 'kyazdani42/nvim-web-devicons'
-
-	" Colorschemes
-	Plug 'Mofiqul/vscode.nvim'
-	" Plug 'tjdevries/gruvbuddy.nvim'
-	" Plug 'tjdevries/colorbuddy.vim'
-	" Plug 'marko-cerovac/material.nvim'
-	" Plug 'ishan9299/nvim-solarized-lua'
-
-	call plug#end()
-endfunction
-
+if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+	echo "Some modules are missing, run :PlugInstall"
+	finish
+endif
 " LspInstall --sync sumneko_lua bashls vimls yamlls diagnosticls
-
-call s:listPlugins()
 
 " }}} Plugins initialization "
 
@@ -211,7 +203,7 @@ vnoremap <leader>d "_d
 nnoremap <leader>p "+p
 vnoremap <leader>p "_dP
 nnoremap <leader>Pi :source $MYVIMRC <Bar> PlugClean <Bar> PlugInstall<cr>
-nnoremap <leader>Pu :PlugUpdate<cr>
+nnoremap <leader>Pu :PlugUpdate<cr>:TSUpdate<cr>
 nnoremap <leader>+ :resize +5<CR>
 nnoremap <leader>_ :resize -5<CR>
 nnoremap <leader>= :vertical resize +20<CR>
