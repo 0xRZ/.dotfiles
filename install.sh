@@ -11,7 +11,7 @@ function check_prog() {
 }
 
 term_configs=(bin nvim tmux zsh nnn)
-desktop_configs=("${term_configs[@]}" fonts alacritty i3 picom redshift rofi neomutt)
+desktop_configs=(fonts alacritty i3 picom redshift rofi neomutt)
 
 function install_term() {
 	if [ -z "$(ls -A ~/.config/nnn/plugins)" ]; then
@@ -71,13 +71,14 @@ $(basename "$0") [TYPE || OPTION]
 script to install dotfiles
 
 TYPE:
-	--t |-term		
-		only install dotfiles for programs that are available through terminal interface;
-			fetches plugins for an nnn file manager;
+	-t | --term
+		only install dotfiles for programs that are available through terminal interface
+			fetches plugins for an nnn file manager
 			installs plugins for Tmux's Plugin Manager TPM
 
-	--d | -desktop	
-		install dotfiles fully fledged;
+	-d | --desktop
+		install dotfiles fully fledged
+			do everything as with --term
 			compiles c blocklets for an i3blocks status bar
 
 OPTION:
@@ -101,6 +102,7 @@ while (( $# )); do
     	shift
     	;;
     -d|--desktop)
+    	CLI=1
     	DESK=1
     	shift
     	;;
@@ -127,15 +129,19 @@ while (( $# )); do
   esac
 done
 
+if [[ $CLI -eq 0 && $DESK -eq 0 ]]
+then
+	echo "Error: specify --term or --desktop flags" >&2
+	exit 1
+fi
+
 check_prog stow make gcc curl
 
+if [[ $CLI -ne 0 ]]
+then
+	install_term
+fi
 if [[ $DESK -ne 0 ]]
 then
 	install_desktop
-elif [[ $CLI -ne 0 ]]
-then
-	install_term
-else
-	echo "Error: specify --term or --desktop flags" >&2
-	exit 1
 fi
