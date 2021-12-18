@@ -1,21 +1,17 @@
 #!/bin/bash
 
+function check_prog() {
+	for prg in "$@"
+	do
+		if ! hash "$prg" > /dev/null 2>&1; then
+			echo "Command not found: $prg. Aborting..."
+			exit 1
+		fi
+	done
+}
+
 term_configs=(bin nvim tmux zsh nnn)
 desktop_configs=("${term_configs[@]}" fonts alacritty i3 picom redshift rofi neomutt)
-
-function check_prog() {
-    if ! hash "$1" > /dev/null 2>&1; then
-        echo "Command not found: $1. Aborting..."
-        exit 1
-    fi
-}
-
-function check_root() {
-	if [ "$EUID" -ne 0 ]
-		then echo "run as root"
-		exit
-	fi
-}
 
 function install_term() {
 	if [ -z "$(ls -A ~/.config/nnn/plugins)" ]; then
@@ -36,24 +32,6 @@ function install_desktop() {
 	done
 }
 
-function check_health() {
-	printf "Lines of colors should be continous:\n"
-	curl -s https://raw.githubusercontent.com/JohnMorales/dotfiles/master/colors/24-bit-color.sh | bash
-}
-
-function clear() {
-	for e in "${desktop_configs[@]}"; do
-		stow --verbose=2 -D --target "$HOME" "$e"
-	done
-}
-
-function configure() {
-	check_root
-	check_prog update-alternatives chsh
-	chsh -s "$(which zsh)"
-	update-alternatives --install /usr/bin/vim vim /usr/local/bin/nvim 200
-}
-
 function update() {
 	local -a submodules_paths
 	local is_init=true
@@ -66,9 +44,9 @@ function update() {
 			is_init=false
 		fi
 	done
-	# INFO: --checkout = checks out superproject's submodule commit, --remote checks out latest submodule's branch commit
+	# INFO: --checkout = checks out superproject's submodule commit always, --remote checks out latest submodule's branch commit
 	if [ "$is_init" = true ]; then
-		git submodule update --remote --recursive --jobs "$(nproc)" --depth 1
+		git submodule update --remote --jobs "$(nproc)" --depth 1
 		./tmux/.config/tmux/plugins/tpm/bin/update_plugins all
 	else
 		echo "Initializing repo submodules..."
@@ -76,8 +54,19 @@ function update() {
 	fi
 }
 
+function clear() {
+	for e in "${desktop_configs[@]}"; do
+		stow --verbose=2 -D --target "$HOME" "$e"
+	done
+}
+
+function check_health() {
+	printf "Lines of colors should be continous:\n"
+	curl -s https://raw.githubusercontent.com/JohnMorales/dotfiles/master/colors/24-bit-color.sh | bash
+}
+
 usage="
-$(basename "$0") TYPE [OPTION]
+$(basename "$0") [TYPE || OPTION]
 
 script to install dotfiles
 
@@ -92,14 +81,11 @@ TYPE:
 			compiles c blocklets for an i3blocks status bar
 
 OPTION:
-	--c | -configure
-		configure default programs for persistent sessions
+	-u | --update
+	   update tmux plugins, git submodules;
+	   or initialize git submodules if its not initialized already
 
-	 -u | --update
-		update tmux plugins, git submodules;
-		or initialize git submodules if its not initialized already
-
-	 -l | --clear
+	-l | --clear
 		clean environment from config files
 
 	--checkhealth
@@ -124,10 +110,6 @@ while (( $# )); do
     	;;
     -u|--update)
     	update
-    	exit
-    	;;
-    -c|--configure)
-    	configure
     	exit
     	;;
     --checkhealth)

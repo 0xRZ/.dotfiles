@@ -38,7 +38,8 @@ n ()
 	# show hidden files by default
 	# CLI only custom opener
 	# always use selection
-    nnn -a -H -c -u "$@"
+	# sort by time accessed
+    nnn -a -H -c -u -T 't' "$@"
 
     if [ -f "$NNN_TMPFILE" ]; then
             . "$NNN_TMPFILE"
