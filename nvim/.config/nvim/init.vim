@@ -204,7 +204,7 @@ vnoremap <leader>d "_d
 nnoremap <leader>p "+p
 vnoremap <leader>p "_dP
 nnoremap <leader>Pi :source $MYVIMRC <Bar> PlugClean <Bar> PlugInstall<cr>
-nnoremap <leader>Pu :PlugUpdate<cr>:TSUpdate<cr>
+nnoremap <leader>Pu :PlugUpdate --sync<cr>:TSUpdate<cr>
 nnoremap <leader>+ :resize +5<CR>
 nnoremap <leader>_ :resize -5<CR>
 nnoremap <leader>= :vertical resize +20<CR>
