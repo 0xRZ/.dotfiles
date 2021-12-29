@@ -12,6 +12,16 @@ function check_prog() {
 
 term_configs=(bin nvim tmux zsh nnn)
 desktop_configs=(fonts alacritty i3 picom redshift rofi neomutt)
+declare -A fonts=( \
+["JetBrains Mono NL Regular Nerd Font Complete.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Regular/complete/JetBrains%20Mono%20NL%20Regular%20Nerd%20Font%20Complete.ttf?raw=true" \
+["JetBrains Mono NL Bold Nerd Font Complete.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Bold/complete/JetBrains%20Mono%20NL%20Bold%20Nerd%20Font%20Complete.ttf?raw=true" \
+["JetBrains Mono NL Bold Italic Nerd Font Complete.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/BoldItalic/complete/JetBrains%20Mono%20NL%20Bold%20Italic%20Nerd%20Font%20Complete.ttf?raw=true" \
+["JetBrains Mono NL Italic Nerd Font Complete.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Italic/complete/JetBrains%20Mono%20NL%20Italic%20Nerd%20Font%20Complete.ttf?raw=true" \
+["JetBrains Mono NL Regular Nerd Font Complete Mono.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Regular/complete/JetBrains%20Mono%20NL%20Regular%20Nerd%20Font%20Complete%20Mono.ttf?raw=true" \
+["JetBrains Mono NL Bold Nerd Font Complete Mono.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Bold/complete/JetBrains%20Mono%20NL%20Bold%20Nerd%20Font%20Complete%20Mono.ttf?raw=true" \
+["JetBrains Mono NL Bold Italic Nerd Font Complete Mono.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/BoldItalic/complete/JetBrains%20Mono%20NL%20Bold%20Italic%20Nerd%20Font%20Complete%20Mono.ttf?raw=true" \
+["JetBrains Mono NL Italic Nerd Font Complete Mono.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Italic/complete/JetBrains%20Mono%20NL%20Italic%20Nerd%20Font%20Complete%20Mono.ttf?raw=true" \
+)
 
 function install_term() {
 	if [ -z "$(ls -A ~/.config/nnn/plugins)" ]; then
@@ -26,6 +36,16 @@ function install_term() {
 }
 
 function install_desktop() {
+	pushd .
+	cd fonts/.local/share/fonts || exit
+	for name in "${!fonts[@]}"
+	do
+		if ! [ -f "$name" ] ; then
+			echo "Downloading \"$name\" font..."
+			curl -L "${fonts[$name]}" -o "$name"
+		fi
+	done
+	popd || exit
 	make -C ./i3/.i3blocks
 	for e in "${desktop_configs[@]}"; do
 		stow --verbose=2 --target "$HOME" "$e"
@@ -79,6 +99,7 @@ TYPE:
 	-d | --desktop
 		install dotfiles fully fledged
 			do everything as with --term
+			downloads missing nerd fonts
 			compiles c blocklets for an i3blocks status bar
 
 OPTION:

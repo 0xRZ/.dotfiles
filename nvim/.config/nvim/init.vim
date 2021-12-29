@@ -15,7 +15,7 @@ Plug 'folke/lua-dev.nvim'
 Plug 'simrat39/symbols-outline.nvim'
 Plug 'rmagatti/goto-preview',
 Plug 'ray-x/lsp_signature.nvim'
-Plug 'ldelossa/calltree.nvim'
+Plug 'ldelossa/litee.nvim'
 Plug 'kosayoda/nvim-lightbulb'
 Plug 'weilbith/nvim-code-action-menu'
 " auto change cwd
@@ -38,6 +38,7 @@ Plug 'nvim-treesitter/playground'
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'p00f/nvim-ts-rainbow'
 Plug 'romgrk/nvim-treesitter-context'
+Plug 'mfussenegger/nvim-treehopper'
 
 " Git
 Plug 'tpope/vim-fugitive'
@@ -60,11 +61,10 @@ Plug 'arkav/lualine-lsp-progress'
 
 " Tabs & Windows & Buffers
 Plug 'akinsho/bufferline.nvim'
-Plug 'famiu/bufdelete.nvim'
+Plug 'kazhala/close-buffers.nvim'
 Plug 'romainl/vim-qf'
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'folke/zen-mode.nvim'
-Plug 'folke/twilight.nvim'
 
 " File explorer
 Plug 'kyazdani42/nvim-tree.lua'
@@ -184,8 +184,8 @@ inoremap <esc> <nop>
 vnoremap <esc> <nop>
 nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
-nnoremap <c-d> 10j
-nnoremap <c-u> 10k
+nnoremap <silent> <c-d> :<C-U>exec "normal " . (v:count > 1 ? "m'" . v:count*10 : 10) . "j"<CR>
+nnoremap <silent> <c-u> :<C-U>exec "normal " . (v:count > 1 ? "m'" . v:count*10 : 10) . "k"<CR>
 let mapleader = "\<Space>"
 nnoremap . <nop>
 " '\' starts mappings for a toggle
@@ -195,6 +195,8 @@ nnoremap <leader>sv	:source $MYVIMRC<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>
 nnoremap <leader>sn /<c-r><c-w><CR>
 vnoremap <leader>sn "hy/<c-r>h<CR>
+nnoremap <leader>sp ?<c-r><c-w><CR>
+vnoremap <leader>sP "hy?<c-r>h<CR>
 nnoremap <leader>sy /<c-r>"<CR>
 vnoremap <leader>y "+y
 nnoremap <expr> <leader>y 'gg"+yG'.( line(".") == 1 ? '' : '<C-o>')
@@ -220,10 +222,13 @@ nnoremap <leader>id :echo getcwd()<CR>
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
+nmap gh [%
 inoremap <C-p> <C-r>"
 onoremap w iw
 onoremap q i"
 onoremap Q i'
+onoremap b ib
+onoremap B iB
 
 " }}} Mappings "
 
@@ -247,11 +252,10 @@ colorscheme vscode
 hi Folded guifg=#545454 guibg=#F3F3F3
 hi DiagnosticHint guifg=#585858 
 hi TelescopePreviewNormal guibg=#E4FFFF
-hi TelescopePromptBorder   guifg=#000000
 hi TelescopeSelection guifg=#5B5B5B guibg=#FFD5D5 gui=bold
 hi TelescopeMultiSelection guifg=#5B5B5B guibg=#FFD5D5 gui=bold
 hi TelescopeMatching       guifg=#CC241D
-hi TelescopePromptPrefix   guifg=#00349B
+hi TelescopePromptNormal    guifg=#000000 guibg=#C1E3FF gui=bold
 
 " INFO: other themes which might be good
 
@@ -274,7 +278,7 @@ nnoremap gpd <cmd>lua require('goto-preview').goto_preview_definition()<CR>
 nnoremap gpi <cmd>lua require('goto-preview').goto_preview_implementation()<CR>
 nnoremap gP <cmd>lua require('goto-preview').close_all_win()<CR>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
-nnoremap gh <cmd>lua vim.lsp.buf.incoming_calls()<cr>
+" nnoremap gh <cmd>lua vim.lsp.buf.incoming_calls()<cr>
 
 " Neovim logs at: ~/.cache/nvim/lsp.log
 " vim.lsp.set_log_level("debug")
@@ -309,10 +313,10 @@ lua << EOF
 	})
 EOF
 
-" show function call hierarchy 
-lua << EOF
-	require('calltree').setup()
-EOF
+" " show function call hierarchy 
+" lua << EOF
+" 	require('litee').setup({})
+" EOF
 
 " show current context 
 lua << EOF
@@ -393,6 +397,8 @@ nnoremap <leader>ft <cmd>Telescope treesitter<cr>
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 set foldlevel=99
+omap     <silent> aa :<C-U>lua require('tsht').nodes()<CR>
+vnoremap <silent> a :lua require('tsht').nodes()<CR>
 
 " }}} Treesitter "
 
@@ -479,7 +485,7 @@ EOF
 
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fr <cmd>Telescope live_grep<cr>
-nnoremap <leader>fd <cmd>Telescope current_buffer_fuzzy_find<cr>
+nnoremap <leader>fa <cmd>Telescope current_buffer_fuzzy_find<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fm <cmd>Telescope man_pages<cr>
@@ -511,8 +517,8 @@ require("bufferline").setup {
 			end
 		end,
 		indicator_icon = '',
-		close_command = "Bdelete %d",
-		right_mouse_command = "Bdelete! %d",
+		close_command = "BDelete %d",
+		right_mouse_command = "BDelete! %d",
 		show_close_icon = false,
 		offsets = {
 			{
@@ -528,14 +534,26 @@ require("bufferline").setup {
 		}
 	},
 }
+require('close_buffers').setup({
+	preserve_window_layout = { 'this', 'nameless' },
+	next_buffer_cmd = function(windows)
+		require('bufferline').cycle(1)
+		local bufnr = vim.api.nvim_get_current_buf()
+		for _, window in ipairs(windows) do
+		  vim.api.nvim_win_set_buf(window, bufnr)
+		end
+	end,
+})
 EOF
-nnoremap <silent> <leader>h :BufferLineCyclePrev<CR>
-nnoremap <silent> <leader>l :BufferLineCycleNext<CR>
-nnoremap <silent> <leader>< :BufferLineMovePrev<CR>
-nnoremap <silent> <leader>> :BufferLineMoveNext<CR>
-nnoremap <leader>d :Bwipeout<CR>
+nnoremap <silent> <leader>d <C-^>:exe "BWipeout ".bufnr('#')<CR>
+nnoremap <leader>Dh :BDelete hidden<CR>
+nnoremap <leader>Dn :BDelete nameless<CR>
 nnoremap gb :BufferLinePick<CR>
 nnoremap gB :BufferLinePickClose<CR>
+nnoremap <silent> <leader>h :BufferLineCyclePrev<CR>
+nnoremap <silent> <leader>l :BufferLineCycleNext<CR>
+nnoremap <silent> <leader>H :BufferLineMovePrev<CR>
+nnoremap <silent> <leader>L :BufferLineMoveNext<CR>
 
 nnoremap <silent><leader>1 1gt
 nnoremap <silent><leader>2 2gt
@@ -546,12 +564,15 @@ nnoremap <silent><leader>6 6gt
 nnoremap <silent><leader>7 7gt
 nnoremap <silent><leader>8 8gt
 nnoremap <silent><leader>9 9gt
+nnoremap <leader>> :<C-U>exec "tabm +" . (v:count1)<CR>
+nnoremap <leader>< :<C-U>exec "tabm -" . (v:count1)<CR>
 nnoremap <silent> <c-h> :e #<CR>
 au TabLeave * let g:lasttab = tabpagenr()
 nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
 nnoremap <leader>t :tab sp<cr>
 nnoremap <leader>ct :tabclose<cr>
 
+" quickfix win
 nmap [q <Plug>(qf_qf_previous)
 nmap ]q  <Plug>(qf_qf_next)
 nmap \q <Plug>(qf_qf_toggle)
@@ -566,28 +587,25 @@ require('bqf').setup({
 		vsplit = '<c-s>',
         prevfile = '<c-k>',
         nextfile = '<c-j>',
+        pscrollup = '<c-u>',
+        pscrolldown = '<c-d>',
         pscrollorig = '<c-o>',
         ptogglemode = '\\e',
     },
 })
 EOF
 
-" }}} Tabs & Windows & Buffers "
-
-" Distraction-free mode {{{ "
-
+" full screen mode
 nnoremap \e :ZenMode<CR>
 lua << EOF
 	require("zen-mode").setup {
 		plugins = {
-		  twilight = { enabled = true },
 		  gitsigns = { enabled = true },
 		},
 	}
-	require("twilight").setup {}
 EOF
 
-" }}} Distraction-free mode "
+" }}} Tabs & Windows & Buffers "
 
 " File explorer {{{ "
 
@@ -753,11 +771,15 @@ nnoremap <leader>j :AnyJump<CR>
 
 " }}} Search "
 
-" Show available keybindings {{{ "
+" Show available mappings {{{ "
 
-lua require("which-key").setup {}
+lua << EOF
+local presets = require("which-key.plugins.presets")
+presets.operators["v"] = nil
+require("which-key").setup {}
+EOF
 
-" }}} Shows available keybindings "
+" }}} Shows available mappings "
 
 " Highlight todo's {{{ "
 
@@ -801,30 +823,32 @@ require("indent_blankline").setup {
 EOF
 let g:indent_blankline_filetype = ['vim', 'lua', 'sh', 'c', 'cpp']
 
-nnoremap \t :call <SID>toggleList()<CR>
-nnoremap \T :call <SID>toggleTrailing()<CR>
-set lcs+=trail:⬤
-set lcs+=eol:↴
+set lcs+=trail:,eol:↴,space:·
 function! s:toggleList()
-    if !(&lcs =~ "space")
-        set lcs+=space:·
-    endif
 	if (index(g:indent_blankline_filetype, &filetype) >= 0)
 		IndentBlanklineToggle
 	endif
     set list!
+	if (&tabstop == 4)
+		set tabstop&
+	else
+		set tabstop=4
+	endif
 endfunction
-autocmd Syntax * syn match ExtraWhitespace /\s\+$\| \+\ze\t/
 let s:activatetw = 0
 function! s:toggleTrailing()
     if s:activatetw == 0
         let s:activatetw = 1
+		syn match ExtraWhitespace /\s\+$\| \+\ze\t/
 		hi ExtraWhitespace guibg=#FF0000
     else
         let s:activatetw = 0
+		syn clear ExtraWhitespace
 		hi! link ExtraWhitespace None
     endif
 endfunction
+nnoremap \t :call <SID>toggleList()<CR>
+nnoremap \T :call <SID>toggleTrailing()<CR>
 
 " }}} Indentation  display "
 
@@ -890,3 +914,15 @@ lua <<EOF
 EOF
 
 " }}} Draw diagrams "
+
+" Gui-nvim {{{ "
+
+if exists("g:neovide")
+	map <m-g> <nop>
+	set guifont=JetBrainsMonoNL\ Nerd\ Font\ Mono:h15
+	let g:neovide_refresh_rate=140
+	" let g:neovide_transparency=0.95
+	let g:neovide_cursor_vfx_mode = "ripple"
+endif
+
+" }}} Gui-nvim "

@@ -1,3 +1,4 @@
 plugged
 *.log
 tmux/.config/tmux/plugins/
+fonts/.local/share/fonts/.uuid

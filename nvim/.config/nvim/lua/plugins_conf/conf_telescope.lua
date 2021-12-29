@@ -5,6 +5,7 @@ require('telescope').setup{
     defaults = {
 		mappings = {
     	  i = {
+    	    ["<C-w>"] = { "<esc>ciw",type = "command" },
 			["<C-h>"] = "which_key",
     	    ["<C-j>"] = actions.move_selection_next,
     	    ["<C-p>"] = action_layout.toggle_preview,
@@ -15,6 +16,7 @@ require('telescope').setup{
 			["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
     	  },
     	  n = {
+    	    ["<C-w>"] = { "<esc>", type = "command" },
     	    ["<esc>"] = false,
     	    ["<C-p>"] = action_layout.toggle_preview,
     	    ["<C-b>"] = actions.delete_buffer,
@@ -42,7 +44,7 @@ require('telescope').setup{
        		 	prompt_position = "top"
        		},
     	},
-    	prompt_prefix = " ",
+    	prompt_prefix = "  ",
     	selection_caret = "",
     	entry_prefix = "",
 	},

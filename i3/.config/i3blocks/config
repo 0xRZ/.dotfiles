@@ -1,14 +1,8 @@
-[volume-pulseaudio]
-command=$SCRIPT_DIR/volume-pulseaudio/volume-pulseaudio
+[volume]
+command=$SCRIPT_DIR/volume/volume
+LABEL=VOL 
 interval=once
-signal=1
-USE_ALSA_NAME=1
-
-[docker]
-command=$SCRIPT_DIR/docker/docker
-color=#0db7ed
-interval=10
-LABEL=🐳 
+signal=10
 
 [temperature]
 command=$SCRIPT_DIR/temperature/temperature

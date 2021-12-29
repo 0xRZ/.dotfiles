@@ -17,9 +17,8 @@ export ZSH_CUSTOM="$HOME/.custom_oh-my-zsh"
 
 # name of the theme
 ZSH_THEME="powerlevel10k/powerlevel10k"
-ENABLE_CORRECTION="true"
+# ENABLE_CORRECTION="true"
 DISABLE_MAGIC_FUNCTIONS="true"
-# COMPLETION_WAITING_DOTS="true"
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 # auto-update
 zstyle ':omz:update' mode disabled
@@ -139,6 +138,8 @@ function fzf_get_alias() {
 alias tssh='TERM=xterm-256color ssh'
 alias a='print -z $(fzf_get_alias)'
 alias v='$EDITOR'
+# alias vt='$EDITOR $(mktemp)'
+alias vg='neovide --multigrid --noidle '
 alias vt='v -c "set buftype=nofile" -'
 alias hl='history | tail'
 alias nf='n -P f'
