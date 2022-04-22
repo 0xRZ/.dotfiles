@@ -90,7 +90,7 @@ Plug 'tpope/vim-commentary'
 Plug 'matze/vim-move'
 Plug 'godlygeek/tabular'
 Plug 'jbyuki/venn.nvim'
-Plug 'tpope/vim-sleuth'
+Plug 'editorconfig/editorconfig-vim'
 Plug 'monaqa/dial.nvim'
 " movement
 Plug 'phaazon/hop.nvim'
@@ -145,15 +145,16 @@ if executable('rg')
 endif
 set nofixeol
 set hidden
+" tab width
 set tabstop=4
 set shiftwidth=4
 set smarttab
+"
 set tildeop
 set number
 set hlsearch
 set termguicolors
 set cursorline
-set modelines=10000
 set signcolumn=number
 set startofline
 set encoding=UTF-8
@@ -245,7 +246,7 @@ vnoremap < <gv
 " Colorschemes {{{ "
 
 function s:hl_groups_info()
-	let tmpfile = tempname()	
+	let tmpfile = tempname()
 	exe "redir > " . tmpfile
 	silent hi
 	redir END
@@ -260,7 +261,7 @@ set background=light
 let g:vscode_style = "light"
 colorscheme vscode
 hi Folded guifg=#545454 guibg=#F3F3F3
-hi DiagnosticHint guifg=#585858 
+hi DiagnosticHint guifg=#585858
 hi TelescopePreviewNormal guibg=#E4FFFF
 hi TelescopeSelection guifg=#5B5B5B guibg=#FFD5D5 gui=bold
 hi TelescopeMultiSelection guifg=#5B5B5B guibg=#FFD5D5 gui=bold
@@ -316,16 +317,16 @@ lua << EOF
 	}
 EOF
 
-" show function signature during editing 
+" show function signature during editing
 lua << EOF
 	require 'lsp_signature'.setup({
 		hint_enable = false,
 	})
 EOF
 
-" " show function call hierarchy 
+" " show function call hierarchy
 " lua << EOF
-" 	require('litee').setup({})
+"	require('litee').setup({})
 " EOF
 
 " show lightbulb when there is a code action available under cursor
@@ -394,7 +395,7 @@ set foldlevel=99
 omap     <silent> aa :<C-U>lua require('tsht').nodes()<CR>
 vnoremap <silent> a :lua require('tsht').nodes()<CR>
 
-" show current context 
+" show current context
 lua << EOF
 	require'treesitter-context'.setup{
 	    patterns = {
@@ -433,7 +434,7 @@ function s:rebaseStagedChanges()
 		execute "Git commit --amend"
     else
         return
-    endif 
+    endif
 endfunction
 nnoremap <leader>gr :call <SID>rebaseStagedChanges()<cr>
 function s:showBranchCommitDiffs()
@@ -452,7 +453,7 @@ nnoremap <leader>gp :Git difftool -y HEAD~1 HEAD<cr>
 nnoremap <leader>go :Gtabedit <c-r>"<cr>
 autocmd FileType fugitive nmap <buffer> dt dp<C-w>T
 
-" rhysd/git-messenger.vim 
+" rhysd/git-messenger.vim
 let g:git_messenger_no_default_mappings = v:true
 nnoremap \g :GitMessenger<cr>
 
@@ -524,7 +525,7 @@ require("bufferline").setup {
 		diagnostics = "nvim_lsp",
 	    diagnostics_indicator = function(count, level)
 			if level:match("error") then
-				return "("..count..")"	
+				return "("..count..")"
 			end
 		end,
 		indicator_icon = '',
@@ -732,6 +733,13 @@ vmap g<C-x> g<Plug>(dial-decrement)
 
 " }}} Increment/decrement "
 
+" project level indentation {{{ "
+
+let g:EditorConfig_exclude_patterns = ['fugitive://.*']
+au FileType gitcommit let b:EditorConfig_disable = 1
+
+" }}} project level indentation "
+
 " Jump to word {{{ "
 
 nnoremap s <cmd>HopWord<CR>
@@ -739,15 +747,15 @@ vnoremap s <cmd>HopLine<CR>
 nnoremap S <cmd>HopLine<CR>
 noremap <c-s> <cmd>HopChar1<CR>
 hi HopNextKey gui=bold,underline guifg=#ff007c
-hi! link HopNextKey1 HopNextKey 
+hi! link HopNextKey1 HopNextKey
 hi! link HopNextKey2 HopNextKey
-lua	require'hop'.setup() 
+lua	require'hop'.setup()
 
 " }}} Jump to word "
 
 " Highlight unique characters during f/t {{{ "
 
-highlight QuickScopePrimary guibg='#FF7C7C' gui=bold,underline 
+highlight QuickScopePrimary guibg='#FF7C7C' gui=bold,underline
 highlight QuickScopeSecondary guibg='#FF00FF' gui=bold,underline
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
@@ -844,7 +852,6 @@ require("indent_blankline").setup {
 EOF
 let g:indent_blankline_filetype = ['vim', 'lua', 'sh', 'c', 'cpp']
 highlight IndentBlanklineContextChar guifg=#FF0000
-" highlight! link IndentBlanklineContextStart IndentBlanklineContextChar
 highlight! IndentBlanklineContextStart guifg=Normal gui=underline
 
 hi Whitespace guifg=#008E0E gui=bold
@@ -857,7 +864,7 @@ function! s:toggleList()
 	if (index(g:indent_blankline_filetype, &filetype) >= 0)
 		IndentBlanklineToggle
 	endif
-    set list!
+	set list!
 	if (&list == 1)
 		let s:my_width_of_tab = &tabstop
 		let s:my_expand_tab = &expandtab
@@ -869,7 +876,6 @@ function! s:toggleList()
 		let &tabstop = s:my_width_of_tab
 		let &expandtab = s:my_expand_tab
 		let &shiftwidth = s:my_shift_width
-		Sleuth
 	endif
 endfunction
 let s:activatetw = 0
@@ -886,7 +892,6 @@ function! s:toggleTrailing()
 endfunction
 nnoremap \t :call <SID>toggleList()<CR>
 nnoremap \T :call <SID>toggleTrailing()<CR>
-
 " }}} Indentation  display "
 
 " Colorizer {{{ "

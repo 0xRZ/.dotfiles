@@ -119,34 +119,34 @@ DESK=0
 while (( $# )); do
   case "$1" in
     -t|--term)
-    	CLI=1
-    	shift
-    	;;
-    -d|--desktop)
-    	CLI=1
-    	DESK=1
-    	shift
-    	;;
-    -h|--help)
-    	echo "$usage"
-    	exit
-    	;;
-    -u|--update)
-    	update
-    	exit
-    	;;
-    --checkhealth)
-    	check_health
-    	exit
-    	;;
-    -l|--clear)
-    	clear
-    	exit
-    	;;
-    -*)
-    	echo "Error: Unsupported flag $1" >&2
-    	exit 1
-    	;;
+	CLI=1
+	shift
+	;;
+-d|--desktop)
+	CLI=1
+	DESK=1
+	shift
+	;;
+-h|--help)
+	echo "$usage"
+	exit
+	;;
+-u|--update)
+	update
+	exit
+	;;
+--checkhealth)
+	check_health
+	exit
+	;;
+-l|--clear)
+	clear
+	exit
+	;;
+-*)
+	echo "Error: Unsupported flag $1" >&2
+	exit 1
+	;;
   esac
 done
 
