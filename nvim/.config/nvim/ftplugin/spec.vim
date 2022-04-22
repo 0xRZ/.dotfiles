@@ -12,13 +12,13 @@ let b:did_ftplugin = 1
 " Add mappings, unless user doesn't want
 if !exists("no_plugin_maps") && !exists("no_spec_maps")
 	if !hasmapto("<Plug>AddChangelogEntry")
-		map <buffer> <LocalLeader>l <Plug>AddChangelogEntry
+		map <buffer> <leader>Fl <Plug>AddChangelogEntry
 	endif
 	if !hasmapto("<Plug>AddChangelogItem")
-		map <buffer> <LocalLeader>L <Plug>AddChangelogItem
+		map <buffer> <leader>FL <Plug>AddChangelogItem
 	endif
 	if !hasmapto("<Plug>ExpandMacro")
-		map <buffer> <LocalLeader>m <Plug>ExpandMacro
+		map <buffer> <leader>Fm <Plug>ExpandMacro
 	endif
 	noremap <buffer> <unique> <script> <Plug>AddChangelogEntry :call <SID>AddChangelogEntry()<CR>
 	noremap <buffer> <unique> <script> <Plug>AddChangelogItem :call <SID>AddChangelogItem()<CR>

@@ -90,6 +90,8 @@ Plug 'tpope/vim-commentary'
 Plug 'matze/vim-move'
 Plug 'godlygeek/tabular'
 Plug 'jbyuki/venn.nvim'
+Plug 'tpope/vim-sleuth'
+Plug 'monaqa/dial.nvim'
 " movement
 Plug 'phaazon/hop.nvim'
 Plug 'andymass/vim-matchup'
@@ -109,7 +111,8 @@ Plug 'RRethy/vim-illuminate'
 Plug 'lewis6991/foldsigns.nvim'
 Plug 'rhysd/vim-grammarous'
 " filetype specific
-Plug 'sheerun/vim-polyglot'
+" let g:polyglot_disabled = ['autoindent']
+" Plug 'sheerun/vim-polyglot'
 Plug 'tmux-plugins/vim-tmux'
 " markdown
 Plug 'plasticboy/vim-markdown'
@@ -144,11 +147,13 @@ set nofixeol
 set hidden
 set tabstop=4
 set shiftwidth=4
+set smarttab
 set tildeop
 set number
 set hlsearch
 set termguicolors
 set cursorline
+set modelines=10000
 set signcolumn=number
 set startofline
 set encoding=UTF-8
@@ -191,8 +196,11 @@ nnoremap . <nop>
 " '\' starts mappings for a toggle
 nnoremap \u :UndotreeToggle<CR>
 nnoremap <leader>a @q
-nnoremap <leader>sv	:source $MYVIMRC<cr>
-nnoremap <leader>ev :vsplit $MYVIMRC<CR>
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :qa<CR>
+nnoremap <leader>e :e<CR>
+nnoremap <leader>vs	:source $MYVIMRC<cr>
+nnoremap <leader>ve :vsplit $MYVIMRC<CR>
 nnoremap <leader>sn /<c-r><c-w><CR>
 vnoremap <leader>sn "hy/<c-r>h<CR>
 nnoremap <leader>sp ?<c-r><c-w><CR>
@@ -205,19 +213,18 @@ nnoremap <leader>p "+p
 vnoremap <leader>p "_dP
 nnoremap <leader>Pi :source $MYVIMRC <Bar> PlugClean <Bar> PlugInstall<cr>
 nnoremap <leader>Pu :PlugUpdate --sync<cr>:TSUpdate<cr>
-nnoremap <leader>+ :resize +5<CR>
-nnoremap <leader>_ :resize -5<CR>
-nnoremap <leader>= :vertical resize +20<CR>
-nnoremap <leader>- :vertical resize -20<CR>
+nnoremap <leader>+ :<c-u>exec 'resize +'.v:count1*5<CR>
+nnoremap <leader>_ :<c-u>exec 'resize -'.v:count1*5<CR>
+nnoremap <leader>= :<c-u>exec 'vertical resize +'.v:count1*20<CR>
+nnoremap <leader>- :<c-u>exec 'vertical resize -'.v:count1*20<CR>
 nnoremap \w :set wrap!<CR>
-nnoremap \l :set number!<CR>
+nnoremap \l :set rnu!<CR>:set number!<CR>
 " NOTE: might need clean vimrc with :set nocp
 nnoremap \s :setlocal spell! spelllang=en,ru<CR>
 nnoremap <leader>/ :noh<CR>
-nnoremap <leader>W :w<CR>
-nnoremap <leader>q :qa<CR>
-vnoremap <leader>rr "hy:%s/<c-r>h//gc<left><left><left>
+vnoremap <leader>R "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap <leader>ig :let @l=@%.":".line('.')<CR>:call setreg('+',@l)<CR>:echo @l." copied to clipboard"<CR>
+nnoremap <leader>ib :exec 'echo "words in file:"' <Bar> exec '!wc -m %'<CR>
 nnoremap <leader>id :echo getcwd()<CR>
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
@@ -229,6 +236,9 @@ onoremap q i"
 onoremap Q i'
 onoremap b ib
 onoremap B iB
+nnoremap <c-w>c <nop>
+vnoremap > >gv
+vnoremap < <gv
 
 " }}} Mappings "
 
@@ -318,22 +328,6 @@ EOF
 " 	require('litee').setup({})
 " EOF
 
-" show current context 
-lua << EOF
-	require'treesitter-context'.setup{
-	    patterns = {
-	        default = {
-	            'for',
-	            'while',
-	            'if',
-	            'switch',
-	            'case',
-	        },
-	    },
-	}
-EOF
-hi TreesitterContext guibg=#ECFFFF gui=bold
-
 " show lightbulb when there is a code action available under cursor
 autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb({
 	\ sign = {
@@ -400,6 +394,23 @@ set foldlevel=99
 omap     <silent> aa :<C-U>lua require('tsht').nodes()<CR>
 vnoremap <silent> a :lua require('tsht').nodes()<CR>
 
+" show current context 
+lua << EOF
+	require'treesitter-context'.setup{
+	    patterns = {
+	        default = {
+	            'for',
+	            'while',
+	            'if',
+	            'switch',
+	            'case',
+	        },
+	    },
+	}
+EOF
+hi TreesitterContext guibg=#ECFFFF gui=bold
+
+
 " }}} Treesitter "
 
 " Git {{{ "
@@ -464,10 +475,10 @@ require('gitsigns').setup {
 
     ['n <leader>gh'] = '<cmd>lua require"gitsigns".preview_hunk()<CR>',
     ['n <leader>gHs'] = '<cmd>lua require"gitsigns".stage_hunk()<CR>',
-    ['v <leader>gHs'] = '<cmd>lua require"gitsigns".stage_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
+    ['v <leader>h'] = '<cmd>lua require"gitsigns".stage_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
     ['n <leader>gHu'] = '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>',
     ['n <leader>gHr'] = '<cmd>lua require"gitsigns".reset_hunk()<CR>',
-    ['v <leader>gHr'] = '<cmd>lua require"gitsigns".reset_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
+    ['v <leader>H'] = '<cmd>lua require"gitsigns".reset_hunk({vim.fn.line("."), vim.fn.line("v")})<CR>',
     ['n <leader>gHR'] = '<cmd>lua require"gitsigns".reset_buffer()<CR>',
     ['n <leader>gHb'] = '<cmd>lua require"gitsigns".blame_line(true)<CR>',
     ['n <leader>gHU'] = '<cmd>lua require"gitsigns".reset_buffer_index()<CR>',
@@ -711,6 +722,17 @@ vmap <C-L> <Plug>MoveBlockRight
 
 " }}} Move selected blocks of text "
 
+" Increment/decrement {{{ "
+
+nmap  <C-a>  <Plug>(dial-increment)
+nmap  <C-x>  <Plug>(dial-decrement)
+vmap  <C-a>  <Plug>(dial-increment)
+vmap  <C-x>  <Plug>(dial-decrement)
+vmap g<C-a> g<Plug>(dial-increment)
+vmap g<C-x> g<Plug>(dial-decrement)
+
+" }}} Increment/decrement "
+
 " Jump to word {{{ "
 
 nnoremap s <cmd>HopWord<CR>
@@ -724,13 +746,13 @@ lua	require'hop'.setup()
 
 " }}} Jump to word "
 
-" Highlight unique characters on a line {{{ "
+" Highlight unique characters during f/t {{{ "
 
 highlight QuickScopePrimary guibg='#FF7C7C' gui=bold,underline 
 highlight QuickScopeSecondary guibg='#FF00FF' gui=bold,underline
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
-" }}} Highlight unique characters on a line "
+" }}} Highlight unique characters during f/t "
 
 " Matching bracket navigation {{{ "
 
@@ -824,15 +846,26 @@ EOF
 let g:indent_blankline_filetype = ['vim', 'lua', 'sh', 'c', 'cpp']
 
 set lcs+=trail:,eol:↴,space:·
+let s:my_width_of_tab = &tabstop
+let s:my_expand_tab = &expandtab
+let s:my_shift_width = &shiftwidth
 function! s:toggleList()
 	if (index(g:indent_blankline_filetype, &filetype) >= 0)
 		IndentBlanklineToggle
 	endif
     set list!
-	if (&tabstop == 4)
-		set tabstop&
+	if (&list == 1)
+		let s:my_width_of_tab = &tabstop
+		let s:my_expand_tab = &expandtab
+		let s:my_shift_width = &shiftwidth
+		set tabstop=8
+		set shiftwidth=8
+		set noexpandtab
 	else
-		set tabstop=4
+		let &tabstop = s:my_width_of_tab
+		let &expandtab = s:my_expand_tab
+		let &shiftwidth = s:my_shift_width
+		Sleuth
 	endif
 endfunction
 let s:activatetw = 0

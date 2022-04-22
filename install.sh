@@ -11,7 +11,7 @@ function check_prog() {
 }
 
 term_configs=(bin nvim tmux zsh nnn)
-desktop_configs=(fonts alacritty i3 picom redshift rofi neomutt)
+desktop_configs=(fonts alacritty i3 picom redshift rofi)
 declare -A fonts=( \
 ["JetBrains Mono NL Regular Nerd Font Complete.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Regular/complete/JetBrains%20Mono%20NL%20Regular%20Nerd%20Font%20Complete.ttf?raw=true" \
 ["JetBrains Mono NL Bold Nerd Font Complete.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Bold/complete/JetBrains%20Mono%20NL%20Bold%20Nerd%20Font%20Complete.ttf?raw=true" \
