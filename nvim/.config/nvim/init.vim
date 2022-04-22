@@ -621,7 +621,6 @@ EOF
 " File explorer {{{ "
 
 nnoremap \n :NvimTreeFindFileToggle<CR>
-let g:nvim_tree_quit_on_open = 1
 lua << EOF
 	require('plugins_conf/conf_nvim-tree')
 EOF
@@ -844,7 +843,12 @@ require("indent_blankline").setup {
 }
 EOF
 let g:indent_blankline_filetype = ['vim', 'lua', 'sh', 'c', 'cpp']
+highlight IndentBlanklineContextChar guifg=#FF0000
+" highlight! link IndentBlanklineContextStart IndentBlanklineContextChar
+highlight! IndentBlanklineContextStart guifg=Normal gui=underline
 
+hi Whitespace guifg=#008E0E gui=bold
+hi NonText guifg=#008E0E gui=bold
 set lcs+=trail:,eol:↴,space:·
 let s:my_width_of_tab = &tabstop
 let s:my_expand_tab = &expandtab
