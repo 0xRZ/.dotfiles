@@ -1,6 +1,6 @@
 require'nvim-treesitter.configs'.setup {
 
-  ensure_installed = { "c", "cpp", "lua", "bash", "vim", "yaml", "query" },
+  ensure_installed = { "c", "cpp", "lua", "bash", "vim", "yaml", "query", "markdown", "rst" },
   sync_install = false,
   -- treesitter modules
   highlight = {

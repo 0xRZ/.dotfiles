@@ -5,6 +5,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 endif
 
+let g:plug_window = "enew"
 call plug#begin()
 " LSP
 Plug 'neovim/nvim-lspconfig'
@@ -18,8 +19,8 @@ Plug 'ray-x/lsp_signature.nvim'
 Plug 'ldelossa/litee.nvim'
 Plug 'kosayoda/nvim-lightbulb'
 Plug 'weilbith/nvim-code-action-menu'
-" auto change cwd
 Plug 'ahmedkhalf/project.nvim'
+Plug 'filipdutescu/renamer.nvim'
 
 " Completion
 Plug 'hrsh7th/nvim-cmp'
@@ -53,6 +54,7 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'sudormrfbin/cheatsheet.nvim'
+Plug 'crispgm/telescope-heading.nvim'
 
 " Status line
 Plug 'nvim-lualine/lualine.nvim'
@@ -60,7 +62,7 @@ Plug 'SmiteshP/nvim-gps'
 Plug 'arkav/lualine-lsp-progress'
 
 " Tabs & Windows & Buffers
-Plug 'akinsho/bufferline.nvim'
+Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
 Plug 'kazhala/close-buffers.nvim'
 Plug 'romainl/vim-qf'
 Plug 'kevinhwang91/nvim-bqf'
@@ -92,6 +94,7 @@ Plug 'godlygeek/tabular'
 Plug 'jbyuki/venn.nvim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'monaqa/dial.nvim'
+Plug 'ntpeters/vim-better-whitespace'
 " movement
 Plug 'phaazon/hop.nvim'
 Plug 'andymass/vim-matchup'
@@ -111,8 +114,6 @@ Plug 'RRethy/vim-illuminate'
 Plug 'lewis6991/foldsigns.nvim'
 Plug 'rhysd/vim-grammarous'
 " filetype specific
-" let g:polyglot_disabled = ['autoindent']
-" Plug 'sheerun/vim-polyglot'
 Plug 'tmux-plugins/vim-tmux'
 " markdown
 Plug 'plasticboy/vim-markdown'
@@ -166,9 +167,9 @@ set nowrap
 set pastetoggle=<F3>
 autocmd InsertLeave * set nopaste
 augroup numbertoggle
-  autocmd!
-  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
-  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+	autocmd!
+	autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+	autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
 augroup END
 
 " }}} Options "
@@ -197,7 +198,7 @@ nnoremap . <nop>
 " '\' starts mappings for a toggle
 nnoremap \u :UndotreeToggle<CR>
 nnoremap <leader>a @q
-nnoremap <leader>w :w<CR>
+nnoremap <leader>W :w<CR>
 nnoremap <leader>q :qa<CR>
 nnoremap <leader>e :e<CR>
 nnoremap <leader>vs	:source $MYVIMRC<cr>
@@ -225,7 +226,7 @@ nnoremap \s :setlocal spell! spelllang=en,ru<CR>
 nnoremap <leader>/ :noh<CR>
 vnoremap <leader>R "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap <leader>ig :let @l=@%.":".line('.')<CR>:call setreg('+',@l)<CR>:echo @l." copied to clipboard"<CR>
-nnoremap <leader>ib :exec 'echo "words in file:"' <Bar> exec '!wc -m %'<CR>
+nnoremap <leader>ib :exec 'echo "bytes in file:"' <Bar> exec '!wc -c %'<CR>
 nnoremap <leader>id :echo getcwd()<CR>
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
@@ -240,6 +241,8 @@ onoremap B iB
 nnoremap <c-w>c <nop>
 vnoremap > >gv
 vnoremap < <gv
+vnoremap <leader>t :retab<CR>
+nnoremap \W :set colorcolumn=80
 
 " }}} Mappings "
 
@@ -283,6 +286,7 @@ hi TelescopePromptNormal    guifg=#000000 guibg=#C1E3FF gui=bold
 " LSP {{{ "
 
 nnoremap <leader>il <cmd>LspInfo<CR>
+nnoremap <leader>iL <cmd>LspInstallInfo<CR>
 nnoremap <leader>fl <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
 nnoremap \x <cmd>TroubleToggle<cr>
 nnoremap gpd <cmd>lua require('goto-preview').goto_preview_definition()<CR>
@@ -324,11 +328,6 @@ lua << EOF
 	})
 EOF
 
-" " show function call hierarchy
-" lua << EOF
-"	require('litee').setup({})
-" EOF
-
 " show lightbulb when there is a code action available under cursor
 autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb({
 	\ sign = {
@@ -340,6 +339,9 @@ autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb({
 	\   hl_mode = "replace",
 	\},
 \})
+
+" rename UI
+" nnoremap <silent> <leader>glr <cmd>lua require('renamer').rename()<cr>
 
 " }}} LSP "
 
@@ -398,19 +400,19 @@ vnoremap <silent> a :lua require('tsht').nodes()<CR>
 " show current context
 lua << EOF
 	require'treesitter-context'.setup{
-	    patterns = {
-	        default = {
-	            'for',
-	            'while',
-	            'if',
-	            'switch',
-	            'case',
-	        },
-	    },
+		patterns = {
+			default = {
+				'for',
+				'while',
+				'if',
+				'switch',
+				'case',
+			},
+		},
 	}
 EOF
 hi TreesitterContext guibg=#ECFFFF gui=bold
-
+nnoremap \C :TSContextToggle<CR>
 
 " }}} Treesitter "
 
@@ -426,17 +428,6 @@ nnoremap <leader>fgt <cmd>Telescope git_stash<cr>
 nnoremap <leader>gs :Git<cr>
 nnoremap <leader>ga :Gwrite<cr>
 nnoremap <leader>gc :Git commit<cr>
-function s:rebaseStagedChanges()
-	let ans = input("Is everything needed to be rebased on top of previous commit staged? y/n: ")
-	if ans == 'y'
-		echo "\n"
-		execute "Git reset --soft HEAD~1"
-		execute "Git commit --amend"
-    else
-        return
-    endif
-endfunction
-nnoremap <leader>gr :call <SID>rebaseStagedChanges()<cr>
 function s:showBranchCommitDiffs()
 	let branch_name = input("Base branch for which to show commits difference: ", "master")
 	execute "Git log "..branch_name..".."..FugitiveHead()
@@ -507,6 +498,7 @@ nnoremap <leader>fj <cmd>Telescope jumplist<cr>
 nnoremap <leader>f= <cmd>Telescope spell_suggest<cr>
 nnoremap <leader>fk <cmd>Telescope keymaps<cr>
 nnoremap <leader>f? <cmd>Cheatsheet<cr>
+nnoremap <leader>fH <cmd>Telescope heading<cr>
 lua require('plugins_conf/conf_telescope')
 
 " }}} Finder "
@@ -520,17 +512,15 @@ lua require('plugins_conf/conf_statusline')
 " Tabs & Windows & Buffers {{{ "
 
 lua << EOF
+local groups = require('bufferline.groups')
 require("bufferline").setup {
 	options = {
-		diagnostics = "nvim_lsp",
-	    diagnostics_indicator = function(count, level)
-			if level:match("error") then
-				return "("..count..")"
-			end
-		end,
-		indicator_icon = '',
+		mode = "buffers",
 		close_command = "BDelete %d",
+		show_buffer_close_icons = false,
 		right_mouse_command = "BDelete! %d",
+		indicator_icon = '',
+		separator_style = { "", "" },
 		show_close_icon = false,
 		offsets = {
 			{
@@ -543,11 +533,27 @@ require("bufferline").setup {
 			    text = "Class viewer",
 			    text_align = "center",
 			},
-		}
+		},
+		groups = {
+			items = {
+				require('bufferline.groups').builtin.pinned:with({ icon = "" }),
+			},
+		},
 	},
+	highlights = {
+		background = {
+			guibg = '#E4E4E4',
+		},
+		buffer_visible = {
+			guibg = '#FAFAFA',
+		},
+		buffer_selected = {
+			guibg = '#FFFFFF',
+		},
+	};
 }
 require('close_buffers').setup({
-	preserve_window_layout = { 'this', 'nameless' },
+	preserve_window_layout = { 'this' },
 	next_buffer_cmd = function(windows)
 		require('bufferline').cycle(1)
 		local bufnr = vim.api.nvim_get_current_buf()
@@ -557,15 +563,19 @@ require('close_buffers').setup({
 	end,
 })
 EOF
-nnoremap <silent> <leader>d <C-^>:exe "BWipeout ".bufnr('#')<CR>
-nnoremap <leader>Dh :BDelete hidden<CR>
-nnoremap <leader>Dn :BDelete nameless<CR>
-nnoremap gb :BufferLinePick<CR>
-nnoremap gB :BufferLinePickClose<CR>
+nnoremap <silent> gb :BufferLinePick<CR>
+nnoremap <silent> gB :BufferLinePickClose<CR>
+nnoremap <silent> <leader>d :BWipeout this<CR>
+nnoremap <silent> <leader>bh :BDelete hidden<CR>
+nnoremap <silent> <leader>bn :BDelete nameless<CR>
 nnoremap <silent> <leader>h :BufferLineCyclePrev<CR>
 nnoremap <silent> <leader>l :BufferLineCycleNext<CR>
 nnoremap <silent> <leader>H :BufferLineMovePrev<CR>
 nnoremap <silent> <leader>L :BufferLineMoveNext<CR>
+nnoremap <silent> <leader>bse :BufferLineSortByExtension<CR>
+nnoremap <silent> <leader>bsd :BufferLineSortByDirectory<CR>
+nnoremap <silent> <leader>bst :BufferLineSortByTabs<CR>
+nnoremap <silent> <leader>bp :BufferLineTogglePin<CR>
 
 nnoremap <silent><leader>1 1gt
 nnoremap <silent><leader>2 2gt
@@ -576,13 +586,14 @@ nnoremap <silent><leader>6 6gt
 nnoremap <silent><leader>7 7gt
 nnoremap <silent><leader>8 8gt
 nnoremap <silent><leader>9 9gt
-nnoremap <leader>> :<C-U>exec "tabm +" . (v:count1)<CR>
-nnoremap <leader>< :<C-U>exec "tabm -" . (v:count1)<CR>
+nnoremap <leader>Tl :<C-U>exec "tabm +" . (v:count1)<CR>
+nnoremap <leader>Th :<C-U>exec "tabm -" . (v:count1)<CR>
+nnoremap <leader>Tr :LualineRenameTab 
 nnoremap <silent> <c-h> :e #<CR>
 au TabLeave * let g:lasttab = tabpagenr()
 nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
 nnoremap <leader>t :tab sp<cr>
-nnoremap <leader>ct :tabclose<cr>
+nnoremap <leader>D :tabclose<cr>
 
 " quickfix win
 nmap [q <Plug>(qf_qf_previous)
@@ -681,7 +692,7 @@ nnoremap <leader>fs <cmd>Telescope session-lens search_session<cr>
 
 lua require('auto-session').setup()
 
-"	 }}} Sessions "
+" }}} Sessions "
 
 " Open file on last line {{{ "
 
@@ -699,8 +710,8 @@ require('nvim-autopairs').setup{
 	map_c_w = true,
 	check_ts = true,
 	ts_config = {
-        {'string'},
-    },
+		{'string'},
+	},
 }
 EOF
 
@@ -740,11 +751,25 @@ au FileType gitcommit let b:EditorConfig_disable = 1
 
 " }}} project level indentation "
 
+" trailing whitespaces {{{ "
+
+hi ExtraWhitespace guibg=#FF0000
+let g:better_whitespace_enabled=1
+nnoremap <leader>w :StripWhitespace<CR>
+vnoremap <leader>w :StripWhitespace<CR>
+let g:better_whitespace_filetypes_blacklist=['diff', 'git', 'gitcommit', 'qf', 'help', 'markdown', 'fugitive']
+let g:show_spaces_that_precede_tabs=1
+nnoremap ]w :NextTrailingWhitespace<CR>
+nnoremap [w :PrevTrailingWhitespace<CR>
+
+" }}} trailing whitespaces "
+
 " Jump to word {{{ "
 
 nnoremap s <cmd>HopWord<CR>
-vnoremap s <cmd>HopLine<CR>
+vnoremap s <cmd>HopWord<CR>
 nnoremap S <cmd>HopLine<CR>
+vnoremap <leader>S <cmd>HopLine<CR>
 noremap <c-s> <cmd>HopChar1<CR>
 hi HopNextKey gui=bold,underline guifg=#ff007c
 hi! link HopNextKey1 HopNextKey
@@ -839,8 +864,8 @@ nnoremap <silent> <c-k> <cmd>lua require"illuminate".next_reference{reverse=true
 
 lua << EOF
 require("indent_blankline").setup {
-    show_current_context = true,
-    show_current_context_start = true,
+	show_current_context = true,
+	show_current_context_start = true,
 	use_treesitter = true,
 	context_patterns = {
 		"class", "function", "method", "^if", "^do", "^while", "^for", "^struct",
@@ -878,20 +903,8 @@ function! s:toggleList()
 		let &shiftwidth = s:my_shift_width
 	endif
 endfunction
-let s:activatetw = 0
-function! s:toggleTrailing()
-    if s:activatetw == 0
-        let s:activatetw = 1
-		syn match ExtraWhitespace /\s\+$\| \+\ze\t/
-		hi ExtraWhitespace guibg=#FF0000
-    else
-        let s:activatetw = 0
-		syn clear ExtraWhitespace
-		hi! link ExtraWhitespace None
-    endif
-endfunction
 nnoremap \t :call <SID>toggleList()<CR>
-nnoremap \T :call <SID>toggleTrailing()<CR>
+
 " }}} Indentation  display "
 
 " Colorizer {{{ "

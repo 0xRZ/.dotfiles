@@ -54,19 +54,19 @@ lsp_servers["sumneko_lua"] = function()
 	opt = require("lua-dev").setup({
 	library = {
 		vimruntime = true,
-	  	types = true,
-	  	plugins = false,
+		types = true,
+		plugins = false,
 	},
 	lspconfig = {
 		on_attach = on_attach,
 		capabilities = capabilities,
 		settings = {
-	  		Lua = {
-	  			workspace = {
-	  				library = vim.api.nvim_get_runtime_file("", true),
-	  			},
-	  		},
-	  	},
+			Lua = {
+				workspace = {
+					library = vim.api.nvim_get_runtime_file("", true),
+				},
+			},
+		},
 	},
 	})
 	return opt
@@ -84,10 +84,10 @@ lsp_servers["vimls"] = function()
 	local opt
 	opt = {
 		on_attach = on_attach,
-   		init_options = {
-   		  isNeovim = true
-  		},
-   		capabilities = capabilities,
+		init_options = {
+		  isNeovim = true
+		},
+		capabilities = capabilities,
 	}
 	return opt
 end
@@ -100,11 +100,11 @@ lsp_servers["diagnosticls"] = function()
 				shellcheck = {
 					command = "shellcheck",
 					debounce = 100,
-        			args = { "--format=gcc", "-" },
-        			offsetLine = 0,
-        			offsetColumn = 0,
-        			sourceName = "shellcheck",
-        			formatLines = 1,
+					args = { "--format=gcc", "-" },
+					offsetLine = 0,
+					offsetColumn = 0,
+					sourceName = "shellcheck",
+					formatLines = 1,
 					formatPattern = {
 						"^[^:]+:(\\d+):(\\d+):\\s+([^:]+):\\s+(.*)$",
 						{
@@ -114,11 +114,11 @@ lsp_servers["diagnosticls"] = function()
 							security = 3
 						}
 					},
-        			securities = {
-        			  error = "error",
-        			  warning = "warning",
-        			  note = "info"
-        			}
+					securities = {
+					  error = "error",
+					  warning = "warning",
+					  note = "info"
+					}
 				}
 			},
 			filetypes = {
@@ -147,7 +147,7 @@ end
 local lsp_conf = require'lspconfig'
 if vim.fn.executable("clangd") then
     lsp_conf.clangd.setup {
-    	on_attach = on_attach,
-    	capabilities = capabilities
+		on_attach = on_attach,
+		capabilities = capabilities
     }
 end

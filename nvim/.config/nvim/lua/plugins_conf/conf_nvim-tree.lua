@@ -4,6 +4,7 @@ local list_binds = {
     { key = "<C-s>",                        cb = tree_cb("vsplit") },
     { key = "<C-[>",                        cb = tree_cb("dir_up") },
     { key = "s",                            cb = "<cmd>HopWord<CR>" },
+    { key = "S",                            cb = "<cmd>HopLine<CR>" },
 }
 
 require'nvim-tree'.setup {

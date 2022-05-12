@@ -6,15 +6,14 @@ local mycode = {}
 local colors = {
   black        = "#262626",
   white        = '#ffffff',
-  red          = '#f44747',
-  green        = '#619955',
-  blue         = '#A89EFF',
+  red          = '#FF0000',
+  lightred     = '#FFD1D1',
   lightblue    = '#5CB6F8',
   yellow       = '#ffaf00',
 }
 mycode.normal = {
-  b = {fg = colors.blue, bg = colors.black},
-  a = {fg = colors.white, bg = colors.blue, gui = 'bold'},
+  b = {fg = colors.red, bg = colors.black},
+  a = {fg = colors.white, bg = colors.red, gui = 'bold'},
   c = {fg = colors.white, bg = colors.black},
 }
 mycode.visual = {
@@ -32,57 +31,79 @@ mycode.replace = {
   c = {fg = colors.white, bg = colors.black}
 }
 mycode.insert = {
-  a = {fg = colors.black, bg = colors.yellow, gui = 'bold'},
-  b = {fg = colors.yellow, bg = colors.black},
+  a = {fg = colors.black, bg = colors.lightred, gui = 'bold'},
+  b = {fg = colors.lightred, bg = colors.black},
   c = {fg = colors.white, bg = colors.black}
 }
+
 local function trailing_ws()
-  return vim.fn.search([[\s\+$]], 'nw') ~= 0 and 'TW' or ''
+	return vim.fn.search([[\s\+$]], 'nw') ~= 0 and 'TW' or ''
 end
 require'lualine'.setup {
   options = {
-    theme = mycode,
-    section_separators = '',
-    component_separators = '',
-	disabled_filetypes = {'help', 'man', 'Outline', 'GV'},
-  },
-  sections = {
-    lualine_a = {
-		{ 'mode', separator = { left = '' }, right_padding = 2 },
-    },
-	lualine_b = {
-		'branch',
-		{
-			'diff',
-    	    colored = true,
-    	    diff_color = {
-    	    	added = { fg = '#00FF5E', },
-    	    	modified = { fg = '#FFD500', },
-    	    	removed = { fg = '#FF0000', },
-    	    },
+		theme = mycode,
+		section_separators = '',
+		component_separators = '',
+		disabled_filetypes = {'Outline', 'GV'},
+		globalstatus = true,
+	},
+	sections = {
+		lualine_a = {
+			{
+				gps.get_location,
+				cond = gps.is_available,
+			},
+		},
+
+		lualine_b = {
+			'branch',
+			{
+				'diff',
+				colored = true,
+				diff_color = {
+					added = { fg = '#00FF5E', },
+					modified = { fg = '#FFD500', },
+					removed = { fg = '#FF0000', },
+				},
+			},
+		},
+
+		lualine_c = {
+			'filename',
+			trailing_ws,
+			'lsp_progress',
+			'grepper#statusline'
+		},
+
+		lualine_x = {
+			'filetype',
+			{
+				'diagnostics',
+				sources = {'nvim_diagnostic'},
+				diagnostics_color = {
+					error = { fg = '#FF0000', },
+					warn  = { fg = '#FFEF00', },
+					info  = { fg = '#9FC3FF', },
+					hint  = { fg = '#97FFFF', },
+				},
+			},
+			{
+				'tabs',
+				mode = 1,
+				tabs_color = {
+					active = { fg = colors.red, bg = colors.black },
+					inactive = { fg = colors.white, bg = colors.black },
+				},
+			},
+		},
+
+		lualine_y = {
+			'location',
+		},
+
+		lualine_z = {
+			'progress',
 		},
 	},
-	lualine_c = {'filename', 'lsp_progress',
-				trailing_ws, {
-					gps.get_location,
-					cond = gps.is_available,
-				}, 'grepper#statusline'},
-    lualine_x = {
-	{
-		'diagnostics',
-		sources = {'nvim_diagnostic'},
-    	diagnostics_color = {
-    		error = { fg = '#FF0000', },
-    		warn  = { fg = '#FFEF00', },
-    		info  = { fg = '#9FC3FF', },
-    		hint  = { fg = '#97FFFF', },
-    	},
-	},
-	'encoding', 'filetype' },
-    lualine_y = {'progress'},
-    lualine_z = {
-      { 'location', separator = { right = '' }, left_padding = 2 },
-    },
-  },
-  extensions = {'quickfix', 'nvim-tree', 'fugitive'}
+	extensions = {'quickfix', 'nvim-tree', 'fugitive'},
 }
