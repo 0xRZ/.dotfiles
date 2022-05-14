@@ -5,6 +5,7 @@ local list_binds = {
     { key = "<C-[>",                        cb = tree_cb("dir_up") },
     { key = "s",                            cb = "<cmd>HopWord<CR>" },
     { key = "S",                            cb = "<cmd>HopLine<CR>" },
+    { key = "<C-e>",                         cb = "<C-e>" },
 }
 
 require'nvim-tree'.setup {
@@ -16,7 +17,7 @@ require'nvim-tree'.setup {
 	},
     },
     filters = {
-    	dotfiles = false,
+		dotfiles = false,
 		custom = {
 		    '.git',
 		    'node_modules',
@@ -26,14 +27,16 @@ require'nvim-tree'.setup {
     },
     update_cwd = true,
     update_focused_file = {
-    	enable = true,
-    	update_cwd = true,
+		enable = true,
+		update_cwd = true,
     },
     trash = {
 	cmd = "trash",
-	require_confirm = true,
+		require_confirm = true,
     },
-    open_file = {
-	quit_on_open = false,
-    },
+	actions = {
+		open_file = {
+			quit_on_open = true,
+		},
+	}
 }

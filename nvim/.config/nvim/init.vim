@@ -39,7 +39,6 @@ Plug 'nvim-treesitter/playground'
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'p00f/nvim-ts-rainbow'
 Plug 'romgrk/nvim-treesitter-context'
-Plug 'mfussenegger/nvim-treehopper'
 
 " Git
 Plug 'tpope/vim-fugitive'
@@ -47,6 +46,7 @@ Plug 'rhysd/git-messenger.vim'
 Plug 'f-person/git-blame.nvim'
 Plug 'junegunn/gv.vim'
 Plug 'lewis6991/gitsigns.nvim'
+Plug 'sindrets/diffview.nvim'
 
 " Finder/telescope
 Plug 'nvim-lua/popup.nvim'
@@ -67,6 +67,8 @@ Plug 'kazhala/close-buffers.nvim'
 Plug 'romainl/vim-qf'
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'folke/zen-mode.nvim'
+Plug 'sindrets/winshift.nvim'
+Plug 't9md/vim-choosewin'
 
 " File explorer
 Plug 'kyazdani42/nvim-tree.lua'
@@ -113,6 +115,7 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'RRethy/vim-illuminate'
 Plug 'lewis6991/foldsigns.nvim'
 Plug 'rhysd/vim-grammarous'
+Plug 'rcarriga/nvim-notify'
 " filetype specific
 Plug 'tmux-plugins/vim-tmux'
 " markdown
@@ -394,8 +397,6 @@ nnoremap <leader>ft <cmd>Telescope treesitter<cr>
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 set foldlevel=99
-omap     <silent> aa :<C-U>lua require('tsht').nodes()<CR>
-vnoremap <silent> a :lua require('tsht').nodes()<CR>
 
 " show current context
 lua << EOF
@@ -482,9 +483,27 @@ require('gitsigns').setup {
 }
 EOF
 
+lua << EOF
+local cb = require'diffview.config'.diffview_callback
+require('diffview').setup {
+  key_bindings = {
+    view = {
+      ["<C-t>"] = cb("goto_file_tab"),
+      ["\\p"]   = cb("toggle_files"),
+    },
+    file_panel = {
+      ["s"]       = cb("toggle_stage_entry"),
+      ["<C-t>"]   = cb("goto_file_tab"),
+      ["\\p"]     = cb("toggle_files"),
+    },
+  },
+}
+EOF
+nnoremap <leader>gD :DiffviewOpen<cr>
+nnoremap \D :DiffviewToggleFiles<cr>
 " }}} Git "
 
-" Finder {{{ "
+" Finder/Telescope {{{ "
 
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fr <cmd>Telescope live_grep<cr>
@@ -499,9 +518,10 @@ nnoremap <leader>f= <cmd>Telescope spell_suggest<cr>
 nnoremap <leader>fk <cmd>Telescope keymaps<cr>
 nnoremap <leader>f? <cmd>Cheatsheet<cr>
 nnoremap <leader>fH <cmd>Telescope heading<cr>
+nnoremap <leader>fN <cmd>Telescope notify<cr>
 lua require('plugins_conf/conf_telescope')
 
-" }}} Finder "
+" }}} Finder/Telescope "
 
 " Statusline {{{ "
 
@@ -594,6 +614,10 @@ au TabLeave * let g:lasttab = tabpagenr()
 nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
 nnoremap <leader>t :tab sp<cr>
 nnoremap <leader>D :tabclose<cr>
+nnoremap <C-W>m <Cmd>WinShift<CR>
+nnoremap <C-W>S <Cmd>WinShift swap<CR>
+let g:choosewin_overlay_enable = 1
+nnoremap <C-W>g <Plug>(choosewin)
 
 " quickfix win
 nmap [q <Plug>(qf_qf_previous)
@@ -927,6 +951,17 @@ EOF
 lua require('foldsigns').setup()
 
 " }}} Show signs inside of folds "
+
+" Notifier {{{ "
+
+lua <<EOF
+require('plugins_conf/conf_notify')
+require("notify").setup({
+	timeout = 5,
+})
+EOF
+
+" }}} Notifier "
 
 " Notes {{{ "
 
