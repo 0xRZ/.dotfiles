@@ -1,11 +1,15 @@
 " Plugins initialization {{{ "
 
-let data_dir = stdpath('data') . '/site'
-if empty(glob(data_dir . '/autoload/plug.vim'))
-	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+let s:data_dir = stdpath('data') . '/site'
+if empty(glob(s:data_dir . '/autoload/plug.vim'))
+	silent execute '!curl -fLo '.s:data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 endif
 
 let g:plug_window = "enew"
+if &compatible
+  set nocompatible
+endif
+execute 'set runtimepath+=' . s:data_dir
 call plug#begin()
 " LSP
 Plug 'neovim/nvim-lspconfig'
@@ -23,14 +27,16 @@ Plug 'ahmedkhalf/project.nvim'
 Plug 'filipdutescu/renamer.nvim'
 
 " Completion
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'rafamadriz/friendly-snippets'
+Plug 'hrsh7th/cmp-vsnip'
 Plug 'onsails/lspkind-nvim'
+Plug 'rafamadriz/friendly-snippets'
 
 " treesitter
 Plug 'nvim-treesitter/nvim-treesitter'
@@ -55,6 +61,9 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'sudormrfbin/cheatsheet.nvim'
 Plug 'crispgm/telescope-heading.nvim'
+Plug 'LinArcX/telescope-command-palette.nvim'
+Plug 'LinArcX/telescope-env.nvim'
+Plug 'nvim-telescope/telescope-hop.nvim'
 
 " Status line
 Plug 'nvim-lualine/lualine.nvim'
@@ -204,20 +213,16 @@ nnoremap <leader>a @q
 nnoremap <leader>W :w<CR>
 nnoremap <leader>q :qa<CR>
 nnoremap <leader>e :e<CR>
-nnoremap <leader>vs	:source $MYVIMRC<cr>
-nnoremap <leader>ve :vsplit $MYVIMRC<CR>
 nnoremap <leader>sn /<c-r><c-w><CR>
 vnoremap <leader>sn "hy/<c-r>h<CR>
-nnoremap <leader>sp ?<c-r><c-w><CR>
-vnoremap <leader>sP "hy?<c-r>h<CR>
+nnoremap <leader>sN ?<c-r><c-w><CR>
+vnoremap <leader>sN "hy?<c-r>h<CR>
 nnoremap <leader>sy /<c-r>"<CR>
 vnoremap <leader>y "+y
 nnoremap <expr> <leader>y 'gg"+yG'.( line(".") == 1 ? '' : '<C-o>')
 vnoremap <leader>d "_d
 nnoremap <leader>p "+p
 vnoremap <leader>p "_dP
-nnoremap <leader>Pi :source $MYVIMRC <Bar> PlugClean <Bar> PlugInstall<cr>
-nnoremap <leader>Pu :PlugUpdate --sync<cr>:TSUpdate<cr>
 nnoremap <leader>+ :<c-u>exec 'resize +'.v:count1*5<CR>
 nnoremap <leader>_ :<c-u>exec 'resize -'.v:count1*5<CR>
 nnoremap <leader>= :<c-u>exec 'vertical resize +'.v:count1*20<CR>
@@ -238,7 +243,9 @@ nmap gh [%
 inoremap <C-p> <C-r>"
 onoremap w iw
 onoremap q i"
+vnoremap q i"
 onoremap Q i'
+vnoremap Q i'
 onoremap b ib
 onoremap B iB
 nnoremap <c-w>c <nop>
@@ -380,13 +387,19 @@ set shortmess+=c
 
 lua require('plugins_conf/conf_completion')
 " Override global configuration
-autocmd FileType c,cpp,lua lua require'cmp'.setup.buffer {
-\   sources = {
-\   { name = 'nvim_lsp' },
-\   { name = 'vsnip' },
-\   { name = 'path' },
-\   },
-\ }
+" autocmd FileType c,cpp,lua lua require'cmp'.setup.buffer {
+" \   sources = {
+" \   { name = 'nvim_lsp' },
+" \   { name = 'vsnip' },
+" \   { name = 'path' },
+" \   },
+" \ }
+imap <expr> <C-l>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : ''
+smap <expr> <C-l>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : ''
+imap <expr> <C-h> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : ''
+smap <expr> <C-h> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : ''
+smap <C-r> <BS>
+
 
 " }}} Completion "
 
@@ -429,16 +442,14 @@ nnoremap <leader>fgt <cmd>Telescope git_stash<cr>
 nnoremap <leader>gs :Git<cr>
 nnoremap <leader>ga :Gwrite<cr>
 nnoremap <leader>gc :Git commit<cr>
-function s:showBranchCommitDiffs()
+function MyFuncShowBranchCommitDiffs()
 	let branch_name = input("Base branch for which to show commits difference: ", "master")
 	execute "Git log "..branch_name..".."..FugitiveHead()
 endfunction
-function s:showBranchDiffs()
+function MyFuncShowBranchDiffs()
 	let branch_name = input("Base branch relative to which to show difference: ", "master")
 	execute "tab Git diff "..branch_name..".."..FugitiveHead()
 endfunction
-nnoremap <leader>gnc :call <SID>showBranchCommitDiffs()<cr>
-nnoremap <leader>gnd :call <SID>showBranchDiffs()<cr>
 nnoremap <leader>gd :Git difftool<cr>
 nnoremap <leader>gt :tab Git diff --staged<cr>
 nnoremap <leader>gp :Git difftool -y HEAD~1 HEAD<cr>
@@ -489,18 +500,17 @@ require('diffview').setup {
   key_bindings = {
     view = {
       ["<C-t>"] = cb("goto_file_tab"),
-      ["\\p"]   = cb("toggle_files"),
+      ["\\n"]   = cb("toggle_files"),
     },
     file_panel = {
       ["s"]       = cb("toggle_stage_entry"),
       ["<C-t>"]   = cb("goto_file_tab"),
-      ["\\p"]     = cb("toggle_files"),
+      ["\\n"]     = cb("toggle_files"),
     },
   },
 }
 EOF
 nnoremap <leader>gD :DiffviewOpen<cr>
-nnoremap \D :DiffviewToggleFiles<cr>
 " }}} Git "
 
 " Finder/Telescope {{{ "
@@ -519,6 +529,8 @@ nnoremap <leader>fk <cmd>Telescope keymaps<cr>
 nnoremap <leader>f? <cmd>Cheatsheet<cr>
 nnoremap <leader>fH <cmd>Telescope heading<cr>
 nnoremap <leader>fN <cmd>Telescope notify<cr>
+nnoremap <leader>fc <cmd>Telescope command_palette<cr>
+nnoremap <leader>fe <cmd>Telescope env<cr>
 lua require('plugins_conf/conf_telescope')
 
 " }}} Finder/Telescope "
@@ -752,8 +764,6 @@ lua require("autosave").setup()
 let g:move_map_keys = 0
 vmap K <Plug>MoveBlockUp
 vmap J <Plug>MoveBlockDown
-vmap <C-H> <Plug>MoveBlockLeft
-vmap <C-L> <Plug>MoveBlockRight
 
 " }}} Move selected blocks of text "
 
@@ -936,10 +946,9 @@ nnoremap \t :call <SID>toggleList()<CR>
 lua << EOF
 if jit ~= nil then
 	require 'colorizer'.setup {
-	  '*';
-	  '!c';
-	  '!cpp';
-	  '!sh';
+	  'lua';
+	  'vim';
+	  'txt';
 	}
 end
 EOF
