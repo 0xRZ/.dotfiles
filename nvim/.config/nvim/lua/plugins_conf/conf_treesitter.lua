@@ -1,6 +1,6 @@
 require'nvim-treesitter.configs'.setup {
 
-  ensure_installed = { "c", "cpp", "lua", "bash", "vim", "yaml", "query", "markdown", "rst" },
+  ensure_installed = { "c", "bash", "comment", "cpp", "dockerfile", "json", "json5", "jsonc", "lua", "query", "regex", "rst", "vim", "yaml", "markdown", "make" },
   sync_install = false,
   -- treesitter modules
   highlight = {

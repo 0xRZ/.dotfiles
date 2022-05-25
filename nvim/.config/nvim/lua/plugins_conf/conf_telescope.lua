@@ -11,20 +11,18 @@ require('telescope').setup{
 			["<C-k>"] = actions.move_selection_previous,
 			["<C-b>"] = actions.delete_buffer,
 			["<C-x>"] = actions.select_horizontal,
-			["<C-s>"] = actions.select_vertical,
 			["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
-			["<C-h>"] = require("telescope").extensions.hop.hop,  -- hop.hop_toggle_selection
+			["<C-s>"] = require("telescope").extensions.hop.hop,
 		  },
 		  n = {
 			["<C-w>"] = { "<esc>", type = "command" },
-			["<esc>"] = false,
-			["<C-p>"] = action_layout.toggle_preview,
-			["<C-b>"] = actions.delete_buffer,
-			["<C-x>"] = actions.select_horizontal,
-			["<C-s>"] = actions.select_vertical,
+			["p"] = action_layout.toggle_preview,
+			["b"] = actions.delete_buffer,
+			["v"] = actions.select_horizontal,
+			["x"] = actions.select_vertical,
+			["q"] = actions.close,
+			["<esc>"] = actions.close,
 			["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
-			["<C-c>"] = actions.close,
-			["<C-h>"] = require("telescope").extensions.hop.hop,  -- hop.hop_toggle_selection
 		  },
 		},
 		vimgrep_arguments = {
@@ -118,3 +116,5 @@ require('telescope').load_extension('heading')
 require('telescope').load_extension('command_palette')
 require('telescope').load_extension('env')
 require('telescope').load_extension('hop')
+require("telescope").load_extension("notify")
+require("telescope").load_extension("dap")

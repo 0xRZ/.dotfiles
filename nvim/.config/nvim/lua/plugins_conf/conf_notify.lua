@@ -1,5 +1,4 @@
 vim.notify = require("notify")
--- Utility functions shared between progress reports for LSP and DAP
 
 local client_notifs = {}
 
@@ -55,6 +54,10 @@ vim.lsp.handlers["$/progress"] = function(_, result, ctx)
    return
  end
 
+ if vim.lsp.get_client_by_id(client_id).name == "null-ls" then
+     return
+ end
+ -- MyDump(vim.lsp.get_client_by_id(client_id).name, val.message)
  local notif_data = get_notif_data(client_id, result.token)
 
  if val.kind == "begin" then

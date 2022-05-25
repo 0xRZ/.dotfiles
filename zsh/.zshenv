@@ -1,12 +1,13 @@
 # environment variables
-export PATH=$HOME/bin:$HOME/usr/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH
+export PATH=$HOME/bin:$HOME/usr/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/go/bin:$PATH
+# export PATH="$HOME/bin"
 export XDG_CONFIG_HOME=$HOME/.config
 export LANG=en_US.UTF-8
 export EDITOR='nvim'
 export TERM=alacritty
 export COLORTERM=truecolor
 export SHELL=/bin/zsh
-# n/curses: number of milliseconds to wait after reading an escape character 
+# n/curses: number of milliseconds to wait after reading an escape character
 export ESCDELAY=0
 
 # nnn file manager
@@ -16,7 +17,7 @@ b:$HOME/build;d:$HOME/.dotfiles;p:$HOME/.backup;\
 a:$HOME/.my_tmp;\
 "
 NNN_PLUG_BUNDLED='m:bulknew;f:fzcd;t:mimelist;p:preview-tui'
-NNN_PLUG_CMDS='s:-!sudoedit $nnn*;g:-!neovide --multigrid $nnn*'
+NNN_PLUG_CMDS='s:-!sudoedit $nnn*;g:-!neovide --notabs --multigrid $nnn*'
 NNN_PLUG_YANK='y:nnn_file_path_yank;Y:nnn_file_name_yank;d:nnn_file_dir_yank'
 NNN_PLUG_CD='c:nnn_clipboard_file_path_cd'
 export NNN_PLUG="$NNN_PLUG_BUNDLED;$NNN_PLUG_CMDS;$NNN_PLUG_YANK;$NNN_PLUG_CD;"

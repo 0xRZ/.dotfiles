@@ -6,15 +6,10 @@ if empty(glob(s:data_dir . '/autoload/plug.vim'))
 endif
 
 let g:plug_window = "enew"
-if &compatible
-  set nocompatible
-endif
-execute 'set runtimepath+=' . s:data_dir
 call plug#begin()
 " LSP
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
-" Plug 'glepnir/lspsaga.nvim'
 Plug 'folke/trouble.nvim'
 Plug 'folke/lua-dev.nvim'
 Plug 'simrat39/symbols-outline.nvim'
@@ -25,6 +20,9 @@ Plug 'kosayoda/nvim-lightbulb'
 Plug 'weilbith/nvim-code-action-menu'
 Plug 'ahmedkhalf/project.nvim'
 Plug 'filipdutescu/renamer.nvim'
+Plug 'b0o/schemastore.nvim'
+Plug 'p00f/clangd_extensions.nvim'
+Plug 'jose-elias-alvarez/null-ls.nvim'
 
 " Completion
 Plug 'hrsh7th/vim-vsnip'
@@ -45,6 +43,7 @@ Plug 'nvim-treesitter/playground'
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'p00f/nvim-ts-rainbow'
 Plug 'romgrk/nvim-treesitter-context'
+Plug 'danymat/neogen'
 
 " Git
 Plug 'tpope/vim-fugitive'
@@ -87,6 +86,12 @@ Plug 'kassio/neoterm'
 
 " Debugging
 Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh' }
+Plug 'mfussenegger/nvim-dap'
+Plug 'theHamsta/nvim-dap-virtual-text'
+Plug 'nvim-telescope/telescope-dap.nvim'
+Plug 'tpope/vim-scriptease'
+Plug 'rcarriga/cmp-dap'
+Plug 'michaelb/sniprun', { 'do': 'bash install.sh' }
 
 " Sessions
 Plug 'rmagatti/session-lens'
@@ -106,6 +111,7 @@ Plug 'jbyuki/venn.nvim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'monaqa/dial.nvim'
 Plug 'ntpeters/vim-better-whitespace'
+Plug 'sbdchd/neoformat'
 " movement
 Plug 'phaazon/hop.nvim'
 Plug 'andymass/vim-matchup'
@@ -123,7 +129,7 @@ Plug 'folke/todo-comments.nvim'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'RRethy/vim-illuminate'
 Plug 'lewis6991/foldsigns.nvim'
-Plug 'rhysd/vim-grammarous'
+Plug 'dpelle/vim-LanguageTool'
 Plug 'rcarriga/nvim-notify'
 " filetype specific
 Plug 'tmux-plugins/vim-tmux'
@@ -134,6 +140,7 @@ if (system("uname -m") == "x86_64\n")
 endif
 " misc
 Plug 'kyazdani42/nvim-web-devicons'
+Plug 'tpope/vim-dispatch'
 
 " Colorschemes
 Plug 'Mofiqul/vscode.nvim'
@@ -162,6 +169,7 @@ set hidden
 set tabstop=4
 set shiftwidth=4
 set smarttab
+set noexpandtab
 "
 set tildeop
 set number
@@ -188,6 +196,7 @@ augroup END
 
 " Mappings {{{ "
 
+nmap M '
 nnoremap H 0
 vnoremap H 0
 onoremap H 0
@@ -205,10 +214,24 @@ nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
 nnoremap <silent> <c-d> :<C-U>exec "normal " . (v:count > 1 ? "m'" . v:count*10 : 10) . "j"<CR>
 nnoremap <silent> <c-u> :<C-U>exec "normal " . (v:count > 1 ? "m'" . v:count*10 : 10) . "k"<CR>
-let mapleader = "\<Space>"
 nnoremap . <nop>
+inoremap <C-p> <C-r>"
+onoremap w iw
+onoremap q i"
+vnoremap q i"
+onoremap Q i'
+vnoremap Q i'
+onoremap b ib
+onoremap B iB
+nnoremap <c-w>c <nop>
+vnoremap > >gv
+vnoremap < <gv
 " '\' starts mappings for a toggle
 nnoremap \u :UndotreeToggle<CR>
+nnoremap \w :set wrap!<CR>
+nnoremap \l :set rnu!<CR>:set number!<CR>
+nnoremap \W :set colorcolumn=80
+let mapleader = "\<Space>"
 nnoremap <leader>a @q
 nnoremap <leader>W :w<CR>
 nnoremap <leader>q :qa<CR>
@@ -227,10 +250,8 @@ nnoremap <leader>+ :<c-u>exec 'resize +'.v:count1*5<CR>
 nnoremap <leader>_ :<c-u>exec 'resize -'.v:count1*5<CR>
 nnoremap <leader>= :<c-u>exec 'vertical resize +'.v:count1*20<CR>
 nnoremap <leader>- :<c-u>exec 'vertical resize -'.v:count1*20<CR>
-nnoremap \w :set wrap!<CR>
-nnoremap \l :set rnu!<CR>:set number!<CR>
 " NOTE: might need clean vimrc with :set nocp
-nnoremap \s :setlocal spell! spelllang=en,ru<CR>
+" nnoremap \s :setlocal spell! spelllang=en,ru<CR>
 nnoremap <leader>/ :noh<CR>
 vnoremap <leader>R "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap <leader>ig :let @l=@%.":".line('.')<CR>:call setreg('+',@l)<CR>:echo @l." copied to clipboard"<CR>
@@ -239,20 +260,6 @@ nnoremap <leader>id :echo getcwd()<CR>
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 nnoremap [<leader> :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
-nmap gh [%
-inoremap <C-p> <C-r>"
-onoremap w iw
-onoremap q i"
-vnoremap q i"
-onoremap Q i'
-vnoremap Q i'
-onoremap b ib
-onoremap B iB
-nnoremap <c-w>c <nop>
-vnoremap > >gv
-vnoremap < <gv
-vnoremap <leader>t :retab<CR>
-nnoremap \W :set colorcolumn=80
 
 " }}} Mappings "
 
@@ -303,24 +310,10 @@ nnoremap gpd <cmd>lua require('goto-preview').goto_preview_definition()<CR>
 nnoremap gpi <cmd>lua require('goto-preview').goto_preview_implementation()<CR>
 nnoremap gP <cmd>lua require('goto-preview').close_all_win()<CR>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
-" nnoremap gh <cmd>lua vim.lsp.buf.incoming_calls()<cr>
 
 " Neovim logs at: ~/.cache/nvim/lsp.log
 " vim.lsp.set_log_level("debug")
 lua require('plugins_conf/conf_lspclient')
-
-" lua << EOF
-" local saga = require 'lspsaga'
-" saga.init_lsp_saga()
-" nnoremap <silent> gh <cmd>lua require'lspsaga.provider'.lsp_finder()<CR>
-" nnoremap <silent><leader>ca <cmd>lua require('lspsaga.codeaction').code_action()<CR>
-" vnoremap <silent><leader>ca :<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>
-" nnoremap <silent> K <cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
-" nnoremap <silent> gs <cmd>lua require('lspsaga.signaturehelp').signature_help()<CR>
-" nnoremap <silent>gr <cmd>lua require('lspsaga.rename').rename()<CR>
-" nnoremap <silent> gd <cmd>lua require'lspsaga.provider'.preview_definition()<CR>
-" nnoremap <silent><leader>cd <cmd>lua require'lspsaga.diagnostic'.show_line_diagnostics()<CR>
-" EOF
 
 " preview of an LSP symbol
 lua << EOF
@@ -333,25 +326,41 @@ EOF
 
 " show function signature during editing
 lua << EOF
-	require 'lsp_signature'.setup({
+	require('lsp_signature').setup({
 		hint_enable = false,
 	})
 EOF
 
 " show lightbulb when there is a code action available under cursor
-autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb({
-	\ sign = {
-	\    enabled = false,
-	\ },
-	\ virtual_text = {
-	\   enabled = true,
-	\    text = "💡",
-	\   hl_mode = "replace",
-	\},
-\})
+lua << EOF
+require('nvim-lightbulb').setup({
+	sign = {
+		enabled = false,
+	},
+	virtual_text = {
+		enabled = true,
+		text = "💡",
+		hl_mode = "combine",
+	},
+	autocmd = {
+		enabled = true,
+		pattern = {"*"},
+		events = {"CursorHold", "CursorHoldI"}
+	},
+})
+EOF
 
-" rename UI
-" nnoremap <silent> <leader>glr <cmd>lua require('renamer').rename()<cr>
+" rename
+lua << EOF
+require('renamer').setup {
+	show_refs = true,
+	with_qf_list = true,
+	with_popup = false,
+	handler = function(param)
+		vim.cmd('execute "normal \\<Plug>(qf_qf_toggle_stay)"')
+	end,
+}
+EOF
 
 " }}} LSP "
 
@@ -385,21 +394,18 @@ set updatetime=100
 set completeopt=menu,menuone,noselect
 set shortmess+=c
 
+let g:vsnip_sync_delay = 0
+let g:vsnip_choice_delay = 200
 lua require('plugins_conf/conf_completion')
 " Override global configuration
-" autocmd FileType c,cpp,lua lua require'cmp'.setup.buffer {
-" \   sources = {
-" \   { name = 'nvim_lsp' },
-" \   { name = 'vsnip' },
-" \   { name = 'path' },
-" \   },
-" \ }
-imap <expr> <C-l>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : ''
-smap <expr> <C-l>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : ''
-imap <expr> <C-h> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : ''
-smap <expr> <C-h> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : ''
+autocmd FileType c,cpp,lua lua require'cmp'.setup.buffer {
+\   sources = {
+\   { name = 'nvim_lsp' },
+\   { name = 'vsnip' },
+\   { name = 'path' },
+\   },
+\ }
 smap <C-r> <BS>
-
 
 " }}} Completion "
 
@@ -428,6 +434,14 @@ EOF
 hi TreesitterContext guibg=#ECFFFF gui=bold
 nnoremap \C :TSContextToggle<CR>
 
+" insert code annotation
+lua << EOF
+require('neogen').setup {
+        enabled = true,
+}
+EOF
+nnoremap <leader>ea :Neogen<CR>
+
 " }}} Treesitter "
 
 " Git {{{ "
@@ -444,7 +458,7 @@ nnoremap <leader>ga :Gwrite<cr>
 nnoremap <leader>gc :Git commit<cr>
 function MyFuncShowBranchCommitDiffs()
 	let branch_name = input("Base branch for which to show commits difference: ", "master")
-	execute "Git log "..branch_name..".."..FugitiveHead()
+	execute "Git log "..branch_name."..".FugitiveHead()
 endfunction
 function MyFuncShowBranchDiffs()
 	let branch_name = input("Base branch relative to which to show difference: ", "master")
@@ -548,7 +562,7 @@ local groups = require('bufferline.groups')
 require("bufferline").setup {
 	options = {
 		mode = "buffers",
-		close_command = "BDelete %d",
+		close_command = "BDelete! %d",
 		show_buffer_close_icons = false,
 		right_mouse_command = "BDelete! %d",
 		indicator_icon = '',
@@ -696,29 +710,203 @@ tnoremap <silent> <c-\> <c-\><c-n>
 
 " }}} Terminal "
 
-" Debugger {{{ "
+" Debugger/REPL {{{ "
 
-" let g:nvimgdb_disable_start_keymaps = v:true
+" DEBUG ADAPTERS
+" C/C++/RUST
+lua <<EOF
+local dap = require('dap')
+dap.adapters.lldb = {
+	type = 'executable',
+	command = 'lldb-vscode',
+	name = 'lldb'
+}
+dap.adapters.cppdbg = {
+	id = 'cppdbg',
+	type = 'executable',
+	command = os.getenv("HOME").."/extension/debugAdapters/bin/OpenDebugAD7",
+	options = {
+		detached = false
+	}
+}
+dap.configurations.cpp = {
+	{
+		name = 'Launch executable',
+		type = 'lldb',
+		request = 'launch',
+		program = function()
+			return vim.fn.input('Path to executable: ')
+		end,
+		cwd = '${workspaceFolder}',
+		stopOnEntry = false,
+		args = {  }
+		-- args = function()
+		-- 	return vim.fn.input('enter args:')
+		-- end,
+		-- runInTerminal = true,
+		-- postRunCommands = {'process handle -p true -s false -n false SIGWINCH'},
+	},
+	{
+		name = 'Attach to executable',
+		type = 'lldb',
+		request = 'attach',
+		pid = function()
+			return vim.fn.str2nr(vim.fn.input('Enter pid: '))
+		end,
+		args = {},
+	},
+	{
+		name = 'Attach to gdbserver',
+		type = 'cppdbg',
+		request = 'launch',
+		MIMode = 'gdb',
+		miDebuggerServerAddress = function()
+			return vim.fn.input('Address of gdbserver: ', 'localhost:1234')
+		end,
+		miDebuggerPath = 'gdb',
+		cwd = '${workspaceFolder}',
+		program = function()
+			return vim.fn.input('Path to executable: ')
+		end,
+	},
+}
+dap.configurations.c = dap.configurations.cpp
+-- $HOME/.cache/nvim/dap.log
+-- require('dap').set_log_level('TRACE')
 
-" let g:nvimgdb_config_override = {
-"   \ 'key_next': 'n',
-"   \ 'key_step': 's',
-"   \ 'key_finish': 'f',
-"   \ 'key_continue': 'c',
-"   \ 'key_until': 'u',
-"   \ 'key_eval': 'p',
-"   \ 'key_breakpoint': 'r',
-"   \ }
+local dap = require('dap')
+local api = vim.api
+local set_keymaps = {}
+set_keymaps['r'] = true
+set_keymaps['n'] = true
+set_keymaps['i'] = true
+set_keymaps['c'] = true
+set_keymaps['o'] = true
+set_keymaps['p'] = true
+local keymap_restore = {}
+dap.listeners.after['event_initialized']['me'] = function()
+    local keymaps = api.nvim_get_keymap('n')
+    for _, keymap in pairs(keymaps) do
+      if keymap.lhs == "r" then
+        table.insert(keymap_restore, keymap)
+        api.nvim_del_keymap('n', 'r')
+      end
+      if keymap.lhs == "n" then
+        table.insert(keymap_restore, keymap)
+        api.nvim_del_keymap('n', 'n')
+      end
+      if keymap.lhs == "i" then
+        table.insert(keymap_restore, keymap)
+        api.nvim_del_keymap('n', 'i')
+      end
+      if keymap.lhs == "c" then
+        table.insert(keymap_restore, keymap)
+        api.nvim_del_keymap('n', 'c')
+      end
+      if keymap.lhs == "o" then
+        table.insert(keymap_restore, keymap)
+        api.nvim_del_keymap('n', 'o')
+      end
+      if keymap.lhs == "p" then
+        table.insert(keymap_restore, keymap)
+        api.nvim_del_keymap('n', 'p')
+      end
+    end
+  api.nvim_set_keymap(
+  'n', 'r', '<Cmd>lua require("dap").toggle_breakpoint()<CR>', { silent = true })
+  api.nvim_set_keymap(
+  'n', 'n', '<Cmd>lua require("dap").step_over()<CR>', { silent = true })
+  api.nvim_set_keymap(
+  'n', 'i', '<Cmd>lua require("dap").step_into()<CR>', { silent = true })
+  api.nvim_set_keymap(
+  'n', 'c', '<Cmd>lua require("dap").continue()<CR>', { silent = true })
+  api.nvim_set_keymap(
+  'n', 'o', '<Cmd>lua require("dap").step_out()<CR>', { silent = true })
+  api.nvim_set_keymap(
+  'n', 'p', '<Cmd>lua require("dap.ui.widgets").hover()<CR>', { silent = true })
+end
 
-function s:remoteGDBConn()
-	let db = input("enter remote debug binary path: ")
-	execute('GdbStart gdb -q -ex "target remote localhost:1234" '..db)
+dap.listeners.after['event_terminated']['me'] = function()
+  for _, keymap in pairs(keymap_restore) do
+    api.nvim_set_keymap('n', keymap.lhs, keymap.rhs, { silent = keymap.silent == 1 })
+    if set_keymaps[keymap.lhs] then
+      set_keymaps[keymap.lhs] = false
+    end
+  end
+  keymap_restore = {}
+
+  for keymap in pairs(set_keymaps) do
+    if set_keymaps[keymap] then
+      api.nvim_set_keymap('n', keymap, keymap, { })
+    end
+  end
+end
+
+require("nvim-dap-virtual-text").setup {
+	enabled = true,
+    highlight_changed_variables = false,
+    highlight_new_as_changed = false,
+}
+EOF
+highlight NvimDapVirtualText guifg='#FAFAFA' guibg='#A5A5A5' gui=bold
+nnoremap <silent> <leader>uc <Cmd>lua require'dap'.continue()<CR>
+" nnoremap <silent> <F7> <Cmd>lua require'dap'.step_over()<CR>
+" nnoremap <silent> <F6> <Cmd>lua require'dap'.step_into()<CR>
+nnoremap <silent> <leader>ur <Cmd>lua require'dap'.toggle_breakpoint()<CR>
+nnoremap <silent> <leader>uR <Cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
+nnoremap <silent> <leader>ux <Cmd>lua require'dap'.clear_breakpoints()<CR>
+nnoremap <silent> <leader>uu <Cmd>lua require'dap'.run_to_cursor()<CR>
+nnoremap <silent> <leader>u\ <Cmd>lua require'dap'.repl.toggle()<CR>
+nnoremap <silent> <leader>ui <Cmd>lua require('dap.ui.widgets').centered_float(require('dap.ui.widgets').scopes)<CR>
+nnoremap <silent> <leader>uC <Cmd>lua require'dap'.run_last()<CR>
+nnoremap <silent> <leader>uq <Cmd>lua require'dap'.repl.close()<CR><Cmd>lua require'dap'.terminate()<CR>
+nnoremap <silent> <leader>uf <Cmd>Telescope dap list_breakpoints<CR>
+
+" GDB/BASHDB
+function! NvimGdbNoTKeymaps()
+	tnoremap <silent> <buffer> kj <c-\><c-n>
 endfunction
+let g:nvimgdb_config_override = {
+	\ 'key_breakpoint': 'r',
+	\ 'key_next': 'n',
+	\ 'key_step': 'N',
+	\ 'key_finish': 'f',
+	\ 'key_continue': 'c',
+	\ 'key_until': 'u',
+	\ 'key_eval': 'p',
+	\ 'set_tkeymaps': "NvimGdbNoTKeymaps",
+	\ }
+let g:nvimgdb_disable_start_keymaps = v:true
+function s:gdbconn()
+	let db = input("GDB server\nbinary to debug path: ")
+	let addr = input("address of gdbserver: ", "localhost:1234")
+	if !empty(matchstr(addr, "localhost"))
+		execute('GdbStart gdb -q -ex "set sysroot" -ex "target remote '.addr.'" '.db)
+	else
+		execute('GdbStart gdb -q -ex "target remote '.addr.'" '.db)
+	endif
+endfunction
+function s:rungdb()
+	let db = input("GDB\nbinary to debug path: ")
+	execute('GdbStart gdb -q -ex "start" '.db)
+endfunction
+function s:runbashdb()
+	let db = input("BASHDB\nscript to debug path: ")
+	let args = input("args: ")
+	execute('GdbStartBashDB bashdb '.db.' -- '.args)
+endfunction
+nnoremap <leader>Ugc	:call <SID>gdbconn()<CR>
+nnoremap <leader>Ugr	:call <SID>rungdb()<CR>
+nnoremap <leader>Ubr	:call <SID>runbashdb()<CR>
+nnoremap <leader>Uq	:GdbDebugStop<CR>
 
-nnoremap <leader>ur	:call <SID>remoteGDBConn()<CR>
-nnoremap <leader>uq	:GdbDebugStop<CR>
-
-" }}} Debugger "
+" REPL/coderunner
+nmap <leader>Sr <Plug>SnipRun
+vmap <leader>Sr <Plug>SnipRun
+nmap <leader>Si <Plug>SnipInfo
+nmap <leader>Sq <Plug>SnipReset
+nmap <leader>Sc <Plug>SnipClose
+" }}} Debuggers "
 
 " Sessions {{{ "
 
@@ -748,6 +936,7 @@ require('nvim-autopairs').setup{
 	ts_config = {
 		{'string'},
 	},
+	disable_filetype = { "TelescopePrompt" , "dap-repl" },
 }
 EOF
 
@@ -778,13 +967,6 @@ vmap g<C-x> g<Plug>(dial-decrement)
 
 " }}} Increment/decrement "
 
-" project level indentation {{{ "
-
-let g:EditorConfig_exclude_patterns = ['fugitive://.*']
-au FileType gitcommit let b:EditorConfig_disable = 1
-
-" }}} project level indentation "
-
 " trailing whitespaces {{{ "
 
 hi ExtraWhitespace guibg=#FF0000
@@ -798,13 +980,100 @@ nnoremap [w :PrevTrailingWhitespace<CR>
 
 " }}} trailing whitespaces "
 
+" grammar/spell checker {{{ "
+
+set spelllang=en_us
+let g:languagetool_jar = "/usr/share/languagetool/languagetool-commandline.jar"
+nnoremap <leader>sc :LanguageToolCheck<CR>
+vnoremap <leader>sc :LanguageToolCheck<CR>
+nnoremap <leader>sC :LanguageToolClear<CR>
+
+" }}} grammar/spell checker "
+
+" Draw diagrams {{{ "
+
+nnoremap \v :lua Toggle_venn()<CR>
+lua <<EOF
+	function _G.Toggle_venn()
+	    local venn_enabled = vim.inspect(vim.b.venn_enabled)
+	    if venn_enabled == "nil" then
+	        vim.b.venn_enabled = true
+	        vim.cmd[[setlocal ve=all]]
+	        -- draw a line
+	        vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
+	        vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
+	        vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
+	        vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
+	        -- draw a box
+	        vim.api.nvim_buf_set_keymap(0, "v", "b", ":VBox<CR>", {noremap = true})
+	        -- draw a heavy box
+	        vim.api.nvim_buf_set_keymap(0, "v", "B", ":VBox<CR>", {noremap = true})
+	        -- fill with color
+	        vim.api.nvim_buf_set_keymap(0, "v", "f", ":VFill<CR>", {noremap = true})
+			print("venn mode actviated")
+	    else
+	        vim.cmd[[setlocal ve=]]
+	        vim.cmd[[mapclear <buffer>]]
+	        vim.b.venn_enabled = nil
+			print("venn mode disabled")
+	    end
+	end
+EOF
+
+" }}} Draw diagrams "
+
+" format text {{{ "
+
+function! s:formatWhiteSpace() range
+	" let s:my_width_of_tab = &tabstop
+	if (&expandtab == 1)
+		exe a:firstline . "," . a:lastline . "retab"
+	else
+		set et
+		exe a:firstline . "," . a:lastline .  "retab"
+		set noet
+	endif
+	" let &tabstop = s:my_width_of_tab
+endfunction
+
+function! s:formatTabs() range
+	" let s:my_width_of_tab = &tabstop
+	if (&expandtab == 1)
+		set noet
+		exe a:firstline . "," . a:lastline . "retab!"
+		set et
+	else
+		exe a:firstline . "," . a:lastline .  "retab!"
+	endif
+	" let &tabstop = s:my_width_of_tab
+endfunction
+
+xnoremap mt :call <SID>formatTabs()<CR>
+xnoremap mw :call <SID>formatWhiteSpace()<CR>
+
+let g:shfmt_opt="-ci -i 0"
+let g:neoformat_basic_format_retab = 0
+" let g:neoformat_only_msg_on_error = 1
+" let g:neoformat_verbose = 1
+nnoremap <leader>ef :Neoformat<CR>
+vnoremap <leader>f :Neoformat<CR>
+
+" }}} format text "
+
+" project level indentation {{{ "
+
+let g:EditorConfig_exclude_patterns = ['fugitive://.*']
+au FileType gitcommit let b:EditorConfig_disable = 1
+
+" }}} project level indentation "
+
 " Jump to word {{{ "
 
 nnoremap s <cmd>HopWord<CR>
 vnoremap s <cmd>HopWord<CR>
-nnoremap S <cmd>HopLine<CR>
-vnoremap <leader>S <cmd>HopLine<CR>
-noremap <c-s> <cmd>HopChar1<CR>
+nnoremap <c-s> <cmd>HopLine<CR>
+vnoremap <c-s> <cmd>HopLine<CR>
+nnoremap S <cmd>HopChar1<CR>
 hi HopNextKey gui=bold,underline guifg=#ff007c
 hi! link HopNextKey1 HopNextKey
 hi! link HopNextKey2 HopNextKey
@@ -822,6 +1091,7 @@ let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 " Matching bracket navigation {{{ "
 
+nmap gh [%
 let g:matchup_matchparen_offscreen = {}
 hi MatchParen ctermbg=blue guibg=lightblue cterm=italic gui=italic
 
@@ -982,37 +1252,23 @@ nnoremap <leader>fn <cmd>lua require('telescope.builtin.files').find_files({
 
 " }}} Notes "
 
-" Draw diagrams {{{ "
+" Run builds/tasks {{{ "
 
-nnoremap \v :lua Toggle_venn()<CR>
-lua <<EOF
-	function _G.Toggle_venn()
-	    local venn_enabled = vim.inspect(vim.b.venn_enabled)
-	    if venn_enabled == "nil" then
-	        vim.b.venn_enabled = true
-	        vim.cmd[[setlocal ve=all]]
-	        -- draw a line
-	        vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
-	        vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
-	        vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
-	        vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
-	        -- draw a box
-	        vim.api.nvim_buf_set_keymap(0, "v", "b", ":VBox<CR>", {noremap = true})
-	        -- draw a heavy box
-	        vim.api.nvim_buf_set_keymap(0, "v", "B", ":VBox<CR>", {noremap = true})
-	        -- fill with color
-	        vim.api.nvim_buf_set_keymap(0, "v", "f", ":VFill<CR>", {noremap = true})
-			print("venn mode actviated")
-	    else
-	        vim.cmd[[setlocal ve=]]
-	        vim.cmd[[mapclear <buffer>]]
-	        vim.b.venn_enabled = nil
-			print("venn mode disabled")
-	    end
-	end
-EOF
+function s:runmake()
+	let args = input("make args: ")
+	let nproc = substitute(system('nproc'), '\n$', '', '')
+	execute "Make '-j".nproc."' ".args
+endfunction
 
-" }}} Draw diagrams "
+let g:dispatch_no_maps = 1
+nnoremap <leader>Er :call <SID>runmake()<CR>
+nnoremap <leader>ER :Make! 
+nnoremap <leader>Eo :Copen<cr>
+nnoremap <leader>Ed :Dispatch cmake build 
+nnoremap <leader>Ex :AbortDispatch<cr>
+nnoremap <leader>Es :Start! 
+
+" }}} Run builds/tasks "
 
 " Gui-nvim {{{ "
 
@@ -1020,8 +1276,8 @@ if exists("g:neovide")
 	map <m-g> <nop>
 	set guifont=JetBrainsMonoNL\ Nerd\ Font\ Mono:h15
 	let g:neovide_refresh_rate=140
-	" let g:neovide_transparency=0.95
-	let g:neovide_cursor_vfx_mode = "ripple"
+	let g:neovide_cursor_vfx_mode = "wireframe"
+	" let g:neovide_cursor_antialiasing=v:true
 endif
 
 " }}} Gui-nvim "

@@ -3,9 +3,8 @@ local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 local list_binds = {
     { key = "<C-s>",                        cb = tree_cb("vsplit") },
     { key = "<C-[>",                        cb = tree_cb("dir_up") },
-    { key = "s",                            cb = "<cmd>HopWord<CR>" },
-    { key = "S",                            cb = "<cmd>HopLine<CR>" },
-    { key = "<C-e>",                         cb = "<C-e>" },
+    { key = "s",                            cb = "<cmd>HopLine<CR>" },
+    { key = "<C-e>",                        cb = "<C-e>" },
 }
 
 require'nvim-tree'.setup {
