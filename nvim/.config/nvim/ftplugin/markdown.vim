@@ -17,14 +17,7 @@ setlocal conceallevel=2
 
 " Mappings {{{ "
 nnoremap <buffer> \p :MarkdownPreviewToggle<CR>
-nmap <buffer> gP <Plug>Markdown_MoveToParentHeader
-nmap <buffer> gC <Plug>Markdown_MoveToCurHeader
-nmap <buffer> gn <Plug>Markdown_MoveToNextHeader
-nmap <buffer> gp <Plug>Markdown_MoveToPreviousHeader
-nnoremap <buffer> <Space>xh :Toch<CR>
-vnoremap <buffer> <Space>hd :HeaderDecrease<CR>
-vnoremap <buffer> <Space>hi :HeaderIncrease<CR>
-nnoremap <buffer> <Space>tf :TableFormat<CR>
-nnoremap <buffer> ]l :<c-u>put =repeat('* ', v:count1)<cr>A
-nnoremap <buffer> ]d :<c-u>put =repeat('----', v:count1)<cr>A<cr><ESC>
+vnoremap <buffer> Fd :HeaderDecrease<CR>gv
+vnoremap <buffer> Fi :HeaderIncrease<CR>gv
+nnoremap <buffer> <Space>Ft :TableFormat<CR>
 " }}} Mappings "

@@ -54,10 +54,6 @@ vim.lsp.handlers["$/progress"] = function(_, result, ctx)
    return
  end
 
- if vim.lsp.get_client_by_id(client_id).name == "null-ls" then
-     return
- end
- -- MyDump(vim.lsp.get_client_by_id(client_id).name, val.message)
  local notif_data = get_notif_data(client_id, result.token)
 
  if val.kind == "begin" then
@@ -87,4 +83,16 @@ vim.lsp.handlers["$/progress"] = function(_, result, ctx)
 
    notif_data.spinner = nil
  end
+end
+
+-- filter out annoying notifications from null-ls LSP
+local original_handler = vim.lsp.handlers["$/progress"]
+vim.lsp.handlers["$/progress"] = function(_, result, ctx)
+	-- MyDump(vim.lsp.get_client_by_id(ctx.client_id).name)
+	-- MyDump(result.value)
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    if client and client.name == "null-ls" then
+        return
+    end
+    return original_handler(nil, result, ctx)
 end

@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-echo $2 | tr -d '\n' | xclip -i -selection clipboard
+printf "%s" "$2" | tr -d '\n' | setsid -f xclip -i -selection clipboard

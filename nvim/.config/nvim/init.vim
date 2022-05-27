@@ -15,7 +15,6 @@ Plug 'folke/lua-dev.nvim'
 Plug 'simrat39/symbols-outline.nvim'
 Plug 'rmagatti/goto-preview',
 Plug 'ray-x/lsp_signature.nvim'
-Plug 'ldelossa/litee.nvim'
 Plug 'kosayoda/nvim-lightbulb'
 Plug 'weilbith/nvim-code-action-menu'
 Plug 'ahmedkhalf/project.nvim'
@@ -23,11 +22,18 @@ Plug 'filipdutescu/renamer.nvim'
 Plug 'b0o/schemastore.nvim'
 Plug 'p00f/clangd_extensions.nvim'
 Plug 'jose-elias-alvarez/null-ls.nvim'
+" treesitter
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'JoosepAlviste/nvim-ts-context-commentstring'
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+Plug 'p00f/nvim-ts-rainbow'
+Plug 'romgrk/nvim-treesitter-context'
+Plug 'danymat/neogen'
 
 " Completion
+Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
-Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
@@ -35,15 +41,6 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'onsails/lspkind-nvim'
 Plug 'rafamadriz/friendly-snippets'
-
-" treesitter
-Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'JoosepAlviste/nvim-ts-context-commentstring'
-Plug 'nvim-treesitter/playground'
-Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-Plug 'p00f/nvim-ts-rainbow'
-Plug 'romgrk/nvim-treesitter-context'
-Plug 'danymat/neogen'
 
 " Git
 Plug 'tpope/vim-fugitive'
@@ -122,7 +119,7 @@ Plug 'mhinz/vim-grepper'
 Plug 'kevinhwang91/nvim-hlslens'
 Plug 'pechorin/any-jump.vim'
 " info
-Plug 'mbbill/undotree'
+Plug 'simnalamburt/vim-mundo'
 Plug 'folke/which-key.nvim'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'folke/todo-comments.nvim'
@@ -135,7 +132,7 @@ Plug 'rcarriga/nvim-notify'
 Plug 'tmux-plugins/vim-tmux'
 " markdown
 Plug 'plasticboy/vim-markdown'
-if (system("uname -m") == "x86_64\n")
+if (system('uname -m') ==? 'x86_64\n')
 	Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 endif
 " misc
@@ -144,14 +141,11 @@ Plug 'tpope/vim-dispatch'
 
 " Colorschemes
 Plug 'Mofiqul/vscode.nvim'
-" Plug 'tjdevries/gruvbuddy.nvim'
-" Plug 'tjdevries/colorbuddy.vim'
 " Plug 'marko-cerovac/material.nvim'
-" Plug 'ishan9299/nvim-solarized-lua'
 call plug#end()
 
 if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-	echom "Some modules are missing, run :PlugInstall"
+	echom 'Some modules are missing, run :PlugInstall'
 	finish
 endif
 
@@ -159,10 +153,6 @@ endif
 
 " Options {{{ "
 
-if executable('rg')
-	set grepprg=rg\ --no-ignore\ --smart-case\ --no-heading
-	set grepformat=%f:%l:%c:%m,%f:%l:%m
-endif
 set nofixeol
 set hidden
 " tab width
@@ -196,7 +186,8 @@ augroup END
 
 " Mappings {{{ "
 
-nmap M '
+nmap m '
+nnoremap M m
 nnoremap H 0
 vnoremap H 0
 onoremap H 0
@@ -227,15 +218,13 @@ nnoremap <c-w>c <nop>
 vnoremap > >gv
 vnoremap < <gv
 " '\' starts mappings for a toggle
-nnoremap \u :UndotreeToggle<CR>
 nnoremap \w :set wrap!<CR>
 nnoremap \l :set rnu!<CR>:set number!<CR>
 nnoremap \W :set colorcolumn=80
 let mapleader = "\<Space>"
-nnoremap <leader>a @q
+nnoremap ~ @q
 nnoremap <leader>W :w<CR>
 nnoremap <leader>q :qa<CR>
-nnoremap <leader>e :e<CR>
 nnoremap <leader>sn /<c-r><c-w><CR>
 vnoremap <leader>sn "hy/<c-r>h<CR>
 nnoremap <leader>sN ?<c-r><c-w><CR>
@@ -267,10 +256,10 @@ nnoremap ]<leader> :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 
 function s:hl_groups_info()
 	let tmpfile = tempname()
-	exe "redir > " . tmpfile
+	exe 'redir > ' . tmpfile
 	silent hi
 	redir END
-	exe "tab new " . tmpfile
+	exe 'tab new ' . tmpfile
 	set filetype=txt
 endfunction
 nnoremap <leader>ih :TSHighlightCapturesUnderCursor<CR>
@@ -278,7 +267,7 @@ nnoremap <leader>iH :call <SID>hl_groups_info()<CR>
 
 set background=light
 
-let g:vscode_style = "light"
+let g:vscode_style = 'light'
 colorscheme vscode
 hi Folded guifg=#545454 guibg=#F3F3F3
 hi DiagnosticHint guifg=#585858
@@ -295,12 +284,13 @@ hi TelescopePromptNormal    guifg=#000000 guibg=#C1E3FF gui=bold
 
 " colorscheme solarized-flat
 
-" lua require('colorbuddy').colorscheme('onebuddy', true)
-" lua require('colorbuddy').colorscheme('colorschemes.colorsch_enhancement_onebuddy_light', true)
-
 " }}} Colorschemes "
 
-" LSP {{{ "
+" LSP/treesitter {{{ "
+
+" Neovim logs at: ~/.cache/nvim/lsp.log
+" vim.lsp.set_log_level("debug")
+lua require('MyConfigs/LSP_treesitter')
 
 nnoremap <leader>il <cmd>LspInfo<CR>
 nnoremap <leader>iL <cmd>LspInstallInfo<CR>
@@ -310,10 +300,6 @@ nnoremap gpd <cmd>lua require('goto-preview').goto_preview_definition()<CR>
 nnoremap gpi <cmd>lua require('goto-preview').goto_preview_implementation()<CR>
 nnoremap gP <cmd>lua require('goto-preview').close_all_win()<CR>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
-
-" Neovim logs at: ~/.cache/nvim/lsp.log
-" vim.lsp.set_log_level("debug")
-lua require('plugins_conf/conf_lspclient')
 
 " preview of an LSP symbol
 lua << EOF
@@ -362,56 +348,7 @@ require('renamer').setup {
 }
 EOF
 
-" }}} LSP "
-
-" Class viewer {{{ "
-
-nnoremap \c :SymbolsOutline<CR>
-lua << EOF
-vim.g.symbols_outline = {
-    width = 50,
-	relative_width = false,
-	show_guides = false,
-	auto_preview = false,
-}
-EOF
-" }}} Class viewer "
-
-" Cwd changer {{{ "
-
-" change cwd to lsp's root dir or pattern
-lua << EOF
-require("project_nvim").setup({
-	patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json", ".root" },
-})
-EOF
-
-" }}} Cwd changer "
-
-" Completion {{{ "
-
-set updatetime=100
-set completeopt=menu,menuone,noselect
-set shortmess+=c
-
-let g:vsnip_sync_delay = 0
-let g:vsnip_choice_delay = 200
-lua require('plugins_conf/conf_completion')
-" Override global configuration
-autocmd FileType c,cpp,lua lua require'cmp'.setup.buffer {
-\   sources = {
-\   { name = 'nvim_lsp' },
-\   { name = 'vsnip' },
-\   { name = 'path' },
-\   },
-\ }
-smap <C-r> <BS>
-
-" }}} Completion "
-
-" Treesitter {{{ "
-
-lua require('plugins_conf/conf_treesitter')
+" treesitter
 nnoremap <leader>ft <cmd>Telescope treesitter<cr>
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
@@ -442,7 +379,53 @@ require('neogen').setup {
 EOF
 nnoremap <leader>ea :Neogen<CR>
 
-" }}} Treesitter "
+" }}} LSP/treesitter "
+
+" Completion {{{ "
+
+set updatetime=100
+set completeopt=menu,menuone,noselect
+set shortmess+=c
+
+let g:vsnip_sync_delay = 0
+let g:vsnip_choice_delay = 200
+lua require('MyConfigs/nvim-cmp')
+" Override global configuration
+autocmd FileType c,cpp,lua lua require'cmp'.setup.buffer {
+\   sources = {
+\   { name = 'nvim_lsp' },
+\   { name = 'vsnip' },
+\   { name = 'path' },
+\   },
+\ }
+smap <C-r> <BS>
+
+" }}} Completion "
+
+" Class viewer {{{ "
+
+nnoremap \c :SymbolsOutline<CR>
+lua << EOF
+vim.g.symbols_outline = {
+    width = 50,
+	relative_width = false,
+	show_guides = false,
+	auto_preview = false,
+}
+EOF
+
+" }}} Class viewer "
+
+" Cwd changer {{{ "
+
+" change cwd to lsp's root dir or pattern
+lua << EOF
+require("project_nvim").setup({
+	patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json", ".root" },
+})
+EOF
+
+" }}} Cwd changer "
 
 " Git {{{ "
 
@@ -453,16 +436,16 @@ nnoremap <leader>fgs <cmd>Telescope git_status<cr>
 nnoremap <leader>fgt <cmd>Telescope git_stash<cr>
 
 " tpope/vim-fugitive
-nnoremap <leader>gs :Git<cr>
+nnoremap <leader>gs :Git<cr><C-w>T
 nnoremap <leader>ga :Gwrite<cr>
 nnoremap <leader>gc :Git commit<cr>
 function MyFuncShowBranchCommitDiffs()
-	let branch_name = input("Base branch for which to show commits difference: ", "master")
-	execute "Git log "..branch_name."..".FugitiveHead()
+	let branch_name = input('Base branch for which to show commits difference: ', "master")
+	execute "Git log ".branch_name.".".FugitiveHead()
 endfunction
 function MyFuncShowBranchDiffs()
 	let branch_name = input("Base branch relative to which to show difference: ", "master")
-	execute "tab Git diff "..branch_name..".."..FugitiveHead()
+	execute "tab Git diff ".branch_name."..".FugitiveHead()
 endfunction
 nnoremap <leader>gd :Git difftool<cr>
 nnoremap <leader>gt :tab Git diff --staged<cr>
@@ -517,7 +500,8 @@ require('diffview').setup {
       ["\\n"]   = cb("toggle_files"),
     },
     file_panel = {
-      ["s"]       = cb("toggle_stage_entry"),
+      ["S"]       = cb("toggle_stage_entry"),
+      ["s"]       = "<cmd>HopLine<CR>",
       ["<C-t>"]   = cb("goto_file_tab"),
       ["\\n"]     = cb("toggle_files"),
     },
@@ -534,24 +518,24 @@ nnoremap <leader>fr <cmd>Telescope live_grep<cr>
 nnoremap <leader>fa <cmd>Telescope current_buffer_fuzzy_find<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+nnoremap <leader>fH <cmd>Telescope heading<cr>
 nnoremap <leader>fm <cmd>Telescope man_pages<cr>
-nnoremap <leader>f' <cmd>Telescope marks<cr>
+nnoremap <leader>fM <cmd>Telescope marks<cr>
 nnoremap <leader>fq <cmd>Telescope quickfix<cr>
 nnoremap <leader>fj <cmd>Telescope jumplist<cr>
 nnoremap <leader>f= <cmd>Telescope spell_suggest<cr>
 nnoremap <leader>fk <cmd>Telescope keymaps<cr>
 nnoremap <leader>f? <cmd>Cheatsheet<cr>
-nnoremap <leader>fH <cmd>Telescope heading<cr>
 nnoremap <leader>fN <cmd>Telescope notify<cr>
 nnoremap <leader>fc <cmd>Telescope command_palette<cr>
 nnoremap <leader>fe <cmd>Telescope env<cr>
-lua require('plugins_conf/conf_telescope')
+lua require('MyConfigs/telescope')
 
 " }}} Finder/Telescope "
 
 " Statusline {{{ "
 
-lua require('plugins_conf/conf_statusline')
+lua require('MyConfigs/statusline')
 
 " }}} Statusline "
 
@@ -562,9 +546,13 @@ local groups = require('bufferline.groups')
 require("bufferline").setup {
 	options = {
 		mode = "buffers",
-		close_command = "BDelete! %d",
+		close_command = function(bufnum)
+			require('close_buffers').delete({ type = bufnum })
+		end,
 		show_buffer_close_icons = false,
-		right_mouse_command = "BDelete! %d",
+		right_mouse_command = function(bufnum)
+			require('close_buffers').delete({ type = bufnum })
+		end,
 		indicator_icon = '',
 		separator_style = { "", "" },
 		show_close_icon = false,
@@ -588,26 +576,16 @@ require("bufferline").setup {
 	},
 	highlights = {
 		background = {
-			guibg = '#E4E4E4',
+			guibg = '#D0D0D0',
 		},
 		buffer_visible = {
-			guibg = '#FAFAFA',
+			guibg = '#EBEBEB',
 		},
 		buffer_selected = {
 			guibg = '#FFFFFF',
 		},
 	};
 }
-require('close_buffers').setup({
-	preserve_window_layout = { 'this' },
-	next_buffer_cmd = function(windows)
-		require('bufferline').cycle(1)
-		local bufnr = vim.api.nvim_get_current_buf()
-		for _, window in ipairs(windows) do
-		  vim.api.nvim_win_set_buf(window, bufnr)
-		end
-	end,
-})
 EOF
 nnoremap <silent> gb :BufferLinePick<CR>
 nnoremap <silent> gB :BufferLinePickClose<CR>
@@ -684,7 +662,7 @@ EOF
 
 nnoremap \n :NvimTreeFindFileToggle<CR>
 lua << EOF
-	require('plugins_conf/conf_nvim-tree')
+	require('MyConfigs/nvim-tree')
 EOF
 
 nnoremap <silent> \f :NnnPicker<CR>
@@ -948,6 +926,13 @@ lua require("autosave").setup()
 
 " }}} Auto save buffer modifications "
 
+" Split/join {{{ "
+
+nnoremap <leader>es :SplitjoinSplit<CR>
+nnoremap <leader>ej :SplitjoinJoin<CR>
+
+" }}} Split/join "
+
 " Move selected blocks of text {{{ "
 
 let g:move_map_keys = 0
@@ -1141,7 +1126,7 @@ EOF
 
 " Highlight todo's {{{ "
 
-nnoremap <leader>st <cmd>TodoQuickFix<cr>
+nnoremap <leader>Qt <cmd>TodoQuickFix<cr>
 lua require("todo-comments").setup()
 
 " }}} Highlight todo's "
@@ -1185,7 +1170,7 @@ highlight! IndentBlanklineContextStart guifg=Normal gui=underline
 
 hi Whitespace guifg=#008E0E gui=bold
 hi NonText guifg=#008E0E gui=bold
-set lcs+=trail:,eol:↴,space:·
+set listchars+=trail:,eol:↴,space:·
 let s:my_width_of_tab = &tabstop
 let s:my_expand_tab = &expandtab
 let s:my_shift_width = &shiftwidth
@@ -1231,10 +1216,19 @@ lua require('foldsigns').setup()
 
 " }}} Show signs inside of folds "
 
+" Undo visualizer {{{ "
+
+" persistent undo history
+set undofile
+let &undodir = stdpath('data') . '/undohistory'
+nnoremap \u :MundoToggle<CR>
+
+" }}} Undo visualizer "
+
 " Notifier {{{ "
 
 lua <<EOF
-require('plugins_conf/conf_notify')
+require('MyConfigs/notify')
 require("notify").setup({
 	timeout = 5,
 })
@@ -1245,6 +1239,7 @@ EOF
 " Notes {{{ "
 
 let g:vim_markdown_follow_anchor = 1
+let g:vim_markdown_anchorexpr = 'substitute(v:anchor, "-", " ", "g")'
 nnoremap <leader>fn <cmd>lua require('telescope.builtin.files').find_files({
 			\ cwd = "~/.notes",
 			\ find_command = { "find", "-name", "*.md" },
