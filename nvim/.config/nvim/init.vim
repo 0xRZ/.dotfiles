@@ -189,18 +189,18 @@ augroup END
 nmap m '
 nnoremap M m
 nnoremap H 0
-vnoremap H 0
+xnoremap H 0
 onoremap H 0
 nnoremap L $
-vnoremap L $
+xnoremap L $
 onoremap L $
 inoremap kj <esc>
 nnoremap 0 <nop>
-vnoremap 0 <nop>
+xnoremap 0 <nop>
 nnoremap $ <nop>
-vnoremap $ <nop>
+xnoremap $ <nop>
 inoremap <esc> <nop>
-vnoremap <esc> <nop>
+xnoremap <esc> <nop>
 nnoremap <c-e> 3<c-e>
 nnoremap <c-y> 3<c-y>
 nnoremap <silent> <c-d> :<C-U>exec "normal " . (v:count > 1 ? "m'" . v:count*10 : 10) . "j"<CR>
@@ -209,14 +209,14 @@ nnoremap . <nop>
 inoremap <C-p> <C-r>"
 onoremap w iw
 onoremap q i"
-vnoremap q i"
+xnoremap q i"
 onoremap Q i'
-vnoremap Q i'
+xnoremap Q i'
 onoremap b ib
 onoremap B iB
 nnoremap <c-w>c <nop>
-vnoremap > >gv
-vnoremap < <gv
+xnoremap > >gv
+xnoremap < <gv
 " '\' starts mappings for a toggle
 nnoremap \w :set wrap!<CR>
 nnoremap \l :set rnu!<CR>:set number!<CR>
@@ -226,15 +226,15 @@ nnoremap ~ @q
 nnoremap <leader>W :w<CR>
 nnoremap <leader>q :qa<CR>
 nnoremap <leader>sn /<c-r><c-w><CR>
-vnoremap <leader>sn "hy/<c-r>h<CR>
+xnoremap <leader>sn "hy/<c-r>h<CR>
 nnoremap <leader>sN ?<c-r><c-w><CR>
-vnoremap <leader>sN "hy?<c-r>h<CR>
+xnoremap <leader>sN "hy?<c-r>h<CR>
 nnoremap <leader>sy /<c-r>"<CR>
-vnoremap <leader>y "+y
+xnoremap <leader>y "+y
 nnoremap <expr> <leader>y 'gg"+yG'.( line(".") == 1 ? '' : '<C-o>')
-vnoremap <leader>d "_d
+xnoremap <leader>d "_d
 nnoremap <leader>p "+p
-vnoremap <leader>p "_dP
+xnoremap <leader>p "_dP
 nnoremap <leader>+ :<c-u>exec 'resize +'.v:count1*5<CR>
 nnoremap <leader>_ :<c-u>exec 'resize -'.v:count1*5<CR>
 nnoremap <leader>= :<c-u>exec 'vertical resize +'.v:count1*20<CR>
@@ -242,7 +242,7 @@ nnoremap <leader>- :<c-u>exec 'vertical resize -'.v:count1*20<CR>
 " NOTE: might need clean vimrc with :set nocp
 " nnoremap \s :setlocal spell! spelllang=en,ru<CR>
 nnoremap <leader>/ :noh<CR>
-vnoremap <leader>R "hy:%s/<c-r>h//gc<left><left><left>
+xnoremap <leader>R "hy:%s/<c-r>h//gc<left><left><left>
 nnoremap <leader>ig :let @l=@%.":".line('.')<CR>:call setreg('+',@l)<CR>:echo @l." copied to clipboard"<CR>
 nnoremap <leader>ib :exec 'echo "bytes in file:"' <Bar> exec '!wc -c %'<CR>
 nnoremap <leader>id :echo getcwd()<CR>
@@ -880,7 +880,7 @@ nnoremap <leader>Uq	:GdbDebugStop<CR>
 
 " REPL/coderunner
 nmap <leader>Sr <Plug>SnipRun
-vmap <leader>Sr <Plug>SnipRun
+xmap <leader>Sr <Plug>SnipRun
 nmap <leader>Si <Plug>SnipInfo
 nmap <leader>Sq <Plug>SnipReset
 nmap <leader>Sc <Plug>SnipClose
@@ -936,8 +936,8 @@ nnoremap <leader>ej :SplitjoinJoin<CR>
 " Move selected blocks of text {{{ "
 
 let g:move_map_keys = 0
-vmap K <Plug>MoveBlockUp
-vmap J <Plug>MoveBlockDown
+xmap K <Plug>MoveBlockUp
+xmap J <Plug>MoveBlockDown
 
 " }}} Move selected blocks of text "
 
@@ -945,10 +945,10 @@ vmap J <Plug>MoveBlockDown
 
 nmap  <C-a>  <Plug>(dial-increment)
 nmap  <C-x>  <Plug>(dial-decrement)
-vmap  <C-a>  <Plug>(dial-increment)
-vmap  <C-x>  <Plug>(dial-decrement)
-vmap g<C-a> g<Plug>(dial-increment)
-vmap g<C-x> g<Plug>(dial-decrement)
+xmap  <C-a>  <Plug>(dial-increment)
+xmap  <C-x>  <Plug>(dial-decrement)
+xmap g<C-a> g<Plug>(dial-increment)
+xmap g<C-x> g<Plug>(dial-decrement)
 
 " }}} Increment/decrement "
 
@@ -957,7 +957,7 @@ vmap g<C-x> g<Plug>(dial-decrement)
 hi ExtraWhitespace guibg=#FF0000
 let g:better_whitespace_enabled=1
 nnoremap <leader>w :StripWhitespace<CR>
-vnoremap <leader>w :StripWhitespace<CR>
+xnoremap <leader>w :StripWhitespace<CR>
 let g:better_whitespace_filetypes_blacklist=['diff', 'git', 'gitcommit', 'qf', 'help', 'markdown', 'fugitive']
 let g:show_spaces_that_precede_tabs=1
 nnoremap ]w :NextTrailingWhitespace<CR>
@@ -970,7 +970,7 @@ nnoremap [w :PrevTrailingWhitespace<CR>
 set spelllang=en_us
 let g:languagetool_jar = "/usr/share/languagetool/languagetool-commandline.jar"
 nnoremap <leader>sc :LanguageToolCheck<CR>
-vnoremap <leader>sc :LanguageToolCheck<CR>
+xnoremap <leader>sc :LanguageToolCheck<CR>
 nnoremap <leader>sC :LanguageToolClear<CR>
 
 " }}} grammar/spell checker "
@@ -1041,7 +1041,7 @@ let g:neoformat_basic_format_retab = 0
 " let g:neoformat_only_msg_on_error = 1
 " let g:neoformat_verbose = 1
 nnoremap <leader>ef :Neoformat<CR>
-vnoremap <leader>f :Neoformat<CR>
+xnoremap <leader>f :Neoformat<CR>
 
 " }}} format text "
 
@@ -1055,9 +1055,9 @@ au FileType gitcommit let b:EditorConfig_disable = 1
 " Jump to word {{{ "
 
 nnoremap s <cmd>HopWord<CR>
-vnoremap s <cmd>HopWord<CR>
+xnoremap s <cmd>HopWord<CR>
 nnoremap <c-s> <cmd>HopLine<CR>
-vnoremap <c-s> <cmd>HopLine<CR>
+xnoremap <c-s> <cmd>HopLine<CR>
 nnoremap S <cmd>HopChar1<CR>
 hi HopNextKey gui=bold,underline guifg=#ff007c
 hi! link HopNextKey1 HopNextKey

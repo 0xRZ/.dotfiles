@@ -14,7 +14,7 @@ local colors = {
 }
 mycode.normal = {
 	a = {fg = colors.white, bg = colors.red, gui = 'bold'},
-	b = {fg = colors.red, bg = colors.lighblack},
+	b = {fg = colors.white, bg = colors.lighblack},
 	c = {fg = colors.white, bg = colors.black},
 }
 mycode.visual = {

@@ -29,7 +29,7 @@ local on_attach = function(client, bufnr)
 	buf_set_keymap('n', '[x', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
 	buf_set_keymap('n', ']x', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
 	buf_set_keymap("n", "glf", "<cmd>lua vim.lsp.buf.format { async = true }<CR>", opts)
-	buf_set_keymap("v", "glf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+	buf_set_keymap("x", "glf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
 
 	-- semantic highlight of a variable under cursor
 	require 'illuminate'.on_attach(client)
@@ -250,7 +250,7 @@ local on_attach_null_ls = function(_, bufnr)
 	local opts = { noremap=true, silent=true }
 
 	buf_set_keymap("n", "<leader>nf", "<cmd>lua vim.lsp.buf.format { async = true }<CR>", opts)
-    buf_set_keymap("v", "<leader>nf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+    buf_set_keymap("x", "<leader>nf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
     buf_set_keymap("n", "<leader>ni", "<cmd>NullLsInfo<CR>", opts)
     buf_set_keymap('n', '<leader>ix', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
 	buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
