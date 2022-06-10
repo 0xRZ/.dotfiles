@@ -85,13 +85,16 @@ vim.lsp.handlers["$/progress"] = function(_, result, ctx)
  end
 end
 
--- filter out annoying notifications from null-ls LSP
+-- filter out annoying notifications
 local original_handler = vim.lsp.handlers["$/progress"]
 vim.lsp.handlers["$/progress"] = function(_, result, ctx)
 	-- MyDump(vim.lsp.get_client_by_id(ctx.client_id).name)
 	-- MyDump(result.value)
     local client = vim.lsp.get_client_by_id(ctx.client_id)
     if client and client.name == "null-ls" then
+        return
+    end
+	if client and client.name == "ansiblels" then
         return
     end
     return original_handler(nil, result, ctx)

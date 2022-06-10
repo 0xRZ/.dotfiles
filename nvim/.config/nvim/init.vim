@@ -3,9 +3,11 @@
 let s:data_dir = stdpath('data') . '/site'
 if empty(glob(s:data_dir . '/autoload/plug.vim'))
 	silent execute '!curl -fLo '.s:data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+	autocmd VimEnter * source $MYVIMRC
+	finish
 endif
 
-let g:plug_window = "enew"
+let g:plug_window = 'enew'
 call plug#begin()
 " LSP
 Plug 'neovim/nvim-lspconfig'
@@ -29,6 +31,7 @@ Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'p00f/nvim-ts-rainbow'
 Plug 'romgrk/nvim-treesitter-context'
 Plug 'danymat/neogen'
+Plug 'nvim-treesitter/playground'
 
 " Completion
 Plug 'hrsh7th/nvim-cmp'
@@ -130,9 +133,10 @@ Plug 'dpelle/vim-LanguageTool'
 Plug 'rcarriga/nvim-notify'
 " filetype specific
 Plug 'tmux-plugins/vim-tmux'
+Plug 'pearofducks/ansible-vim'
 " markdown
 Plug 'plasticboy/vim-markdown'
-if (system('uname -m') ==? 'x86_64\n')
+if (system('uname -m') ==? "x86_64\n")
 	Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 endif
 " misc
@@ -141,7 +145,6 @@ Plug 'tpope/vim-dispatch'
 
 " Colorschemes
 Plug 'Mofiqul/vscode.nvim'
-" Plug 'marko-cerovac/material.nvim'
 call plug#end()
 
 if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
@@ -174,7 +177,7 @@ set iminsert=0
 set imsearch=-1
 set timeoutlen=300
 set nowrap
-set pastetoggle=<F3>
+set pastetoggle='\p'
 autocmd InsertLeave * set nopaste
 augroup numbertoggle
 	autocmd!
@@ -370,6 +373,7 @@ lua << EOF
 EOF
 hi TreesitterContext guibg=#ECFFFF gui=bold
 nnoremap \C :TSContextToggle<CR>
+nnoremap \P :TSPlaygroundToggle<CR>
 
 " insert code annotation
 lua << EOF
@@ -899,8 +903,8 @@ lua require('auto-session').setup()
 " Open file on last line {{{ "
 
 lua require'nvim-lastplace'.setup{}
-let g:lastplace_ignore_buftype = "quickfix,nofile,help"
-let g:lastplace_ignore_filetype = "gitcommit,gitrebase,svn,hgcommit"
+let g:lastplace_ignore_buftype = 'quickfix,nofile,help'
+let g:lastplace_ignore_filetype = 'gitcommit,gitrebase,svn,hgcommit'
 let g:lastplace_open_folds = 1
 
 " }}} Open file on last line "

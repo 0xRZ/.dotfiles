@@ -60,12 +60,14 @@ local treesitter_sources = {}
 
 
 -- bash
+-- Neoformat: shfmt
 table.insert(null_ls_sources, null_ls.builtins.formatting.shellharden)
 table.insert(treesitter_sources, "bash")
+-- includes shellcheck support
 table.insert(lsps_to_intall, "bashls")
 local bashls_lspconf = {
 	on_attach = on_attach,
-	capabilities = capabilities
+	capabilities = capabilities,
 }
 
 -- C/C++
@@ -88,6 +90,8 @@ local clangd_lspconf = {
 }
 
 -- yaml
+-- Neoformat: prettier
+table.insert(null_ls_sources, null_ls.builtins.diagnostics.yamllint)
 table.insert(treesitter_sources, "yaml")
 table.insert(lsps_to_intall, "yamlls")
 local yamlls_lspconf = {
@@ -96,6 +100,7 @@ local yamlls_lspconf = {
 }
 
 -- json
+-- Neoformat: prettier
 table.insert(treesitter_sources, "json")
 table.insert(treesitter_sources, "json5")
 table.insert(treesitter_sources, "jsonc")
@@ -135,10 +140,29 @@ local awk_ls_lspconf = {
 }
 
 -- yaml.ansible
+-- includes ansiblelint support
 table.insert(lsps_to_intall_full, "ansiblels")
 local ansiblels_lspconf = {
+	settings = {
+		ansible = {
+			python = {
+				interpreterPath = 'python',
+			},
+			ansibleLint = {
+				path = 'ansible-lint',
+				enabled = true,
+				arguments = "-c " .. vim.env.HOME .. "/.config/ansible-lint.yml",
+			},
+			ansible = {
+				path = 'ansible',
+			},
+			executionEnvironment = {
+				enabled = false,
+			},
+		},
+	},
 	on_attach = on_attach,
-	capabilities = capabilities
+	capabilities = capabilities,
 }
 
 -- xml
@@ -187,7 +211,7 @@ local sumneko_lua_lspconf = require("lua-dev").setup({
 
 -- markdown
 table.insert(null_ls_sources, null_ls.builtins.diagnostics.markdownlint.with({
-		extra_args = { "--disable", "MD013" },
+		extra_args = { "--disable", "MD013", "MD010" },
 	})
 )
 table.insert(treesitter_sources, "markdown")
@@ -270,10 +294,6 @@ table.insert(null_ls_sources, null_ls.builtins.diagnostics.editorconfig_checker.
 		},
 	})
 )
--- yaml
--- json
--- markdown
-table.insert(null_ls_sources, null_ls.builtins.formatting.prettier)
 
 null_ls.setup({
 	sources = null_ls_sources,
@@ -294,91 +314,109 @@ null_ls.setup({
 -- highlights, motion, folds, some info
 table.insert(treesitter_sources, "comment")
 table.insert(treesitter_sources, "regex")
+table.insert(treesitter_sources, "query")
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = treesitter_sources,
-  sync_install = false,
-  -- treesitter modules
-  highlight = {
-    enable = true,
-	additional_vim_regex_highlighting = false,
-  },
+	ensure_installed = treesitter_sources,
+	sync_install = false,
+	-- treesitter modules
+	highlight = {
+		enable = true,
+		additional_vim_regex_highlighting = true,
+	},
 
-  -- JoosepAlviste/nvim-ts-context-commentstring plugin
-  -- semantic nested commenting
-  context_commentstring = {
-    enable = true
-  },
+	-- JoosepAlviste/nvim-ts-context-commentstring plugin
+	-- semantic nested commenting
+	context_commentstring = {
+		enable = true
+	},
 
-  -- andymass/vim-matchup plugin
-  -- better integration for %
-  matchup = {
-    enable = true,
-  },
+	-- andymass/vim-matchup plugin
+	-- better integration for %
+	matchup = {
+		enable = true,
+	},
 
-  -- p00f/nvim-ts-rainbow plugin
-  -- highlight parentheses
-  rainbow = {
-    enable = true,
-    extended_mode = true,
-    max_file_lines = nil,
-	colors = {
-	  "#000000",
-	  "#003CFF",
-	  "#D27000",
-	  "#00D207",
-	  "#CD007B",
-	  "#9A00FF",
-	  "#00C4DA",
-    },
-  },
+	-- p00f/nvim-ts-rainbow plugin
+	-- highlight parentheses
+	rainbow = {
+		enable = true,
+		extended_mode = true,
+		max_file_lines = nil,
+		colors = {
+		  "#000000",
+		  "#003CFF",
+		  "#D27000",
+		  "#00D207",
+		  "#CD007B",
+		  "#9A00FF",
+		  "#00C4DA",
+		},
+	},
 
-  -- nvim-treesitter/playground plugin
-  playground = {},
+	-- nvim-treesitter/playground plugin
+	playground = {
+	enable = true,
+	disable = {},
+	updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
+	persist_queries = false, -- Whether the query persists across vim sessions
+	keybindings = {
+	  toggle_query_editor = 'o',
+	  toggle_hl_groups = 'i',
+	  toggle_injected_languages = 't',
+	  toggle_anonymous_nodes = 'a',
+	  toggle_language_display = 'I',
+	  focus_language = 'f',
+	  unfocus_language = 'F',
+	  update = 'R',
+	  goto_node = '<cr>',
+	  show_help = '?',
+	},
+	},
 
-  -- nvim-treesitter-textobjects plugin
-  textobjects = {
-    select = {
-      enable = true,
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-        ["ac"] = "@class.outer",
-        ["ic"] = "@class.inner",
-        ["ak"] = "@comment.outer",
-        ["ii"] = "@conditional.inner",
-        ["ai"] = "@conditional.outer",
-        ["il"] = "@loop.inner",
-        ["al"] = "@loop.outer",
-      },
-    },
-    move = {
-      enable = true,
-      set_jumps = true, -- whether to set jumps in the jumplist
-      goto_next_start = {
-        ["]M"] = "@function.outer",
-        ["]C"] = "@class.outer",
-        ["]I"] = "@conditional.outer",
-        ["]L"] = "@loop.outer",
-      },
-      goto_next_end = {
-        ["]m"] = "@function.outer",
-        ["]c"] = "@class.outer",
-        ["]i"] = "@conditional.outer",
-        ["]l"] = "@loop.outer",
-      },
-      goto_previous_start = {
-        ["[m"] = "@function.outer",
-		["[c"] = "@class.outer",
-        ["[i"] = "@conditional.outer",
-        ["[l"] = "@loop.outer",
-      },
-      goto_previous_end = {
-        ["[M"] = "@function.outer",
-        ["[C"] = "@class.outer",
-        ["[I"] = "@conditional.outer",
-        ["[L"] = "@loop.outer",
-      },
-    },
+	-- nvim-treesitter-textobjects plugin
+	textobjects = {
+	select = {
+		enable = true,
+		keymaps = {
+			-- You can use the capture groups defined in textobjects.scm
+			["af"] = "@function.outer",
+			["if"] = "@function.inner",
+			["ac"] = "@class.outer",
+			["ic"] = "@class.inner",
+			["ak"] = "@comment.outer",
+			["ii"] = "@conditional.inner",
+			["ai"] = "@conditional.outer",
+			["il"] = "@loop.inner",
+			["al"] = "@loop.outer",
+		},
+	},
+	move = {
+		enable = true,
+		set_jumps = true, -- whether to set jumps in the jumplist
+		goto_next_start = {
+			["]M"] = "@function.outer",
+			["]C"] = "@class.outer",
+			["]I"] = "@conditional.outer",
+			["]L"] = "@loop.outer",
+		},
+		goto_next_end = {
+			["]m"] = "@function.outer",
+			["]c"] = "@class.outer",
+			["]i"] = "@conditional.outer",
+			["]l"] = "@loop.outer",
+		},
+		goto_previous_start = {
+			["[m"] = "@function.outer",
+			["[c"] = "@class.outer",
+			["[i"] = "@conditional.outer",
+			["[l"] = "@loop.outer",
+		},
+		goto_previous_end = {
+			["[M"] = "@function.outer",
+			["[C"] = "@class.outer",
+			["[I"] = "@conditional.outer",
+			["[L"] = "@loop.outer",
+		},
+	},
   },
 }

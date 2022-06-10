@@ -1,6 +1,5 @@
 # environment variables
-export PATH=$HOME/bin:$HOME/usr/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/go/bin:$PATH
-# export PATH="$HOME/bin"
+export PATH=$HOME/bin:$HOME/usr/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/go/bin:${HOME}/npm/bin:$PATH
 export XDG_CONFIG_HOME=$HOME/.config
 export LANG=en_US.UTF-8
 export EDITOR='nvim'

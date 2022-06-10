@@ -10,7 +10,7 @@ function check_prog() {
 	done
 }
 
-term_configs=(bin nvim tmux zsh nnn)
+term_configs=(bin nvim tmux zsh nnn linters)
 desktop_configs=(fonts alacritty i3 picom redshift rofi)
 declare -A fonts=( \
 ["JetBrains Mono NL Regular Nerd Font Complete.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Regular/complete/JetBrains%20Mono%20NL%20Regular%20Nerd%20Font%20Complete.ttf?raw=true" \
