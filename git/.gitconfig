@@ -1,0 +1,20 @@
+[user]
+	name = Dmitry Tikhov
+	email = ddtikhov@gmail.com
+
+[core]
+	pager = delta --syntax-theme='GitHub'
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true
+    light = false
+	side-by-side = true
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    colorMoved = default

@@ -263,10 +263,6 @@ lsp_conf.ansiblels.setup(ansiblels_lspconf)
 lsp_conf.lemminx.setup(lemminx_lspconf)
 lsp_conf.esbonio.setup(esbonio_lspconf)
 lsp_conf.sumneko_lua.setup(sumneko_lua_lspconf)
--- lsp_conf.grammarly.setup {
--- 	on_attach = on_attach,
--- 	capabilities = capabilities,
--- }
 
 -- sources for language server within neovim
 local on_attach_null_ls = function(_, bufnr)

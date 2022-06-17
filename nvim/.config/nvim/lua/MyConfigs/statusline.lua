@@ -109,13 +109,14 @@ require'lualine'.setup {
 		lualine_y = {
 			{
 				'location',
+				'filesize',
 				separator = { left = '' },
 			}
 		},
 
 		lualine_z = {
 			{
-				'progress',
+				"'%p%%/%L'",
 				separator = { left = '' },
 			}
 		},

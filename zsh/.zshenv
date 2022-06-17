@@ -1,5 +1,6 @@
 # environment variables
 export PATH=$HOME/bin:$HOME/usr/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/go/bin:${HOME}/npm/bin:$PATH
+fpath=(~/.zsh.d/ $fpath)
 export XDG_CONFIG_HOME=$HOME/.config
 export LANG=en_US.UTF-8
 export EDITOR='nvim'
@@ -12,8 +13,8 @@ export ESCDELAY=0
 # nnn file manager
 export NNN_BMS="\
 c:$HOME/.config;h:/home;t:$HOME/.local/share/Trash;\
-b:$HOME/build;d:$HOME/.dotfiles;p:$HOME/.backup;\
-a:$HOME/.my_tmp;\
+b:$HOME/build;n:$HOME/.local/share/nvim;p:$HOME/.backup;\
+a:$HOME/.my_tmp;d:$HOME/.dotfiles;\
 "
 NNN_PLUG_BUNDLED='m:bulknew;f:fzcd;t:mimelist;p:preview-tui'
 NNN_PLUG_CMDS='s:-!sudoedit $nnn*;g:-!neovide --multigrid $nnn*'

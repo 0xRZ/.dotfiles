@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
 set -euf -o noclobber -o noglob -o nounset
 
@@ -6,4 +6,12 @@ FPATH="$1"
 FNAME=$(basename "$1")
 EDITOR="${VISUAL:-${EDITOR:-vi}}"
 
-"$EDITOR" "${FPATH}"
+if ! file "$FPATH" | grep -q text ; then
+	if ! objdump -d 1>/dev/null 2>&1 "$FPATH"; then
+		hexdump -Cv "$FPATH" | less
+	else
+		objdump -d "$FPATH" | less
+	fi
+else
+	"$EDITOR" "$FPATH"
+fi

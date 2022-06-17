@@ -1,3 +1,4 @@
+---
 env:
   TERM: alacritty
   LANG: "en_US.UTF-8"
@@ -33,10 +34,10 @@ colors:
     black: "#1d1f21"
     red: "#cc342b"
     green: "#198844"
-    yellow: "#fba922"
-    blue: "#3971ed"
+    yellow: "#D58700"
+    blue: "#6593FD"
     magenta: "#a36ac7"
-    cyan: "#3971ed"
+    cyan: "#6593FD"
     white: "#c5c8c6"
   bright:
     black: "#969896"
@@ -53,9 +54,9 @@ shell:
 
 key_bindings:
   # already have that one in tmux
-  - { key: Space,     mods: Shift|Control, mode: ~Search, action: None }
-  - { key: V,         mods: Shift|Control, action: None             }
-  - { key: V,         mods: Control,       action: Paste            }
+  - {key: Space, mods: Shift|Control, mode: ~Search, action: None}
+  - {key: V, mods: Shift|Control, action: None}
+  - {key: V, mods: Control, action: Paste}
 
 debug:
-  log_level: OFF
+  log_level: Off

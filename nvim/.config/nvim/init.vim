@@ -63,6 +63,8 @@ Plug 'crispgm/telescope-heading.nvim'
 Plug 'LinArcX/telescope-command-palette.nvim'
 Plug 'LinArcX/telescope-env.nvim'
 Plug 'nvim-telescope/telescope-hop.nvim'
+Plug 'RishabhRD/popfix'
+Plug 'RishabhRD/nvim-cheat.sh'
 
 " Status line
 Plug 'nvim-lualine/lualine.nvim'
@@ -235,6 +237,7 @@ xnoremap <leader>sN "hy?<c-r>h<CR>
 nnoremap <leader>sy /<c-r>"<CR>
 xnoremap <leader>y "+y
 nnoremap <expr> <leader>y 'gg"+yG'.( line(".") == 1 ? '' : '<C-o>')
+nnoremap <leader>Y :let @+ = expand("%")<CR>:echo @+"copied to clipboard"<CR>
 xnoremap <leader>d "_d
 nnoremap <leader>p "+p
 xnoremap <leader>p "_dP
@@ -530,6 +533,7 @@ nnoremap <leader>fj <cmd>Telescope jumplist<cr>
 nnoremap <leader>f= <cmd>Telescope spell_suggest<cr>
 nnoremap <leader>fk <cmd>Telescope keymaps<cr>
 nnoremap <leader>f? <cmd>Cheatsheet<cr>
+nnoremap <leader>f/ :Cheat 
 nnoremap <leader>fN <cmd>Telescope notify<cr>
 nnoremap <leader>fc <cmd>Telescope command_palette<cr>
 nnoremap <leader>fe <cmd>Telescope env<cr>
@@ -1208,6 +1212,7 @@ if jit ~= nil then
 	  'lua';
 	  'vim';
 	  'txt';
+	  'yaml';
 	}
 end
 EOF

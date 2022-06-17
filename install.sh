@@ -10,7 +10,7 @@ function check_prog() {
 	done
 }
 
-term_configs=(bin nvim tmux zsh nnn linters)
+term_configs=(bin nvim tmux zsh nnn linters btop git)
 desktop_configs=(fonts alacritty i3 picom redshift rofi)
 declare -A fonts=( \
 ["JetBrains Mono NL Regular Nerd Font Complete.ttf"]="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/JetBrainsMono/NoLigatures/Regular/complete/JetBrains%20Mono%20NL%20Regular%20Nerd%20Font%20Complete.ttf?raw=true" \
@@ -24,14 +24,11 @@ declare -A fonts=( \
 )
 
 function install_term() {
-	if [ -z "$(ls -A ~/.config/nnn/plugins)" ]; then
-		curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs | sh
-	else
-		echo "nnn plugins already installed"
-	fi
+	curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs | sh
 	for e in "${term_configs[@]}"; do
 		stow --verbose=2 --target "$HOME" "$e"
 	done
+	# tmux plugin manager
 	./tmux/.config/tmux/plugins/tpm/bin/install_plugins
 }
 
@@ -68,6 +65,7 @@ function update() {
 	if [ "$is_init" = true ]; then
 		git submodule update --remote --jobs "$(nproc)" --depth 1
 		./tmux/.config/tmux/plugins/tpm/bin/update_plugins all
+		zsh -i -c "zinit update"
 	else
 		echo "Initializing repo submodules..."
 		git submodule update --checkout --init --jobs "$(nproc)" --depth 1
@@ -93,8 +91,6 @@ script to install dotfiles
 TYPE:
 	-t | --term
 		only install dotfiles for programs that are available through terminal interface
-			fetches plugins for an nnn file manager
-			installs plugins for Tmux's Plugin Manager TPM
 
 	-d | --desktop
 		install dotfiles fully fledged
@@ -104,8 +100,11 @@ TYPE:
 
 OPTION:
 	-u | --update
-	   update tmux plugins, git submodules;
-	   or initialize git submodules if its not initialized already
+		update:
+			git submodules
+			tmux plugins
+			zsh plugins
+		or initialize git submodules if its not initialized already
 
 	-l | --clear
 		clean environment from config files

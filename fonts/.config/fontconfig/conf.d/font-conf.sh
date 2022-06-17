@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # might help if fonts are ugly
-# to check currently sourced settings of FreeType font rendering library for e.g. alacritty use 
+# to check currently sourced settings of FreeType font rendering library for e.g. alacritty use
 # FC_DEBUG=1 alacritty
 # man fonts-conf
 # /etc/conf.d used options
