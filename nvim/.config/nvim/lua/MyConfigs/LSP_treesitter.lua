@@ -3,8 +3,14 @@ function MyDump(...)
     print(unpack(objects))
 end
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+--- folds
+capabilities.textDocument.foldingRange = {
+	dynamicRegistration = false,
+	lineFoldingOnly = true
+}
 -- completions
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 -- buffer lsp conf
 local on_attach = function(client, bufnr)
@@ -15,7 +21,7 @@ local on_attach = function(client, bufnr)
 	buf_set_keymap('n', 'gf', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
 	buf_set_keymap('n', 'gF', '<Cmd>vsplit<CR><Cmd>lua vim.lsp.buf.definition()<CR>', opts)
 	buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-	buf_set_keymap('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+	buf_set_keymap('n', 'gls', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
 	buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
 	buf_set_keymap('n', 'glwa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
 	buf_set_keymap('n', 'glwr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
@@ -52,164 +58,172 @@ vim.diagnostic.config({
 	},
 })
 
-local lsps_to_intall = {}
-local lsps_to_intall_full = {}
+local arch = vim.fn.system("uname -m")
+
 local null_ls = require("null-ls")
 local null_ls_sources = {}
 local treesitter_sources = {}
 
+require("nvim-lsp-installer").setup {
+	automatic_installation = { exclude = { "clangd" } }
+}
+
+local lsp_conf = require'lspconfig'
 
 -- bash
 -- Neoformat: shfmt
 table.insert(null_ls_sources, null_ls.builtins.formatting.shellharden)
 table.insert(treesitter_sources, "bash")
 -- includes shellcheck support
-table.insert(lsps_to_intall, "bashls")
-local bashls_lspconf = {
+lsp_conf.bashls.setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
-}
+})
 
 -- C/C++
 table.insert(null_ls_sources, null_ls.builtins.diagnostics.cppcheck)
 table.insert(treesitter_sources, "c")
 table.insert(treesitter_sources, "cpp")
-local clangd_capabilities = {
-	textDocument = {
-		completion = {
-			editsNearCursor = true,
+if vim.fn.executable("clangd") then
+	local clangd_capabilities = {
+		textDocument = {
+			completion = {
+				editsNearCursor = true,
+			},
 		},
-	},
-	offsetEncoding = { 'utf-16' },
-}
-capabilities = vim.tbl_deep_extend('keep', capabilities, clangd_capabilities)
-local clangd_lspconf = {
-	on_attach = on_attach,
-	capabilities = capabilities,
-	cmd = {'clangd', '--header-insertion=never'},
-}
+		offsetEncoding = { 'utf-16' },
+	}
+	capabilities = vim.tbl_deep_extend('keep', capabilities, clangd_capabilities)
+	require("clangd_extensions").setup {
+		server = {
+			on_attach = on_attach,
+			capabilities = capabilities,
+			cmd = {'clangd', '--header-insertion=never'},
+		},
+		extensions = {
+			autoSetHints = false,
+		}
+	}
+end
 
 -- yaml
 -- Neoformat: prettier
 table.insert(null_ls_sources, null_ls.builtins.diagnostics.yamllint)
 table.insert(treesitter_sources, "yaml")
-table.insert(lsps_to_intall, "yamlls")
-local yamlls_lspconf = {
+lsp_conf.yamlls.setup({
 	on_attach = on_attach,
 	capabilities = capabilities
-}
+})
 
 -- json
 -- Neoformat: prettier
 table.insert(treesitter_sources, "json")
 table.insert(treesitter_sources, "json5")
 table.insert(treesitter_sources, "jsonc")
-table.insert(lsps_to_intall, "jsonls")
-local jsonls_lspconf = {
+lsp_conf.jsonls.setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
 	json = {
 		schemas = require('schemastore').json.schemas(),
 		validate = { enable = true },
 	},
-}
+})
 
 -- vim
 table.insert(null_ls_sources, null_ls.builtins.diagnostics.vint)
 table.insert(treesitter_sources, "vim")
-table.insert(lsps_to_intall, "vimls")
-local vimls_lspconf = {
+lsp_conf.vimls.setup({
 	on_attach = on_attach,
 	capabilities = capabilities
-}
+})
 
 -- Dockerfile
 table.insert(null_ls_sources, null_ls.builtins.diagnostics.hadolint)
 table.insert(treesitter_sources, "dockerfile")
-table.insert(lsps_to_intall, "dockerls")
-local dockerls_lspconf = {
+lsp_conf.dockerls.setup({
 	on_attach = on_attach,
 	capabilities = capabilities
-}
+})
 
 -- awk
-table.insert(lsps_to_intall, "awk_ls")
-local awk_ls_lspconf = {
+lsp_conf.awk_ls.setup({
 	on_attach = on_attach,
 	capabilities = capabilities
-}
+})
 
 -- yaml.ansible
 -- includes ansiblelint support
-table.insert(lsps_to_intall_full, "ansiblels")
-local ansiblels_lspconf = {
-	settings = {
-		ansible = {
-			python = {
-				interpreterPath = 'python',
-			},
-			ansibleLint = {
-				path = 'ansible-lint',
-				enabled = true,
-				arguments = "-c " .. vim.env.HOME .. "/.config/ansible-lint.yml",
-			},
+if arch == "x86_64\n" then
+	lsp_conf.ansiblels.setup({
+		settings = {
 			ansible = {
-				path = 'ansible',
-			},
-			executionEnvironment = {
-				enabled = false,
+				python = {
+					interpreterPath = 'python',
+				},
+				ansibleLint = {
+					path = 'ansible-lint',
+					enabled = true,
+					arguments = "-c " .. vim.env.HOME .. "/.config/ansible-lint.yml",
+				},
+				ansible = {
+					path = 'ansible',
+				},
+				executionEnvironment = {
+					enabled = false,
+				},
 			},
 		},
-	},
-	on_attach = on_attach,
-	capabilities = capabilities,
-}
+		on_attach = on_attach,
+		capabilities = capabilities,
+	})
+end
 
 -- xml
+-- Neoformat: prettier
 table.insert(null_ls_sources, null_ls.builtins.formatting.xmllint)
-table.insert(lsps_to_intall, "lemminx")
-local lemminx_lspconf = {
+lsp_conf.lemminx.setup({
 	on_attach = on_attach,
 	capabilities = capabilities
-}
+})
 
 -- .rst
 table.insert(treesitter_sources, "rst")
-table.insert(lsps_to_intall, "esbonio")
-local esbonio_lspconf = {
+lsp_conf.esbonio.setup({
 	on_attach = on_attach,
 	capabilities = capabilities
-}
+})
 
 -- nvim lua
-table.insert(treesitter_sources, "lua")
-table.insert(lsps_to_intall_full, "sumneko_lua")
-local sumneko_lua_lspconf = require("lua-dev").setup({
-	library = {
-		vimruntime = true,
-		types = true,
-		plugins = false,
-	},
-	lspconfig = {
-		on_attach = on_attach,
-		capabilities = capabilities,
-		settings = {
-			Lua = {
-				diagnostics = {
-					globals = {'vim'},
-				},
-				workspace = {
-					library = vim.api.nvim_get_runtime_file("", true),
-				},
-				telemetry = {
-					enable = false,
+if arch == "x86_64\n" then
+	lsp_conf.sumneko_lua.setup(require("lua-dev").setup({
+		library = {
+			vimruntime = true,
+			types = true,
+			plugins = false,
+		},
+		lspconfig = {
+			on_attach = on_attach,
+			capabilities = capabilities,
+			settings = {
+				Lua = {
+					diagnostics = {
+						globals = {'vim'},
+					},
+					workspace = {
+						library = vim.api.nvim_get_runtime_file("", true),
+					},
+					telemetry = {
+						enable = false,
+					},
 				},
 			},
 		},
-	},
-})
+	}))
+end
+table.insert(treesitter_sources, "lua")
 
 -- markdown
+-- Neoformat: prettier
 table.insert(null_ls_sources, null_ls.builtins.diagnostics.markdownlint.with({
 		extra_args = { "--disable", "MD013", "MD010" },
 	})
@@ -225,44 +239,19 @@ table.insert(null_ls_sources, null_ls.builtins.diagnostics.zsh)
 -- Makefile
 table.insert(treesitter_sources, "make")
 
+-- cmake
+table.insert(treesitter_sources, "cmake")
+-- includes cmake_format support
+lsp_conf.cmake.setup({
+	on_attach = on_attach,
+	capabilities = capabilities
+})
+
 -- gitcommit
 table.insert(null_ls_sources, null_ls.builtins.diagnostics.gitlint)
 
-
--- configure LSPs
-local lsps
-if vim.fn.system("uname -m") == "x86_64\n" then
-	for _,v in ipairs(lsps_to_intall) do
-		table.insert(lsps_to_intall_full, v)
-	end
-	lsps = lsps_to_intall_full
-else
-	lsps = lsps_to_intall
-end
-require("nvim-lsp-installer").setup {
-	automatic_installation = false,
-	ensure_installed = lsps,
-}
-
-local lsp_conf = require'lspconfig'
-if vim.fn.executable("clangd") then
-	require("clangd_extensions").setup {
-		server = clangd_lspconf,
-		extensions = {
-			autoSetHints = false,
-		}
-	}
-end
-lsp_conf.bashls.setup(bashls_lspconf)
-lsp_conf.yamlls.setup(yamlls_lspconf)
-lsp_conf.jsonls.setup(jsonls_lspconf)
-lsp_conf.vimls.setup(vimls_lspconf)
-lsp_conf.dockerls.setup(dockerls_lspconf)
-lsp_conf.awk_ls.setup(awk_ls_lspconf)
-lsp_conf.ansiblels.setup(ansiblels_lspconf)
-lsp_conf.lemminx.setup(lemminx_lspconf)
-lsp_conf.esbonio.setup(esbonio_lspconf)
-lsp_conf.sumneko_lua.setup(sumneko_lua_lspconf)
+-- LSP folds
+require('ufo').setup()
 
 -- sources for language server within neovim
 local on_attach_null_ls = function(_, bufnr)

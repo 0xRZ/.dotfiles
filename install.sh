@@ -24,7 +24,11 @@ declare -A fonts=( \
 )
 
 function install_term() {
-	curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs | sh
+	if [ -z "$(ls -A ~/.config/nnn/plugins)" ]; then
+		curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs | sh
+	else
+		echo "nnn plugins already installed"
+	fi
 	for e in "${term_configs[@]}"; do
 		stow --verbose=2 --target "$HOME" "$e"
 	done
@@ -79,7 +83,7 @@ function clear() {
 }
 
 function check_health() {
-	printf "Lines of colors should be continous:\n"
+	printf "Lines of colors should be continuous:\n"
 	curl -s https://raw.githubusercontent.com/JohnMorales/dotfiles/master/colors/24-bit-color.sh | bash
 }
 
@@ -90,10 +94,12 @@ script to install dotfiles
 
 TYPE:
 	-t | --term
-		only install dotfiles for programs that are available through terminal interface
+		only links dotfiles for programs that are available through terminal interface
+			installs nnn plugins
+			installs tmux plugins
 
 	-d | --desktop
-		install dotfiles fully fledged
+		links dotfiles fully fledged
 			do everything as with --term
 			downloads missing nerd fonts
 			compiles c blocklets for an i3blocks status bar

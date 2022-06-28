@@ -54,10 +54,10 @@ cmp.setup{
       c = cmp.mapping.abort(),
     }),
 	['<C-l>'] = cmp.mapping({
-		i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
+		i = cmp.mapping.confirm({ select = false }),
 		c = function(fallback)
 			if cmp.visible() then
-				cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+				cmp.confirm({ select = false })
 			else
 				fallback()
 			end

@@ -1,3 +1,14 @@
+" " load another init.vim {{{ "
+
+" if exists("$CUSTOM_VIM")
+"   for path in split($EXTRA_VIM, ':')
+"     exec "source ".path
+" 	finish
+"   endfor
+" endif
+
+" " }}} load another init.vim "
+
 " Plugins initialization {{{ "
 
 let s:data_dir = stdpath('data') . '/site'
@@ -133,17 +144,21 @@ Plug 'RRethy/vim-illuminate'
 Plug 'lewis6991/foldsigns.nvim'
 Plug 'dpelle/vim-LanguageTool'
 Plug 'rcarriga/nvim-notify'
+Plug 'kevinhwang91/promise-async'
+Plug 'kevinhwang91/nvim-ufo'
 " filetype specific
 Plug 'tmux-plugins/vim-tmux'
 Plug 'pearofducks/ansible-vim'
-" markdown
 Plug 'plasticboy/vim-markdown'
 if (system('uname -m') ==? "x86_64\n")
 	Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+	Plug 'previm/previm'
+	Plug 'tyru/open-browser.vim'
 endif
 " misc
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'tpope/vim-dispatch'
+Plug 'cdelledonne/vim-cmake'
 
 " Colorschemes
 Plug 'Mofiqul/vscode.nvim'
@@ -174,7 +189,6 @@ set cursorline
 set signcolumn=number
 set startofline
 set encoding=UTF-8
-set keymap=russian-jcuken
 set iminsert=0
 set imsearch=-1
 set timeoutlen=300
@@ -199,19 +213,6 @@ onoremap H 0
 nnoremap L $
 xnoremap L $
 onoremap L $
-inoremap kj <esc>
-nnoremap 0 <nop>
-xnoremap 0 <nop>
-nnoremap $ <nop>
-xnoremap $ <nop>
-inoremap <esc> <nop>
-xnoremap <esc> <nop>
-nnoremap <c-e> 3<c-e>
-nnoremap <c-y> 3<c-y>
-nnoremap <silent> <c-d> :<C-U>exec "normal " . (v:count > 1 ? "m'" . v:count*10 : 10) . "j"<CR>
-nnoremap <silent> <c-u> :<C-U>exec "normal " . (v:count > 1 ? "m'" . v:count*10 : 10) . "k"<CR>
-nnoremap . <nop>
-inoremap <C-p> <C-r>"
 onoremap w iw
 onoremap q i"
 xnoremap q i"
@@ -219,15 +220,30 @@ onoremap Q i'
 xnoremap Q i'
 onoremap b ib
 onoremap B iB
-nnoremap <c-w>c <nop>
+nnoremap j gj
+nnoremap k gk
+nnoremap ~ @q
 xnoremap > >gv
 xnoremap < <gv
+nnoremap 0 <nop>
+xnoremap 0 <nop>
+nnoremap $ <nop>
+xnoremap $ <nop>
+nnoremap . <nop>
+inoremap kj <esc>
+inoremap <esc> <nop>
+xnoremap <esc> <nop>
+inoremap <C-p> <C-r>"
+nnoremap <c-w>c <nop>
+nnoremap <c-e> 3<c-e>
+nnoremap <c-y> 3<c-y>
+nnoremap <silent> <c-d> :<C-U>exec "normal " . (v:count > 1 ? "m'" . v:count*10 : 10) . "j"<CR>
+nnoremap <silent> <c-u> :<C-U>exec "normal " . (v:count > 1 ? "m'" . v:count*10 : 10) . "k"<CR>
 " '\' starts mappings for a toggle
 nnoremap \w :set wrap!<CR>
 nnoremap \l :set rnu!<CR>:set number!<CR>
 nnoremap \W :set colorcolumn=80
 let mapleader = "\<Space>"
-nnoremap ~ @q
 nnoremap <leader>W :w<CR>
 nnoremap <leader>q :qa<CR>
 nnoremap <leader>sn /<c-r><c-w><CR>
@@ -237,7 +253,9 @@ xnoremap <leader>sN "hy?<c-r>h<CR>
 nnoremap <leader>sy /<c-r>"<CR>
 xnoremap <leader>y "+y
 nnoremap <expr> <leader>y 'gg"+yG'.( line(".") == 1 ? '' : '<C-o>')
-nnoremap <leader>Y :let @+ = expand("%")<CR>:echo @+"copied to clipboard"<CR>
+nnoremap <leader>Y :let @+ = expand("%:t")<CR>:echo @+"copied to clipboard"<CR>
+nnoremap <leader>ip :let @+ = expand("%")<CR>:echo @+"copied to clipboard"<CR>
+nnoremap <leader>iP :let @+ = expand("%:p")<CR>:echo @+"copied to clipboard"<CR>
 xnoremap <leader>d "_d
 nnoremap <leader>p "+p
 xnoremap <leader>p "_dP
@@ -301,11 +319,23 @@ lua require('MyConfigs/LSP_treesitter')
 nnoremap <leader>il <cmd>LspInfo<CR>
 nnoremap <leader>iL <cmd>LspInstallInfo<CR>
 nnoremap <leader>fl <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
-nnoremap \x <cmd>TroubleToggle<cr>
 nnoremap gpd <cmd>lua require('goto-preview').goto_preview_definition()<CR>
 nnoremap gpi <cmd>lua require('goto-preview').goto_preview_implementation()<CR>
 nnoremap gP <cmd>lua require('goto-preview').close_all_win()<CR>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
+
+" preview of diagnostics
+lua << EOF
+	require('trouble').setup {
+		mode = "document_diagnostics",
+		action_keys = {
+			open_split = { "<c-b>" },
+			toggle_mode = "\\m",
+			toggle_fold = {"zC", "zc"},
+		},
+	}
+EOF
+nnoremap \x <cmd>TroubleToggle<cr>
 
 " preview of an LSP symbol
 lua << EOF
@@ -356,8 +386,6 @@ EOF
 
 " treesitter
 nnoremap <leader>ft <cmd>Telescope treesitter<cr>
-set foldmethod=expr
-set foldexpr=nvim_treesitter#foldexpr()
 set foldlevel=99
 
 " show current context
@@ -975,11 +1003,30 @@ nnoremap [w :PrevTrailingWhitespace<CR>
 
 " grammar/spell checker {{{ "
 
-set spelllang=en_us
+function! s:toggleLang()
+	if (g:languagetool_lang == 'ru')
+		let g:languagetool_lang = 'en'
+		set keymap=
+		imap / /
+		imap ? ?
+		echo "en"
+	else
+		let g:languagetool_lang = 'ru'
+		set keymap=russian-jcuken
+		imap / .
+		imap ? ,
+		echo "ru"
+	endif
+endfunction
+nnoremap <silent> <c-a> a<c-6><ESC>:call <SID>toggleLang()<CR>
+
+" set spelllang=en_us,ru
+" let g:languagetool_lang = 'en'
+let g:languagetool_lang = 'en'
 let g:languagetool_jar = "/usr/share/languagetool/languagetool-commandline.jar"
-nnoremap <leader>sc :LanguageToolCheck<CR>
-xnoremap <leader>sc :LanguageToolCheck<CR>
-nnoremap <leader>sC :LanguageToolClear<CR>
+nnoremap <leader>cs :LanguageToolCheck<CR>
+xnoremap <leader>c :LanguageToolCheck<CR>
+nnoremap <leader>cc :LanguageToolClear<CR>
 
 " }}} grammar/spell checker "
 
@@ -1118,7 +1165,7 @@ noremap g* g*<Cmd>lua require('hlslens').start()<CR>
 noremap g# g#<Cmd>lua require('hlslens').start()<CR>
 
 let g:any_jump_disable_default_keybindings = 1
-nnoremap <leader>j :AnyJump<CR>
+nnoremap gs :AnyJump<CR>
 
 " }}} Search "
 
@@ -1256,23 +1303,27 @@ nnoremap <leader>fn <cmd>lua require('telescope.builtin.files').find_files({
 
 " }}} Notes "
 
-" Run builds/tasks {{{ "
+" Run builds/tests {{{ "
 
-function s:runmake()
-	let args = input("make args: ")
-	let nproc = substitute(system('nproc'), '\n$', '', '')
-	execute "Make '-j".nproc."' ".args
-endfunction
-
+" dispatch.txt
 let g:dispatch_no_maps = 1
-nnoremap <leader>Er :call <SID>runmake()<CR>
-nnoremap <leader>ER :Make! 
-nnoremap <leader>Eo :Copen<cr>
-nnoremap <leader>Ed :Dispatch cmake build 
-nnoremap <leader>Ex :AbortDispatch<cr>
-nnoremap <leader>Es :Start! 
+nnoremap <leader>mm :Dispatch make<CR>
+nnoremap <leader>mM :Dispatch -dir=./ make -j4 
+nnoremap <leader>mk :AbortDispatch<CR>
+nnoremap <F9> :Copen <Bar> Dispatch<CR>
 
-" }}} Run builds/tasks "
+" cmake.txt
+nmap <leader>mcg :CMakeGenerate<CR>
+nmap <leader>mcb :CMakeBuild<CR>
+
+" }}} Run builds/tests "
+
+" open in browser {{{ "
+
+let g:netrw_nogx = 1 " disable netrw's gx mapping.
+xmap gi <Plug>(openbrowser-smart-search)
+
+" }}} open in browser "
 
 " Gui-nvim {{{ "
 
@@ -1282,6 +1333,10 @@ if exists("g:neovide")
 	let g:neovide_refresh_rate=140
 	let g:neovide_cursor_vfx_mode = "wireframe"
 	" let g:neovide_cursor_antialiasing=v:true
+	noremap <C-C> "+y
+	noremap <C-V> "+p
+	cnoremap <C-V> <C-r>+
+	imap <C-V> <C-r>+
 endif
 
 " }}} Gui-nvim "

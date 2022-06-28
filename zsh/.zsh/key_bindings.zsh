@@ -12,8 +12,17 @@ function my_widget_prepend-sudo {
 	if [[ $BUFFER != "sudo "* ]]; then
 		BUFFER="sudo $BUFFER"; CURSOR+=5
 	fi
+	zvm_enter_insert_mode
 }
 zle -N my_widget_prepend-sudo
+
+function my_widget_prepend-man {
+	if [[ $BUFFER != "man "* ]]; then
+		BUFFER="man $BUFFER"; CURSOR+=4
+	fi
+	zvm_enter_insert_mode
+}
+zle -N my_widget_prepend-man
 
 # edit in $EDITOR
 autoload -U edit-command-line
@@ -24,14 +33,16 @@ zle -N edit-command-line
 #### mappings ###
 #################
 
-bindkey -M viins " " my_widget_globalias
-bindkey -M viins "^ " magic-space
-bindkey -M viins "^T" edit-command-line
+function my_init_mappings() {
+	bindkey -M viins " " my_widget_globalias
+	bindkey -M viins "^ " magic-space
+	bindkey -M viins "^k" history-search-backward
 
-function my_init_normal_mode_mappings() {
 	bindkey -M vicmd s my_widget_prepend-sudo
-	bindkey -M vicmd "^T" edit-command-line
-}
-my_init_normal_mode_mappings
+	bindkey -M vicmd m my_widget_prepend-man
+	bindkey "^T" edit-command-line
+	bindkey '^R' fzf-history-widget
 
-bindkey -M isearch " " magic-space
+	bindkey -M isearch " " magic-space
+}
+my_init_mappings

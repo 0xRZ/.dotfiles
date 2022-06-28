@@ -9,6 +9,8 @@ export COLORTERM=truecolor
 export SHELL=/bin/zsh
 # n/curses: number of milliseconds to wait after reading an escape character
 export ESCDELAY=0
+# fuzzy finder
+export FZF_DEFAULT_OPTS='-m --bind=ctrl-d:preview-page-down,ctrl-u:preview-page-up,ctrl-s:jump,ctrl-space:toggle,ctrl-a:toggle-all'
 
 # nnn file manager
 export NNN_BMS="\
@@ -17,7 +19,7 @@ b:$HOME/build;n:$HOME/.local/share/nvim;p:$HOME/.backup;\
 a:$HOME/.my_tmp;d:$HOME/.dotfiles;\
 "
 NNN_PLUG_BUNDLED='m:bulknew;f:fzcd;t:mimelist;p:preview-tui'
-NNN_PLUG_CMDS='s:-!sudoedit $nnn*;g:-!neovide --multigrid $nnn*'
+NNN_PLUG_CMDS='s:-!sudoedit $nnn*;g:-!neovide --multigrid --log $nnn*'
 NNN_PLUG_YANK='y:nnn_file_path_yank;Y:nnn_file_name_yank;d:nnn_file_dir_yank'
 NNN_PLUG_CD='c:nnn_clipboard_file_path_cd'
 export NNN_PLUG="$NNN_PLUG_BUNDLED;$NNN_PLUG_CMDS;$NNN_PLUG_YANK;$NNN_PLUG_CD;"

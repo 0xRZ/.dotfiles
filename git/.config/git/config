@@ -4,6 +4,7 @@
 
 [core]
 	pager = delta --syntax-theme='GitHub'
+	excludesfile = ~/.config/git/.gitignore
 
 [interactive]
     diffFilter = delta --color-only

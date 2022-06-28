@@ -3,7 +3,7 @@ ZINIT_HOME="$HOME/.zsh/zinit"
 source "${ZINIT_HOME}/zinit.zsh"
 
 ### ohmyzsh plugins
-# https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins
+# https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
 # export ZSH="$HOME/ohmyzsh"
 # disable when problems when pasting URLs or pasting anything at all
 DISABLE_MAGIC_FUNCTIONS="true"
@@ -22,7 +22,6 @@ plugins=(
 	magic-enter
 	npm
 	pip
-	pipenv
 	python
 	rand-quote
 	rust
@@ -41,10 +40,6 @@ zinit light ohmyzsh/ohmyzsh
 zinit light Aloxaf/fzf-tab
 # show tmux popup to show results
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-# preview directory's content with exa when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
-# the right and bottom padding of the popup window.
-zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
 # disable sort when completing `git checkout`
 zstyle ':completion:*:git-checkout:*' sort false
 # set descriptions format to enable group support
@@ -55,6 +50,8 @@ zstyle ':fzf-tab:*' prefix ''
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # switch group using `,` and `.`
 zstyle ':fzf-tab:*' switch-group 'ctrl-h' 'ctrl-l'
+# select and execute
+zstyle ':fzf-tab:*' fzf-bindings 'ctrl-s:jump'
 # color for items without group (e.g. files)
 zstyle ':fzf-tab:*' default-color $'\033[38;5;234m'
 # light fzf colorscheme
@@ -69,21 +66,10 @@ ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 zinit ice wait"1" lucid # loading is done 1 second after prompt (hide Loaded message)
 zinit light hlissner/zsh-autopair
 
-### vi-mode ###
-ZVM_VI_ESCAPE_BINDKEY=kj
-ZVM_INIT_MODE=sourcing
-zinit light jeffreytse/zsh-vi-mode
-function my_zvm_after_lazy_keybindings() {
-	zvm_bindkey vicmd 'H' beginning-of-line
-	zvm_bindkey vicmd 'L' end-of-line
-	zvm_bindkey visual 'v' zvm_exit_visual_mode
-}
-zvm_after_lazy_keybindings_commands+=(my_zvm_after_lazy_keybindings)
-zvm_after_lazy_keybindings_commands+=(my_init_normal_mode_mappings)
-# zvm_after_init_commands+=(my_init_mcfly_plug)
-# function zvm_after_init() {
-# 	autopair-init
-# }
+### git with fzf ###
+FORGIT_NO_ALIASES=true
+FORGIT_COPY_CMD='xclip -selection clipboard'
+zinit load wfxr/forgit
 
 ### highlight shell syntax ###
 # fast-theme "base16"
@@ -92,3 +78,20 @@ zinit light zdharma-continuum/fast-syntax-highlighting
 ### theme ###
 zinit ice depth"1" # git clone depth
 zinit light romkatv/powerlevel10k
+
+### vi-mode ###
+ZVM_VI_ESCAPE_BINDKEY=kj
+# ZVM_INIT_MODE=sourcing
+zinit light jeffreytse/zsh-vi-mode
+function my_zvm_after_lazy_keybindings() {
+	zvm_bindkey vicmd 'H' beginning-of-line
+	zvm_bindkey vicmd 'L' end-of-line
+	zvm_bindkey visual 'v' zvm_exit_visual_mode
+	zvm_bindkey visual 'x' zvm_vi_delete
+}
+zvm_after_lazy_keybindings_commands+=(my_zvm_after_lazy_keybindings)
+zvm_after_lazy_keybindings_commands+=(my_init_mappings)
+function my_zvm_after_init() {
+	my_init_mappings
+}
+zvm_after_init_commands+=(my_zvm_after_init)
