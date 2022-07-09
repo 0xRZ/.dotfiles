@@ -3,6 +3,17 @@ function MyDump(...)
     print(unpack(objects))
 end
 
+vim.g.my_diagnostics_visible = true
+function _G.my_toggle_diagnostics()
+  if vim.g.my_diagnostics_visible then
+    vim.g.my_diagnostics_visible = false
+    vim.diagnostic.disable()
+  else
+    vim.g.my_diagnostics_visible = true
+    vim.diagnostic.enable()
+  end
+end
+
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 --- folds
 capabilities.textDocument.foldingRange = {

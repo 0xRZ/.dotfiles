@@ -34,14 +34,15 @@ zle -N edit-command-line
 #################
 
 function my_init_mappings() {
+	bindkey "^T" edit-command-line
+	bindkey '^R' fzf-history-widget
+
 	bindkey -M viins " " my_widget_globalias
 	bindkey -M viins "^ " magic-space
 	bindkey -M viins "^k" history-search-backward
 
 	bindkey -M vicmd s my_widget_prepend-sudo
 	bindkey -M vicmd m my_widget_prepend-man
-	bindkey "^T" edit-command-line
-	bindkey '^R' fzf-history-widget
 
 	bindkey -M isearch " " magic-space
 }

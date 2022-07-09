@@ -86,9 +86,25 @@ function my_create_script() {
 	chmod +x $1
 }
 
+function my_editor_open ()
+{
+	if echo $1 | grep -E ":[[:digit:]]+$"; then
+		local filename=$(echo $1 | cut -d':' -f1)
+		local line=$(echo $1 | cut -d':' -f2)
+		$EDITOR +${line} ${filename}
+	else
+		if [ ! -f $1 ]; then
+			local dir=$(dirname $1)
+			mkdir -p ${dir}
+			echo -e '\n' > $1
+		fi
+		$EDITOR $1
+	fi
+}
+
 function my_ripgrep_fzf() {
 	INITIAL_QUERY=""; \
-	RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "; \
+	RG_PREFIX="rg --column --line-number --hidden --no-ignore --no-heading --color=always --smart-case "; \
 	FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'"; \
 	  fzf --bind "change:reload:$RG_PREFIX {q} || true" \
       --ansi --color=light --disabled --query "$INITIAL_QUERY" \

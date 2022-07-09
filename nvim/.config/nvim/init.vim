@@ -133,6 +133,7 @@ Plug 'nacro90/numb.nvim'
 " search
 Plug 'mhinz/vim-grepper'
 Plug 'kevinhwang91/nvim-hlslens'
+Plug 'kevinhwang91/nvim-hlslens'
 Plug 'pechorin/any-jump.vim'
 " info
 Plug 'simnalamburt/vim-mundo'
@@ -150,6 +151,7 @@ Plug 'kevinhwang91/nvim-ufo'
 Plug 'tmux-plugins/vim-tmux'
 Plug 'pearofducks/ansible-vim'
 Plug 'plasticboy/vim-markdown'
+Plug 'cdelledonne/vim-cmake'
 if (system('uname -m') ==? "x86_64\n")
 	Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 	Plug 'previm/previm'
@@ -158,7 +160,6 @@ endif
 " misc
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'tpope/vim-dispatch'
-Plug 'cdelledonne/vim-cmake'
 
 " Colorschemes
 Plug 'Mofiqul/vscode.nvim'
@@ -175,12 +176,6 @@ endif
 
 set nofixeol
 set hidden
-" tab width
-set tabstop=4
-set shiftwidth=4
-set smarttab
-set noexpandtab
-"
 set tildeop
 set number
 set hlsearch
@@ -193,13 +188,18 @@ set iminsert=0
 set imsearch=-1
 set timeoutlen=300
 set nowrap
-set pastetoggle='\p'
 autocmd InsertLeave * set nopaste
 augroup numbertoggle
 	autocmd!
 	autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
 	autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
 augroup END
+" tab width
+set tabstop=4
+set shiftwidth=4
+set smarttab
+set noexpandtab
+"
 
 " }}} Options "
 
@@ -258,6 +258,7 @@ nnoremap <leader>ip :let @+ = expand("%")<CR>:echo @+"copied to clipboard"<CR>
 nnoremap <leader>iP :let @+ = expand("%:p")<CR>:echo @+"copied to clipboard"<CR>
 xnoremap <leader>d "_d
 nnoremap <leader>p "+p
+nnoremap <leader>P :set invpaste<CR>i<c-r>+
 xnoremap <leader>p "_dP
 nnoremap <leader>+ :<c-u>exec 'resize +'.v:count1*5<CR>
 nnoremap <leader>_ :<c-u>exec 'resize -'.v:count1*5<CR>
@@ -266,7 +267,8 @@ nnoremap <leader>- :<c-u>exec 'vertical resize -'.v:count1*20<CR>
 " NOTE: might need clean vimrc with :set nocp
 " nnoremap \s :setlocal spell! spelllang=en,ru<CR>
 nnoremap <leader>/ :noh<CR>
-xnoremap <leader>R "hy:%s/<c-r>h//gc<left><left><left>
+xnoremap <leader>Rf "zy:%s/<c-r>z//gc<left><left><left>
+xmap <leader>Ra "ay:vimgrep /<c-r>a/gj **/*<CR>:copen<CR>:cfdo %s/<c-r>a//gc <Bar> update<left><left><left><left><left><left><left><left><left><left><left><left>
 nnoremap <leader>ig :let @l=@%.":".line('.')<CR>:call setreg('+',@l)<CR>:echo @l." copied to clipboard"<CR>
 nnoremap <leader>ib :exec 'echo "bytes in file:"' <Bar> exec '!wc -c %'<CR>
 nnoremap <leader>id :echo getcwd()<CR>
@@ -323,6 +325,7 @@ nnoremap gpd <cmd>lua require('goto-preview').goto_preview_definition()<CR>
 nnoremap gpi <cmd>lua require('goto-preview').goto_preview_implementation()<CR>
 nnoremap gP <cmd>lua require('goto-preview').close_all_win()<CR>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
+nnoremap \d <cmd>call v:lua.my_toggle_diagnostics()<CR>
 
 " preview of diagnostics
 lua << EOF
@@ -1148,9 +1151,12 @@ lua require('numb').setup()
 runtime plugin/grepper.vim
 let g:grepper.prompt_quote = 2
 let g:grepper.tools = ['rg', 'rg_hidden', 'git', 'grep']
+let g:grepper.rg.grepprg .= ' --hidden'
 let g:grepper.rg_hidden = {
     \   'grepprg': 'rg -H --no-heading --vimgrep --hidden --no-ignore',
-    \ }
+    \   'grepformat': '%f:%l:%c:%m,%f',
+	\   'escape': '\^$.*+?()[]{}|',
+	\ }
 nnoremap <leader>r :Grepper<CR>
 nnoremap <leader>R :Grepper -stop<CR>
 xmap <leader>r <plug>(GrepperOperator)

@@ -16,7 +16,7 @@ export FZF_DEFAULT_OPTS='-m --bind=ctrl-d:preview-page-down,ctrl-u:preview-page-
 export NNN_BMS="\
 c:$HOME/.config;h:/home;t:$HOME/.local/share/Trash;\
 b:$HOME/build;n:$HOME/.local/share/nvim;p:$HOME/.backup;\
-a:$HOME/.my_tmp;d:$HOME/.dotfiles;\
+a:$HOME/.tmp;d:$HOME/.dotfiles;\
 "
 NNN_PLUG_BUNDLED='m:bulknew;f:fzcd;t:mimelist;p:preview-tui'
 NNN_PLUG_CMDS='s:-!sudoedit $nnn*;g:-!neovide --multigrid --log $nnn*'

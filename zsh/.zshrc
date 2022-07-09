@@ -14,7 +14,6 @@ fi
 (( ${+commands[direnv]} )) && emulate zsh -c "$(direnv hook zsh)"
 
 [ -f $HOME/.zsh/plugins.zsh ] && source $HOME/.zsh/plugins.zsh
-[ -f $HOME/.zsh/plugins_external.zsh ] && source $HOME/.zsh/plugins_external.zsh
 [ -f $HOME/.zsh/functions.zsh ] && source $HOME/.zsh/functions.zsh
 [ -f $HOME/.zsh/aliases.zsh ] && source $HOME/.zsh/aliases.zsh
 [ -f $HOME/.zsh/key_bindings.zsh ] && source $HOME/.zsh/key_bindings.zsh

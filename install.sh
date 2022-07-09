@@ -34,6 +34,8 @@ function install_term() {
 	done
 	# tmux plugin manager
 	./tmux/.config/tmux/plugins/tpm/bin/install_plugins
+	# neovim vim-plug plugin manager
+	nvim --headless +PlugInstall +qall
 }
 
 function install_desktop() {
@@ -69,7 +71,8 @@ function update() {
 	if [ "$is_init" = true ]; then
 		git submodule update --remote --jobs "$(nproc)" --depth 1
 		./tmux/.config/tmux/plugins/tpm/bin/update_plugins all
-		zsh -i -c "zinit update"
+		zsh -i -c "zinit update --parallel"
+		zsh -i -c "zinit self-update"
 	else
 		echo "Initializing repo submodules..."
 		git submodule update --checkout --init --jobs "$(nproc)" --depth 1
@@ -161,7 +164,7 @@ then
 	exit 1
 fi
 
-check_prog stow make gcc curl
+check_prog stow make gcc curl zsh
 
 if [[ $CLI -ne 0 ]]
 then

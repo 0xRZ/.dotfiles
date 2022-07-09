@@ -6,7 +6,7 @@ end
 call plug#begin(s:plug_dir)
 
 call plug#end()
-PlugInstall | quit
+PlugInstall
 
 lua << EOF
 EOF

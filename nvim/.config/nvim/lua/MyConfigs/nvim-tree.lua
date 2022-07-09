@@ -10,7 +10,6 @@ local list_binds = {
 require'nvim-tree'.setup {
     view = {
         width = 40,
-        auto_resize = true,
         mappings = {
 	    list = list_binds,
 	},
